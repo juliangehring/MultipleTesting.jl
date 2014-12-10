@@ -28,13 +28,12 @@ end
 function validPValues{T<:FloatingPoint}(x::Vector{T})
     ex = extrema(x)
     if ex[1] .< 0.0 || ex[2] .> 1.0
-        throw DomainError()
+        throw(DomainError())
     end
-    return res
 end
 
 function checkPValues{T<:FloatingPoint}(pValues::Vector{T})
     if any((pValues .< 0.0) | (pValues .> 1.0))
-        throw DomainError()
+        throw(DomainError())
     end
 end
