@@ -1,5 +1,4 @@
 ## qValues ##
-using StatsBase
 
 ## https://github.com/StoreyLab/qvalue/blob/master/R/qvalue.R
 function qValues{T<:FloatingPoint}(pValues::Vector{T}, pi0::T, pfdr::Bool = false)

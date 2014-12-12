@@ -1,5 +1,11 @@
-using MultipleTesting
-using Base.Test
+tests = ["test-pval-adjustment"
+         #"test-qvalue",
+         #"test-pi0"
+         #"test-utils"
+         ]
 
-# write your own tests here
-@test 1 == 1
+for t in tests
+    test_file = "$(t).jl"
+    println(" * $(t) ...")
+    include(test_file)
+end

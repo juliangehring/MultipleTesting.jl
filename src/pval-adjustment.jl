@@ -4,7 +4,37 @@ function bonferroni{T<:FloatingPoint}(pValues::Vector{T})
     return min(pValues * length(pValues), 1.)
 end
 
+@doc """
+# Benjamini-Hochberg p-value adjustement
 
+
+## Usage
+
+    pAdjusted = benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T})
+
+Input arguments:
+
+- `pValues`: Vector of p-values that should be adjusted
+
+Return values:
+
+- `pAdjusted`: Vector of adjusted p-values, matching the input `pValues`.
+
+
+## References
+
+Benjamini, Y. and Hochberg, Y. (1995):
+Controlling the false discovery rate: A practical and powerful approach to multiple testing.
+Journal of the Royal Statistical Society
+
+http://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure
+
+## Examples
+
+    pOld = rand(100)
+    pNew = benjamini_hochberg(pOld)
+
+""" ->
 function benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T})
     n = length(pValues)
     if n <= 1
@@ -40,7 +70,6 @@ function benjamini_yekutieli{T<:FloatingPoint}(pValues::Vector{T})
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    #c = sum([1/n for i in 1:n])
     stepup!(sortedPValues, benjamini_yekutieli_multiplier, n)
     min(sortedPValues[originalOrder], 1.)
 end

@@ -31,9 +31,3 @@ function validPValues{T<:FloatingPoint}(x::Vector{T})
         throw(DomainError())
     end
 end
-
-function checkPValues{T<:FloatingPoint}(pValues::Vector{T})
-    if any((pValues .< 0.0) | (pValues .> 1.0))
-        throw(DomainError())
-    end
-end
