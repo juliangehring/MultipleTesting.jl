@@ -119,9 +119,3 @@ function hommel{T<:FloatingPoint}(pValues::Vector{T})
     end
     max(pa, sortedPValues)[originalOrder]
 end
-
-#p = [0.0001, 0.001, 0.02, 0.4, 0.8];
-#hommel(p)
-#pValues = p
-
-

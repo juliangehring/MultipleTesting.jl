@@ -64,9 +64,6 @@ function bootstrap_pi0{T<:FloatingPoint}(pValues::Vector{T}, lambda::Vector{T} =
     pi0
 end
 
-#pval = [0.01:0.05:0.91] ## consistent with 'qvalue::pi0est'
-#bootstrap_pi0(pval)
-
 
 function lsl_pi0_vec{T<:FloatingPoint}(pValues::Vector{T})
     n = length(pValues)
