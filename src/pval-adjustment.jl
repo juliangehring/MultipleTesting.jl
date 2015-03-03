@@ -1,6 +1,7 @@
 ## p-value adjustment methods ##
 
 function bonferroni{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
     return min(pValues * length(pValues), 1.)
 end
 
@@ -36,6 +37,7 @@ http://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_pro
 
 """ ->
 function benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -50,6 +52,7 @@ bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
 
 function holm{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -64,6 +67,7 @@ holm_multiplier(i::Int, n::Int) = (n-i+1)
 
 
 function benjamini_yekutieli{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -74,13 +78,14 @@ function benjamini_yekutieli{T<:FloatingPoint}(pValues::Vector{T})
     min(sortedPValues[originalOrder], 1.)
 end
 
-function bejamini_yekutieli_multiplier(i::Int, n::Int)
+function benjamini_yekutieli_multiplier(i::Int, n::Int)
     c = sum([1/i for i in 1:n])
     return ((n*c)/(n-i))
 end
 
 
 function hochberg{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -92,3 +97,31 @@ function hochberg{T<:FloatingPoint}(pValues::Vector{T})
 end
 
 hochberg_multiplier(i::Int, n::Int) = (i+1)
+
+
+function hommel{T<:FloatingPoint}(pValues::Vector{T})
+    validPValues(pValues)
+    n = length(pValues)
+    if n <= 1
+        return pValues
+    end
+    sortedIndexes, originalOrder = reorder(pValues)
+    sortedPValues = pValues[sortedIndexes]
+    q = fill(minimum(n * pValues./[1:n]), n)
+    pa = fill(q[1], n)
+    for j in (n-1):2
+        ij = [1:(n-j+1)]
+        i2 = [(n-j+2):n]
+        q1 = minimum(j * sortedPValues[i2]./([2:j]))
+        q[ij] = min(j * sortedPValues[ij], q1)
+        q[i2] = q[n-j+1]
+        pa = max(pa, q)
+    end
+    max(pa, sortedPValues)[originalOrder]
+end
+
+#p = [0.0001, 0.001, 0.02, 0.4, 0.8];
+#hommel(p)
+#pValues = p
+
+
