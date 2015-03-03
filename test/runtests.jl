@@ -1,7 +1,5 @@
-tests = ["test-pval-adjustment"
-         #"test-qvalue",
-         #"test-pi0"
-         #"test-utils"
+tests = ["test-pval-adjustment",
+         "test-pi0"
          ]
 
 for t in tests

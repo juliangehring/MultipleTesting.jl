@@ -18,7 +18,7 @@ ref2 = Dict(bonferroni => [0.001, 0.001, 0.01, 0.1, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0
             benjamini_yekutieli => [0.001464484, 0.001464484, 0.009763228, 0.073224206, 0.292896825, 0.418424036, 0.418424036, 1.0, 1.0, 1.0])
 
 for m in keys(ref1)
-    println(m)
+    println(" ** ", m)
     @test_throws MethodError m()
     ## no integers as input
     @test_throws MethodError m([0, 1])

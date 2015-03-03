@@ -29,7 +29,7 @@ end
 ## https://github.com/StoreyLab/qvalue/blob/master/R/pi0est.R
 function storey_pi0{T<:FloatingPoint}(pValues::Vector{T}, lambda::T)
     validPValues(pValues)
-    pi0 = (sum(pValues .>= lambda)) / (1-lambda) / length(pValues)
+    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1-lambda)
     pi0 = min(pi0, 1.)
     return pi0
 end
