@@ -1,6 +1,7 @@
 module MultipleTesting
 
 using StatsBase
+import StatsBase.fit
 
 export
     qValues,
@@ -12,11 +13,26 @@ export
     benjamini_yekutieli,
     holm,
     hochberg,
-    validPValues
+    validPValues,
+    estimatepi0,
+    StoreyEstimator,
+    StoreyBootstrapEstimator,
+    conservative,
+    GrenanderEstimator,
+    GrenanderLocalFdrFit,
+    pi0,
+    pvalues,
+    tailfdr,
+    localfdr,
+    distribution
 
 include("utils.jl")
-include("pval-adjustment.jl")
 include("pi0-estimators.jl")
+include("FdrEstimatorsInterface.jl")
+include("GrenanderEstimator.jl")
 include("qvalue.jl")
+include("pval-adjustment.jl")
+
+
 
 end # module
