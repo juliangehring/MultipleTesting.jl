@@ -109,9 +109,9 @@ function hommel{T<:FloatingPoint}(pValues::Vector{T})
     sortedPValues = pValues[sortedIndexes]
     q = fill(minimum(n * pValues./[1:n]), n)
     pa = fill(q[1], n)
-    for j in (n-1):2
-        ij = [1:(n-j+1)]
-        i2 = [(n-j+2):n]
+    for j in (n-1):-1:2
+        ij = 1:(n-j+1)
+        i2 = (n-j+2):n
         q1 = minimum(j * sortedPValues[i2]./([2:j]))
         q[ij] = min(j * sortedPValues[ij], q1)
         q[i2] = q[n-j+1]

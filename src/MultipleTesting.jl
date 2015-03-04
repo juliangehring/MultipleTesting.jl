@@ -12,6 +12,7 @@ export
     benjamini_hochberg,
     benjamini_yekutieli,
     holm,
+    hommel,
     hochberg,
     validPValues,
     estimatepi0,
