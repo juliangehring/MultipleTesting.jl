@@ -14,6 +14,7 @@ export
     holm,
     hommel,
     hochberg,
+    qValues,
     validPValues,
     estimatepi0,
     StoreyEstimator,

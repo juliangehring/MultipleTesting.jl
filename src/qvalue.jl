@@ -1,11 +1,11 @@
 ## qValues ##
 
-## https://github.com/StoreyLab/qvalue/blob/master/R/qvalue.R
 function qValues{T<:FloatingPoint}(pValues::Vector{T}, pi0::T, pfdr::Bool = false)
+    validPValues(pValues)
+    validPValues([pi0])
     n = length(pValues)
     u = sortperm(pValues)
     v = competerank(pValues) ## ties with 'min'
-    ##v = rank(p, ties.method="max") 
     if pfdr
         qvals = (pi0 .* n .* pValues) ./ (v .* (1 - (1 - pValues) .^ n))
     else
