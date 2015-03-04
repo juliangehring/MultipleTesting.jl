@@ -51,6 +51,12 @@ end
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
 
+function benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T}, pi0::T)
+    validPValues([pi0])
+    benjamini_hochberg(pValues) .* pi0
+end
+
+
 function holm{T<:FloatingPoint}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)

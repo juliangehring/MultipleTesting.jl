@@ -1,4 +1,5 @@
 tests = ["test-pval-adjustment",
+         "test-pval-pi0-adjustment",
          "test-pi0"
          ]
 
