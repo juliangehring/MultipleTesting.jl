@@ -22,6 +22,7 @@ export
     conservative,
     GrenanderEstimator,
     GrenanderLocalFdrFit,
+    isotonicregression,
     pi0,
     pvalues,
     tailfdr,
