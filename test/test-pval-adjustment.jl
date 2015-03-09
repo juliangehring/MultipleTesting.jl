@@ -1,4 +1,5 @@
 ## Test pvalue adjustment methods ##
+module Test_pval_adjustment
 
 using MultipleTesting
 using Base.Test
@@ -34,4 +35,6 @@ for m in keys(ref1)
     @test_approx_eq_eps m(pval1) ref1[m] 1e-9
     ## compare with reference values having ties
     @test_approx_eq_eps m(pval2) ref2[m] 1e-9
+end
+
 end

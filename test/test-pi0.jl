@@ -1,4 +1,5 @@
 ## Test π0 estimator methods ##
+module Test_pi0
 
 using MultipleTesting
 using Base.Test
@@ -24,3 +25,5 @@ println(" ** ", "bootstrap_pi0")
 @test_approx_eq bootstrap_pi0(p, lambdas) 0.6
 @test_approx_eq bootstrap_pi0(p0, lambdas) 1.0
 @test_approx_eq bootstrap_pi0(p1, lambdas) 0.15
+
+end

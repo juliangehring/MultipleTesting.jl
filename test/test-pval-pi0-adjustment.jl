@@ -1,4 +1,5 @@
 ## Test pvalue adjustment methods ##
+module Test_pval_pi0_adjustment
 
 using MultipleTesting
 using Base.Test
@@ -24,4 +25,6 @@ for m in keys(ref1)
     ## compare with reference values
     @test_approx_eq_eps m(pval1, pi0) ref1[m] 1e-6
     ## missing: qValue pfdr option, ties
+end
+
 end
