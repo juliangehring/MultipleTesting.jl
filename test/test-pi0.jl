@@ -4,12 +4,12 @@ using MultipleTesting
 using Base.Test
 
 ## test case: deterministic
-p0 = [0.01:0.01:1]
+p0 = [0.01:0.01:1; ]
 p1 = p0 .^ 10
-p = [p0, p1] ## unsorted
+p = [p0; p1] ## unsorted
 pi0 = length(p0) / length(p)
 
-lambdas = [0.05:0.05:0.95]
+lambdas = [0.05:0.05:0.95; ]
 
 ## storey_pi0 ##
 println(" ** ", "storey_pi0")
