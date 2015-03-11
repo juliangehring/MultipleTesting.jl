@@ -2,6 +2,8 @@ module MultipleTesting
 
 using StatsBase
 import StatsBase.fit
+import Base.length
+import Base.getindex
 
 export
     qValues,
@@ -14,6 +16,14 @@ export
     holm,
     hommel,
     hochberg,
+    BenjaminiHochberg,
+    Bonferroni,
+    Hommel,
+    BenjaminiYekutieli,
+    Hochberg,
+    Holm,
+    padjust,
+    MTPWeightVec,
     qValues,
     validPValues,
     estimatepi0,
