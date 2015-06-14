@@ -35,9 +35,14 @@ println(" ** ", "bootstrap_pi0")
 @test_approx_eq bootstrap_pi0(p1) 0.15
 
 ## lsl_pi0 ##
-println(" ** ", "lsl_pi0", ": Insufficient tests!")
+println(" ** ", "lsl_pi0")
 @test_approx_eq lsl_pi0(p) MultipleTesting.lsl_pi0_vec(p)
 @test_approx_eq lsl_pi0(p0) MultipleTesting.lsl_pi0_vec(p0)
 @test_approx_eq lsl_pi0(p1) MultipleTesting.lsl_pi0_vec(p1)
+
+## checked against structSSI::pi0.lsl
+@test_approx_eq_eps lsl_pi0(p) 0.62 1e-2
+@test_approx_eq_eps lsl_pi0(p0) 1.0 1e-2
+@test_approx_eq_eps lsl_pi0(p1) 0.16 1e-2
 
 end
