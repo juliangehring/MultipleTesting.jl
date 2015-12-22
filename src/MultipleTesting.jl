@@ -1,5 +1,6 @@
 module MultipleTesting
 
+using Compat
 using StatsBase
 import StatsBase.fit
 
