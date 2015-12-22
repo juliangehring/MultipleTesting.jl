@@ -1,12 +1,12 @@
 ## p-value adjustment methods ##
 
-function bonferroni{T<:FloatingPoint}(pValues::Vector{T})
+function bonferroni{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     return min(pValues * length(pValues), 1.)
 end
 
 
-function benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T})
+function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
     if n <= 1
@@ -21,13 +21,13 @@ end
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
 
-function benjamini_hochberg{T<:FloatingPoint}(pValues::Vector{T}, pi0::T)
+function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
     validPValues([pi0])
     benjamini_hochberg(pValues) .* pi0
 end
 
 
-function holm{T<:FloatingPoint}(pValues::Vector{T})
+function holm{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
     if n <= 1
@@ -42,7 +42,7 @@ end
 holm_multiplier(i::Int, n::Int) = (n-i+1)
 
 
-function benjamini_yekutieli{T<:FloatingPoint}(pValues::Vector{T})
+function benjamini_yekutieli{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
     if n <= 1
@@ -60,7 +60,7 @@ function benjamini_yekutieli_multiplier(i::Int, n::Int)
 end
 
 
-function hochberg{T<:FloatingPoint}(pValues::Vector{T})
+function hochberg{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
     if n <= 1
@@ -75,7 +75,7 @@ end
 hochberg_multiplier(i::Int, n::Int) = (i+1)
 
 
-function hommel{T<:FloatingPoint}(pValues::Vector{T})
+function hommel{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
     if n <= 1

@@ -1,6 +1,6 @@
 ## utility functions ##
 
-function stepup!{T<:FloatingPoint}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
+function stepup!{T<:AbstractFloat}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
     sortedPValues[n] *= multiplier(0, n)
     for i in 1:(n-1)
         sortedPValues[n-i] = min(sortedPValues[n-i+1], sortedPValues[n-i] * multiplier(i, n))
@@ -9,7 +9,7 @@ function stepup!{T<:FloatingPoint}(sortedPValues::Vector{T}, multiplier::Functio
 end
 
 
-function stepdown!{T<:FloatingPoint}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
+function stepdown!{T<:AbstractFloat}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
     sortedPValues[1] *= multiplier(1, n)
     for i in 2:n
         sortedPValues[i] = max(sortedPValues[i-1], sortedPValues[i] * multiplier(i, n))
@@ -25,7 +25,7 @@ function reorder{T<:Number}(values::Vector{T})
 end
 
 
-function validPValues{T<:FloatingPoint}(x::Vector{T})
+function validPValues{T<:AbstractFloat}(x::Vector{T})
     ex = extrema(x)
     if ex[1] .< 0.0 || ex[2] .> 1.0
         throw(DomainError())
