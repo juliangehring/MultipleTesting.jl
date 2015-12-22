@@ -53,7 +53,7 @@ function bootstrap_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{T} =
     #validPValues(lambda) ## TODO check bounds
     n = length(pValues)
     if !issorted(lambda)
-        sort!(lambda)
+        lambda = sort(lambda)
     end
     pi0 = Float64[mean(pValues .>= l) / (1-l) for l in lambda]
     min_pi0 = quantile(pi0, q)
@@ -67,9 +67,8 @@ end
 
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
     n = length(pValues)
-    ## sorting requires most time
     if !issorted(pValues)
-        sort!(pValues)
+        pValues = sort(pValues)
     end
     s = (1 - pValues) ./ (n - collect(1:n) + 1)
     d = diff(s) .< 0
@@ -81,9 +80,8 @@ end
 
 function lsl_pi0{T<:AbstractFloat}(pValues::Vector{T})
     n = length(pValues)
-    ## sorting requires most time
     if !issorted(pValues)
-        sort!(pValues)
+        pValues = sort(pValues)
     end
     s0 = lsl_slope(1, n, pValues)
     sx = 0.

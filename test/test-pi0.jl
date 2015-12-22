@@ -6,29 +6,47 @@ using Base.Test
 using StatsBase
 
 ## test case: deterministic
-p0 = [0.01:0.01:1; ]
+p0 = collect(0.01:0.01:1)
 p1 = p0 .^ 10
 p = [p0; p1] ## unsorted
 pi0 = length(p0) / length(p)
 
-lambdas = [0.05:0.05:0.95; ]
-lambdas_unsort = sample(lambdas, length(lambdas), replace = false)
+function unsort(x)
+    y = copy(x)
+    while issorted(y)
+        sample!(x, y, replace = false)
+    end
+    return y
+end
+
+lambdas = collect(0.05:0.05:0.95)
 
 ## storey_pi0 ##
 println(" ** ", "storey_pi0")
 @test_throws MethodError storey_pi0()
 @test_approx_eq storey_pi0(p, 0.2) 0.6
-@test_approx_eq storey_pi0(p, 0.) 1.0
+@test_approx_eq storey_pi0(p, 0.0) 1.0
 #@test_throws DomainError storey_pi0(p, 1.) ## CHCK
+
+p_unsort = unsort(p)
+@test !issorted(p_unsort)
+@test_approx_eq storey_pi0(p_unsort, 0.2) 0.6
+@test !issorted(p_unsort)
 
 ## bootstrap_pi0 ##
 println(" ** ", "bootstrap_pi0")
 @test_throws MethodError bootstrap_pi0()
+
 @test_approx_eq bootstrap_pi0(p, lambdas) 0.6
 @test_approx_eq bootstrap_pi0(p0, lambdas) 1.0
 @test_approx_eq bootstrap_pi0(p1, lambdas) 0.15
+
 ## unsorted lambdas
+lambdas_unsort = unsort(lambdas)
+@test !issorted(lambdas_unsort)
 @test_approx_eq bootstrap_pi0(p, lambdas_unsort) 0.6
+@test !issorted(lambdas_unsort)
+
 ## with default 'lambdas'
 @test_approx_eq bootstrap_pi0(p) 0.6
 @test_approx_eq bootstrap_pi0(p0) 1.0
@@ -44,5 +62,16 @@ println(" ** ", "lsl_pi0")
 @test_approx_eq_eps lsl_pi0(p) 0.62 1e-2
 @test_approx_eq_eps lsl_pi0(p0) 1.0 1e-2
 @test_approx_eq_eps lsl_pi0(p1) 0.16 1e-2
+
+## unsorted p-values
+p_unsort = unsort(p)
+@test !issorted(p_unsort)
+@test_approx_eq_eps lsl_pi0(p_unsort) 0.62 1e-2
+@test !issorted(p_unsort)
+
+p_unsort = unsort(p)
+@test !issorted(p_unsort)
+@test_approx_eq_eps MultipleTesting.lsl_pi0_vec(p_unsort) 0.62 1e-2
+@test !issorted(p_unsort)
 
 end
