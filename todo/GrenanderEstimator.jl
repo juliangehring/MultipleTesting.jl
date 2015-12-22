@@ -52,33 +52,3 @@ function fit(pv:: Array{Float64,1}, fdrestimator::GrenanderEstimator)
 
   GrenanderLocalFdrFit(pv_sorted,f,F,pi0)
 end
-
-
-
-
-function isotonicregression(y::Array{Float64,1},w::Array{Float64,1})
-  #todo: ignore zero weights
-  y=copy(y)
-  w=copy(w)
-  m = length(y)
-  cnts = ones(Int64,m)
-  i = 2
-  # ... not most efficient way but could be fun to (ab)use iterator protocol
-  while (!done(y,i))
-    if y[i]<y[i-1]
-      y[i-1]=(w[i]*y[i]+w[i-1]*y[i-1])/(w[i]+w[i-1])
-      w[i-1]=w[i]+w[i-1]
-      cnts[i-1] += cnts[i]
-      deleteat!(y,i)
-      deleteat!(w,i)
-      deleteat!(cnts,i)
-      i = max(i-2,1)
-    end
-    i += 1
-  end
-  yisotonic = vcat([y[idx]*ones(Float64,cnt) for (idx,cnt) in enumerate(cnts)]...)
-end
-
-function isotonicregression(y::Array{Float64,1})
-  isotonicregression(y, ones(Float64, length(y)))
-end
