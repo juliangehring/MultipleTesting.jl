@@ -16,7 +16,14 @@ export
     hommel,
     hochberg,
     qValues,
-    isotonicregression
+    isotonicregression,
+    estimate_pi0,
+    Pi0Estimator,
+    StoreyEstimator,
+    StoreyBootstrapEstimator,
+    LeastSlopeEstimator,
+    isin
+
 
 include("utils.jl")
 include("pi0-estimators.jl")

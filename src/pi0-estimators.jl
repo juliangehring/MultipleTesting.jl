@@ -1,4 +1,41 @@
-## https://github.com/StoreyLab/qvalue/blob/master/R/pi0est.R
+### estimators for π0 (pi0) ###
+
+abstract Pi0Estimator
+
+type StoreyEstimator <: Pi0Estimator
+    λ::AbstractFloat
+
+    StoreyEstimator(λ) = λ >= 0. && λ <= 1. ? new(λ) : throw(DomainError())
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyEstimator)
+    storey_pi0(pValues, pi0estimator.λ)
+end
+
+
+type StoreyBootstrapEstimator <: Pi0Estimator
+    ## check range of arguments
+    λseq::Vector{AbstractFloat}
+    q   ::AbstractFloat
+
+    StoreyBootstrapEstimator(λseq, q) = new(λseq, q)
+end
+
+StoreyBootstrapEstimator() = StoreyBootstrapEstimator(collect(0.05:0.05:0.95), 0.1)
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyBootstrapEstimator)
+    bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
+end
+
+
+type LeastSlopeEstimator <: Pi0Estimator
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::LeastSlopeEstimator)
+    lsl_pi0(pValues)
+end
+
+
 function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
     validPValues(pValues)
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1-lambda)
@@ -7,9 +44,8 @@ function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
 end
 
 
-function bootstrap_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{T} = collect(0.05:0.05:0.95), q::T = 0.1)
+function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = collect(0.05:0.05:0.95), q::S = 0.1)
     #validPValues(pValues)
-    #validPValues(lambda) ## TODO check bounds
     n = length(pValues)
     if !issorted(lambda)
         lambda = sort(lambda)

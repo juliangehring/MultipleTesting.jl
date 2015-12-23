@@ -26,10 +26,19 @@ end
 
 
 function validPValues{T<:AbstractFloat}(x::Vector{T})
-    ex = extrema(x)
-    if ex[1] .< 0.0 || ex[2] .> 1.0
+    if !isin(x)
         throw(DomainError())
     end
+end
+
+
+function isin(x::Real, lower::Real = 0., upper::Real = 1.)
+    x >= lower && x <= upper
+end
+
+function isin{T<:Real}(x::Vector{T}, lower::Real = 0., upper::Real = 1.)
+    ex = extrema(x)
+    ex[1] >= lower && ex[2] <= upper
 end
 
 
