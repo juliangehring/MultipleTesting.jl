@@ -66,8 +66,8 @@ lambdas_unsort = unsort(lambdas)
 @test_approx_eq estimate_pi0(p0, StoreyBootstrapEstimator()) 1.0
 @test_approx_eq estimate_pi0(p1, StoreyBootstrapEstimator()) 0.15
 
-#@test_throws DomainError StoreyBootstrapEstimator(lambdas, -0.1)
-#@test_throws DomainError StoreyBootstrapEstimator(lambdas, 1.1)
+@test_throws DomainError StoreyBootstrapEstimator(lambdas, -0.1)
+@test_throws DomainError StoreyBootstrapEstimator(lambdas, 1.1)
 @test_throws MethodError StoreyBootstrapEstimator(0.5)
 @test_throws MethodError StoreyBootstrapEstimator(lambdas)
 @test_throws MethodError StoreyBootstrapEstimator(0.5, lambdas)

@@ -5,7 +5,7 @@ abstract Pi0Estimator
 type StoreyEstimator <: Pi0Estimator
     λ::AbstractFloat
 
-    StoreyEstimator(λ) = λ >= 0. && λ <= 1. ? new(λ) : throw(DomainError())
+    StoreyEstimator(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
 end
 
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyEstimator)
@@ -18,7 +18,8 @@ type StoreyBootstrapEstimator <: Pi0Estimator
     λseq::Vector{AbstractFloat}
     q   ::AbstractFloat
 
-    StoreyBootstrapEstimator(λseq, q) = new(λseq, q)
+    StoreyBootstrapEstimator(λseq, q) =
+        isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
 end
 
 StoreyBootstrapEstimator() = StoreyBootstrapEstimator(collect(0.05:0.05:0.95), 0.1)
