@@ -1,6 +1,6 @@
 tests = ["test-pval-adjustment",
          "test-pval-pi0-adjustment",
-         "test-pi0",
+         "test-pi0-estimators",
          "test-grenander",
          "test-utils"
          ]
