@@ -26,9 +26,9 @@ export
     isotonicregression,
     estimate_pi0,
     Pi0Estimator,
-    StoreyEstimator,
-    StoreyBootstrapEstimator,
-    LeastSlopeEstimator,
+    Storey,
+    StoreyBootstrap,
+    LeastSlope,
     isin
 
 

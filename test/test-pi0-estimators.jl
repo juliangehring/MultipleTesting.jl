@@ -33,13 +33,13 @@ p_unsort = unsort(p)
 @test_approx_eq storey_pi0(p_unsort, 0.2) 0.6
 @test !issorted(p_unsort)
 
-@test issubtype(typeof(StoreyEstimator(0.5)), Pi0Estimator)
-@test_approx_eq estimate_pi0(p, StoreyEstimator(0.2)) 0.6
-@test_approx_eq estimate_pi0(p, StoreyEstimator(0.0)) 1.0
+@test issubtype(typeof(Storey(0.5)), Pi0Estimator)
+@test_approx_eq estimate_pi0(p, Storey(0.2)) 0.6
+@test_approx_eq estimate_pi0(p, Storey(0.0)) 1.0
 
-@test_throws DomainError StoreyEstimator(-0.1)
-@test_throws DomainError StoreyEstimator(1.1)
-@test_throws MethodError StoreyEstimator()
+@test_throws DomainError Storey(-0.1)
+@test_throws DomainError Storey(1.1)
+@test_throws MethodError Storey()
 
 
 ## bootstrap_pi0 ##
@@ -61,16 +61,16 @@ lambdas_unsort = unsort(lambdas)
 @test_approx_eq bootstrap_pi0(p0) 1.0
 @test_approx_eq bootstrap_pi0(p1) 0.15
 
-@test issubtype(typeof(StoreyBootstrapEstimator()), Pi0Estimator)
-@test_approx_eq estimate_pi0(p, StoreyBootstrapEstimator()) 0.6
-@test_approx_eq estimate_pi0(p0, StoreyBootstrapEstimator()) 1.0
-@test_approx_eq estimate_pi0(p1, StoreyBootstrapEstimator()) 0.15
+@test issubtype(typeof(StoreyBootstrap()), Pi0Estimator)
+@test_approx_eq estimate_pi0(p, StoreyBootstrap()) 0.6
+@test_approx_eq estimate_pi0(p0, StoreyBootstrap()) 1.0
+@test_approx_eq estimate_pi0(p1, StoreyBootstrap()) 0.15
 
-@test_throws DomainError StoreyBootstrapEstimator(lambdas, -0.1)
-@test_throws DomainError StoreyBootstrapEstimator(lambdas, 1.1)
-@test_throws MethodError StoreyBootstrapEstimator(0.5)
-@test_throws MethodError StoreyBootstrapEstimator(lambdas)
-@test_throws MethodError StoreyBootstrapEstimator(0.5, lambdas)
+@test_throws DomainError StoreyBootstrap(lambdas, -0.1)
+@test_throws DomainError StoreyBootstrap(lambdas, 1.1)
+@test_throws MethodError StoreyBootstrap(0.5)
+@test_throws MethodError StoreyBootstrap(lambdas)
+@test_throws MethodError StoreyBootstrap(0.5, lambdas)
 
 ## lsl_pi0 ##
 println(" ** ", "lsl_pi0")
@@ -83,12 +83,12 @@ println(" ** ", "lsl_pi0")
 @test_approx_eq_eps lsl_pi0(p0) 1.0 1e-2
 @test_approx_eq_eps lsl_pi0(p1) 0.16 1e-2
 
-@test issubtype(typeof(LeastSlopeEstimator()), Pi0Estimator)
-@test_approx_eq_eps estimate_pi0(p, LeastSlopeEstimator()) 0.62 1e-2
-@test_approx_eq_eps estimate_pi0(p0, LeastSlopeEstimator()) 1.0 1e-2
-@test_approx_eq_eps estimate_pi0(p1, LeastSlopeEstimator()) 0.16 1e-2
+@test issubtype(typeof(LeastSlope()), Pi0Estimator)
+@test_approx_eq_eps estimate_pi0(p, LeastSlope()) 0.62 1e-2
+@test_approx_eq_eps estimate_pi0(p0, LeastSlope()) 1.0 1e-2
+@test_approx_eq_eps estimate_pi0(p1, LeastSlope()) 0.16 1e-2
 
-@test_throws MethodError LeastSlopeEstimator(0.1)
+@test_throws MethodError LeastSlope(0.1)
 
 ## unsorted p-values
 p_unsort = unsort(p)

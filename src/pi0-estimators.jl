@@ -2,40 +2,18 @@
 
 abstract Pi0Estimator
 
-type StoreyEstimator <: Pi0Estimator
+
+## Storey estimator ##
+
+type Storey <: Pi0Estimator
     λ::AbstractFloat
 
-    StoreyEstimator(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
+    Storey(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
 end
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyEstimator)
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Storey)
     storey_pi0(pValues, pi0estimator.λ)
 end
-
-
-type StoreyBootstrapEstimator <: Pi0Estimator
-    ## check range of arguments
-    λseq::Vector{AbstractFloat}
-    q   ::AbstractFloat
-
-    StoreyBootstrapEstimator(λseq, q) =
-        isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
-end
-
-StoreyBootstrapEstimator() = StoreyBootstrapEstimator(collect(0.05:0.05:0.95), 0.1)
-
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyBootstrapEstimator)
-    bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
-end
-
-
-type LeastSlopeEstimator <: Pi0Estimator
-end
-
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::LeastSlopeEstimator)
-    lsl_pi0(pValues)
-end
-
 
 function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
     validPValues(pValues)
@@ -44,6 +22,23 @@ function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
     return pi0
 end
 
+
+## Storey bootstrap estimator ##
+
+type StoreyBootstrap <: Pi0Estimator
+    ## check range of arguments
+    λseq::Vector{AbstractFloat}
+    q   ::AbstractFloat
+
+    StoreyBootstrap(λseq, q) =
+        isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
+end
+
+StoreyBootstrap() = StoreyBootstrap(collect(0.05:0.05:0.95), 0.1)
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyBootstrap)
+    bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
+end
 
 function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = collect(0.05:0.05:0.95), q::S = 0.1)
     #validPValues(pValues)
@@ -61,18 +56,14 @@ function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, la
 end
 
 
-function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
-    n = length(pValues)
-    if !issorted(pValues)
-        pValues = sort(pValues)
-    end
-    s = (1 - pValues) ./ (n - collect(1:n) + 1)
-    d = diff(s) .< 0
-    idx = findfirst(d) + 1
-    pi0 = min( 1/s[idx] + 1, n ) / n
-    return(pi0)
+## Least SLope (LSL) estimator ##
+
+type LeastSlope <: Pi0Estimator
 end
 
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::LeastSlope)
+    lsl_pi0(pValues)
+end
 
 function lsl_pi0{T<:AbstractFloat}(pValues::Vector{T})
     n = length(pValues)
@@ -96,4 +87,18 @@ end
 function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::Vector{T})
     s = (1 - pval[i]) / (n - i + 1)
     return s
+end
+
+## alternative, vectorized version
+## used for comparison and compactness
+function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
+    n = length(pValues)
+    if !issorted(pValues)
+        pValues = sort(pValues)
+    end
+    s = (1 - pValues) ./ (n - collect(1:n) + 1)
+    d = diff(s) .< 0
+    idx = findfirst(d) + 1
+    pi0 = min( 1/s[idx] + 1, n ) / n
+    return(pi0)
 end
