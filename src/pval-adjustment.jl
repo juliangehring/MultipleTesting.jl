@@ -1,10 +1,21 @@
 ## p-value adjustment methods ##
 
+abstract PValueAdjustmentMethod
+
+type Bonferroni <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::Bonferroni) = bonferroni(pvals)
+
 function bonferroni{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     return min(pValues * length(pValues), 1.)
 end
 
+type BenjaminiHochberg <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
 
 function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
@@ -20,6 +31,13 @@ end
 
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
+type BenjaminiHochbergOracle <: PValueAdjustmentMethod
+    π0::Float64
+
+    BenjaminiHochbergOracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
+end
+
+adjust(pvals, method::BenjaminiHochbergOracle) = benjamini_hochberg(pvals, method.π0)
 
 function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
     validPValues([pi0])
@@ -27,20 +45,10 @@ function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
 end
 
 
-function holm{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
-    n = length(pValues)
-    if n <= 1
-        return pValues
-    end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepdown!(sortedPValues, holm_multiplier, n)
-    min(sortedPValues[originalOrder], 1.)
+type BenjaminiYekutieli <: PValueAdjustmentMethod
 end
 
-holm_multiplier(i::Int, n::Int) = (n-i+1)
-
+adjust(pvals, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
 
 function benjamini_yekutieli{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
@@ -60,6 +68,11 @@ function benjamini_yekutieli_multiplier(i::Int, n::Int)
 end
 
 
+type Hochberg <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::Hochberg) = hochberg(pvals)
+
 function hochberg{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     n = length(pValues)
@@ -74,6 +87,31 @@ end
 
 hochberg_multiplier(i::Int, n::Int) = (i+1)
 
+
+type Holm <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::Holm) = holm(pvals)
+
+function holm{T<:AbstractFloat}(pValues::Vector{T})
+    validPValues(pValues)
+    n = length(pValues)
+    if n <= 1
+        return pValues
+    end
+    sortedIndexes, originalOrder = reorder(pValues)
+    sortedPValues = pValues[sortedIndexes]
+    stepdown!(sortedPValues, holm_multiplier, n)
+    min(sortedPValues[originalOrder], 1.)
+end
+
+holm_multiplier(i::Int, n::Int) = (n-i+1)
+
+
+type Hommel <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::Hommel) = hommel(pvals)
 
 function hommel{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)

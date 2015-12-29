@@ -12,6 +12,7 @@ pi0 = 0.4
 
 ## benjamini_hochberg
 m = benjamini_hochberg
+t = BenjaminiHochbergOracle
 ref = [0.0, 0.0005, 0.003333333, 0.025, 0.1, 0.166666667, 0.285714286, 0.5, 0.833333333, 1.0] .* pi0
 println(" ** ", m)
 @test_throws MethodError m()
@@ -25,8 +26,10 @@ println(" ** ", m)
 ## single p-value is returned unchanged
 pval = rand(1)
 @test m(pval, pi0) == pval .* pi0
+@test adjust(pval, t(pi0)) == pval .* pi0
 ## compare with reference values
 @test_approx_eq_eps m(pval1, pi0) ref 1e-6
+@test_approx_eq_eps adjust(pval1, t(pi0)) ref 1e-6
 
 ## qvalue
 m = qValues
