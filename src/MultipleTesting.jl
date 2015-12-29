@@ -1,7 +1,6 @@
 module MultipleTesting
 
 using StatsBase
-import StatsBase.fit
 
 export
     qValues,
