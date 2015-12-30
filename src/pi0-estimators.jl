@@ -11,6 +11,8 @@ type Storey <: Pi0Estimator
     Storey(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
 end
 
+Storey() = Storey(0.1)
+
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Storey)
     storey_pi0(pValues, pi0estimator.λ)
 end

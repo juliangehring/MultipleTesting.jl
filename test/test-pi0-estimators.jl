@@ -39,7 +39,6 @@ p_unsort = unsort(p)
 
 @test_throws DomainError Storey(-0.1)
 @test_throws DomainError Storey(1.1)
-@test_throws MethodError Storey()
 
 
 ## bootstrap_pi0 ##
