@@ -37,6 +37,9 @@ type BenjaminiHochbergOracle <: PValueAdjustmentMethod
     BenjaminiHochbergOracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
 end
 
+## default to BenjaminiHochberg
+BenjaminiHochbergOracle() = BenjaminiHochbergOracle(1.0)
+
 adjust(pvals, method::BenjaminiHochbergOracle) = benjamini_hochberg(pvals, method.π0)
 
 function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)

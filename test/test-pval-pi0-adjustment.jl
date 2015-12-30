@@ -13,7 +13,8 @@ pi0 = 0.4
 ## benjamini_hochberg
 m = benjamini_hochberg
 t = BenjaminiHochbergOracle
-ref = [0.0, 0.0005, 0.003333333, 0.025, 0.1, 0.166666667, 0.285714286, 0.5, 0.833333333, 1.0] .* pi0
+ref0 = [0.0, 0.0005, 0.003333333, 0.025, 0.1, 0.166666667, 0.285714286, 0.5, 0.833333333, 1.0]
+ref = ref0 .* pi0
 println(" ** ", m)
 @test_throws MethodError m()
 ## no integers as input
@@ -30,6 +31,12 @@ pval = rand(1)
 ## compare with reference values
 @test_approx_eq_eps m(pval1, pi0) ref 1e-6
 @test_approx_eq_eps adjust(pval1, t(pi0)) ref 1e-6
+## BHOracle same as BH for π0 missing or 1
+@test_approx_eq_eps m(pval1, 1.0) ref0 1e-6
+@test_approx_eq_eps adjust(pval1, t(1.0)) ref0 1e-6
+@test_approx_eq_eps adjust(pval1, t()) ref0 1e-6
+@test_approx_eq_eps adjust(pval1, t(0.0)) zeros(ref0) 1e-6
+
 
 ## qvalue
 m = qValues
