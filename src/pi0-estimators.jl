@@ -19,7 +19,7 @@ end
 
 function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
     validPValues(pValues)
-    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1-lambda)
+    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
     pi0 = min(pi0, 1.)
     return pi0
 end

@@ -33,12 +33,15 @@ p_unsort = unsort(p)
 @test_approx_eq storey_pi0(p_unsort, 0.2) 0.6
 @test !issorted(p_unsort)
 
+@test issubtype(typeof(Storey()), Pi0Estimator)
 @test issubtype(typeof(Storey(0.5)), Pi0Estimator)
 @test_approx_eq estimate_pi0(p, Storey(0.2)) 0.6
 @test_approx_eq estimate_pi0(p, Storey(0.0)) 1.0
+@test_approx_eq estimate_pi0(p, Storey(1.0)) 1.0
 
 @test_throws DomainError Storey(-0.1)
 @test_throws DomainError Storey(1.1)
+
 
 
 ## bootstrap_pi0 ##
