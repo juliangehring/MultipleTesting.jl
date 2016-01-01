@@ -11,7 +11,7 @@ export
     PValueAdjustmentMethod,
     Bonferroni,
     BenjaminiHochberg,
-    BenjaminiHochbergOracle,
+    BenjaminiHochbergAdaptive,
     BenjaminiYekutieli,
     Hochberg,
     Holm,
@@ -29,6 +29,7 @@ export
     Storey,
     StoreyBootstrap,
     LeastSlope,
+    Oracle,
     isin
 
 
