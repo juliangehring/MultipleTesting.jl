@@ -104,3 +104,22 @@ function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
     pi0 = min( 1/s[idx] + 1, n ) / n
     return(pi0)
 end
+
+## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006) ##
+
+type TwoStep <: Pi0Estimator
+    α::AbstractFloat
+    ## method::PValueAdjustmentMethod
+
+    TwoStep(α) = isin(α, 0., 1.) ? new(α) : throw(DomainError())
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::TwoStep)
+    twostep_pi0(pValues, pi0estimator.α)
+end
+
+function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod = BenjaminiHochberg())
+    padj = adjust(pValues, method)
+    pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
+    return(pi0)
+end

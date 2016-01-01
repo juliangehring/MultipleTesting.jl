@@ -39,9 +39,11 @@ adjust(pvals, Hommel())
 * Storey
 * Storey's closed-form bootstrap
 * Least SLope (LSL)
+* Two Step
 
 ```julia
 estimate_pi0(pvals, Storey())
 estimate_pi0(pvals, StoreyBootstrap())
 estimate_pi0(pvals, LeastSlope())
+estimate_pi0(pvals, TwoStep(0.05))
 ```
