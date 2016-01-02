@@ -1,0 +1,2 @@
+abstract Pi0Estimator
+abstract PValueAdjustmentMethod

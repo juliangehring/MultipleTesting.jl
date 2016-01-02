@@ -1,7 +1,5 @@
 ## p-value adjustment methods ##
 
-abstract PValueAdjustmentMethod
-
 type Bonferroni <: PValueAdjustmentMethod
 end
 
