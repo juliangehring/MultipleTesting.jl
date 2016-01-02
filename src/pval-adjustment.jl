@@ -1,7 +1,5 @@
 ## p-value adjustment methods ##
 
-abstract PValueAdjustmentMethod
-
 type Bonferroni <: PValueAdjustmentMethod
 end
 
@@ -31,16 +29,19 @@ end
 
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
-type BenjaminiHochbergOracle <: PValueAdjustmentMethod
-    π0::Float64
-
-    BenjaminiHochbergOracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
+type BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
+    pi0estimator::Pi0Estimator
 end
 
 ## default to BenjaminiHochberg
-BenjaminiHochbergOracle() = BenjaminiHochbergOracle(1.0)
+BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle(π0))
 
-adjust(pvals, method::BenjaminiHochbergOracle) = benjamini_hochberg(pvals, method.π0)
+BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
+
+function adjust(pvals, method::BenjaminiHochbergAdaptive)
+  π0 = estimate_pi0(pvals, method.pi0estimator)
+  benjamini_hochberg(pvals, π0)
+end
 
 function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
     validPValues([pi0])

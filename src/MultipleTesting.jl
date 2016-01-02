@@ -12,7 +12,7 @@ export
     PValueAdjustmentMethod,
     Bonferroni,
     BenjaminiHochberg,
-    BenjaminiHochbergOracle,
+    BenjaminiHochbergAdaptive,
     BenjaminiYekutieli,
     Hochberg,
     Holm,
@@ -30,10 +30,11 @@ export
     Storey,
     StoreyBootstrap,
     LeastSlope,
+    Oracle,
     TwoStep,
     isin
 
-
+include("types.jl")
 include("utils.jl")
 include("pval-adjustment.jl")
 include("pi0-estimators.jl")

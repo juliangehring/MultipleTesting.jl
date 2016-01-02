@@ -103,6 +103,12 @@ p_unsort = unsort(p)
 @test_approx_eq_eps MultipleTesting.lsl_pi0_vec(p_unsort) 0.62 1e-2
 @test !issorted(p_unsort)
 
+## Oracle ##
+println(" ** ", "oracle")
+@test estimate_pi0(p, Oracle(0.5)) == 0.5
+@test estimate_pi0(p0, Oracle(0.6)) == 0.6
+@test estimate_pi0(p1, Oracle()) == 1.0
+
 ## twostep_pi0 ##
 println(" ** ", "twostep_pi0")
 

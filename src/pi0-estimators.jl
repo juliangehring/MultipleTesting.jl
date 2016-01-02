@@ -1,6 +1,5 @@
 ### estimators for π0 (pi0) ###
 
-abstract Pi0Estimator
 
 
 ## Storey estimator ##
@@ -103,6 +102,21 @@ function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
     idx = findfirst(d) + 1
     pi0 = min( 1/s[idx] + 1, n ) / n
     return(pi0)
+end
+
+
+## Oracle
+
+type Oracle <: Pi0Estimator
+    π0::AbstractFloat
+
+    Oracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
+end
+
+Oracle() = Oracle(1.0)
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Oracle)
+    pi0estimator.π0
 end
 
 ## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006) ##
