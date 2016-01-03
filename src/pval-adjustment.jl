@@ -148,3 +148,18 @@ function sidak{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     return min(1-(1-pValues).^length(pValues), 1.)
 end
+
+type ForwardStop <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::ForwardStop) = forwardstop(pvals)
+
+function forwardstop{T<:AbstractFloat}(pvalues::Vector{T})
+    validPValues(pvalues)
+    n = length(pvalues)
+    logsums = - cumsum(log(1-pvalues))
+    stepup!(logsums, forwardstop_multiplier, n)
+    max(min(logsums, 1.),0.)
+end
+
+forwardstop_multiplier(i::Int, n::Int) = 1/(n-i)

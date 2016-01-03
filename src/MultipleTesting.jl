@@ -1,5 +1,11 @@
-__precompile__()
+#__precompile__()
 
+"""
+*MultipleTesting* package
+
+* Adjusting p-values for multiple testing
+* Estimating the fraction π0 of tests under the null hypothesis
+"""
 module MultipleTesting
 
 using StatsBase
@@ -21,6 +27,7 @@ export
     Holm,
     Hommel,
     Sidak,
+    ForwardStop,
     bonferroni,
     benjamini_hochberg,
     benjamini_yekutieli,
@@ -28,6 +35,7 @@ export
     hommel,
     hochberg,
     sidak,
+    forwardstop,
     qValues,
     isotonicregression,
     estimate_pi0,
