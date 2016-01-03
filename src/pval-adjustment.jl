@@ -137,3 +137,14 @@ function hommel{T<:AbstractFloat}(pValues::Vector{T})
     end
     max(pa, sortedPValues)[originalOrder]
 end
+
+
+type Sidak <: PValueAdjustmentMethod
+end
+
+adjust(pvals, method::Sidak) = sidak(pvals)
+
+function sidak{T<:AbstractFloat}(pValues::Vector{T})
+    validPValues(pValues)
+    return min(1-(1-pValues).^length(pValues), 1.)
+end
