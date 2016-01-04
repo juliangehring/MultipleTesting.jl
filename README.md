@@ -23,6 +23,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 * Hochberg
 * Holm
 * Hommel
+* Sidak
 
 ```julia
 adjust(pvals, Bonferroni())
@@ -33,6 +34,7 @@ adjust(pvals, BenjaminiYekutieli())
 adjust(pvals, Hochberg())
 adjust(pvals, Holm())
 adjust(pvals, Hommel())
+adjust(pvals, Sidak())
 ```
 
 ### π0 estimation
