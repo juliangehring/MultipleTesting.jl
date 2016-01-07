@@ -165,8 +165,8 @@ function rightboundary_pi0{T<:AbstractFloat}(pValues::Vector{T}, λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
-    h = fit(Histogram, pValues, [λseq; 1.1], closed=:left)
-    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1. -λseq)./n
+    h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
+    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.-λseq)./n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
