@@ -137,3 +137,38 @@ function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PVa
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)
 end
+
+
+# RightBoundary procedure as defined in Definition 2 of Liang and Nettleton 2012
+# "Adaptive and dynamic adaptive procedures for false discovery rate control and estimation"
+type RightBoundary <: Pi0Estimator
+    ## check range of arguments
+    λseq::Vector{Float64}
+
+    RightBoundary(λseq) =
+        isin(λseq, 0., 1.) ? new(λseq) : throw(DomainError())
+end
+
+# λseq used in Liang, Nettleton 2012
+RightBoundary() = RightBoundary([collect(0.02:0.02:0.1); collect(0.15:0.05:0.95)])
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::RightBoundary)
+    rightboundary_pi0(pValues, pi0estimator.λseq)
+end
+
+function rightboundary_pi0{T<:AbstractFloat}(pValues::Vector{T}, λseq)
+    validPValues(pValues)
+    n = length(pValues)
+    if !issorted(λseq)
+        λseq = sort(λseq)
+    end
+    # make sure we catch p-values equal to 1 despite left closure
+    # use closed=:left because we have been using >= convention in this package
+    # note that original paper uses > convention.
+    h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
+    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.-λseq)./n
+    pi0_decrease = diff(pi0_estimates) .>= 0
+    pi0_decrease[end] = true
+    pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
+    return(min(pi0,1))
+end

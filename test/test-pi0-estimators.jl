@@ -137,4 +137,41 @@ p_unsort = unsort(p)
 @test_approx_eq twostep_pi0(p_unsort, alpha) 0.665
 @test !issorted(p_unsort)
 
+
+## rightboundary_pi0 ##
+println(" ** ", "rightboundary_pi0")
+
+# R code tested against (note this uses equidistant grid so we have to use
+# λseq as in Storey for comparison
+
+# library(pi0)
+# p0 <- seq(0.01,1, by=0.01)
+# histf1(p0, rightBoundary=TRUE)
+# [1] 1
+# p1 <- p0^10
+# histf1(p1, rightBoundary=TRUE)
+# [1] 0.1428571
+# p <- c(p0,p1)# histf1(p, rightBoundary=TRUE)
+# [1] 0.5714286
+
+# only eps because pi0 package uses right closed histograms
+@test_approx_eq_eps rightboundary_pi0(p,  lambdas) 0.5714286 0.02
+@test_approx_eq rightboundary_pi0(p0, lambdas) 1.0
+@test_approx_eq_eps rightboundary_pi0(p1, lambdas) 0.1428571 10.0^(-7)
+
+@test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
+@test_approx_eq_eps estimate_pi0(p,  RightBoundary(lambdas)) 0.5714286 0.02
+@test_approx_eq estimate_pi0(p0, RightBoundary(lambdas)) 1.0
+@test_approx_eq_eps estimate_pi0(p1, RightBoundary(lambdas)) 0.1428571 10.0^(-7)
+
+# not checked against R implementation but should hold (check for default lambda grid)
+@test_approx_eq estimate_pi0(p0, RightBoundary()) 1.0
+
+@test issubtype(typeof(RightBoundary()), Pi0Estimator)
+
+p_unsort = unsort(p1)
+@test !issorted(p_unsort)
+@test_approx_eq_eps rightboundary_pi0(p_unsort, lambdas) 0.1428571 10.0^(-7)
+@test !issorted(p_unsort)
+
 end
