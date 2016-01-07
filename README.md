@@ -43,10 +43,12 @@ adjust(pvals, Sidak())
 * Storey's closed-form bootstrap
 * Least SLope (LSL)
 * Two STep (TST)
+* RightBoundary (Storey's estimate with dynamically chosen λ)
 
 ```julia
 estimate_pi0(pvals, Storey())
 estimate_pi0(pvals, StoreyBootstrap())
 estimate_pi0(pvals, LeastSlope())
 estimate_pi0(pvals, TwoStep(0.05))
+estimate_pi0(pvals, RightBoundary())
 ```
