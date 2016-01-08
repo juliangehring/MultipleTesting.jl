@@ -7,6 +7,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 
 ## Package Status
 
+[![Package Status](http://pkg.julialang.org/badges/MultipleTesting_0.4.svg)](http://pkg.julialang.org/?pkg=MultipleTesting)
 [![Linux/Mac Build Status](https://travis-ci.org/julian-gehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/julian-gehring/MultipleTesting.jl)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/julian-gehring/multipletesting-jl/branch/master)
 [![Coverage Status](http://codecov.io/github/julian-gehring/MultipleTesting.jl/coverage.svg?branch=master)](http://codecov.io/github/julian-gehring/MultipleTesting.jl?branch=master&view=all)
