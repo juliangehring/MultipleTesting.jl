@@ -174,4 +174,44 @@ p_unsort = unsort(p1)
 @test_approx_eq_eps rightboundary_pi0(p_unsort, lambdas) 0.1428571 10.0^(-7)
 @test !issorted(p_unsort)
 
+
+## censoredBUM_pi0 ##
+println(" ** ", "censoredBUM_pi0")
+
+@test_approx_eq_eps estimate_pi0(p, CensoredBUM()) 0.55797 1e-5
+@test_approx_eq estimate_pi0(p, CensoredBUM()) MultipleTesting.cbum_pi0_naive(p)[1]
+@test_approx_eq_eps estimate_pi0(p0, CensoredBUM()) 1.0 1e-5
+@test_approx_eq_eps estimate_pi0(p1, CensoredBUM()) 0.1160817 1e-5
+@test_approx_eq_eps estimate_pi0(ones(50), CensoredBUM()) 1.0 1e-5
+
+## test if not converging
+#@test isnan(estimate_pi0(p, CensoredBUM(0.5, 0.05, 1e-10, 10)))
+
+@test issubtype(typeof(CensoredBUM()), Pi0Estimator)
+
+let
+    f = fit(CensoredBUM(), p)
+    @test issubtype(typeof(f), CensoredBUMFit)
+    @test_approx_eq_eps f.π0 0.55797 1e-5
+
+    pi0, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
+    @test_approx_eq pi0 1.0
+    @test is_converged
+
+    pi0, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
+    @test isnan(pi0)
+    @test !is_converged
+end
+
+## BUM_pi0 ##
+## needs better test cases and reference values
+println(" ** ", "BUM_pi0")
+
+@test_approx_eq_eps estimate_pi0(p, BUM(0.5)) 0.55528 1e-5
+@test_approx_eq_eps estimate_pi0(p, BUM()) 0.55528 1e-5
+@test_approx_eq_eps estimate_pi0(p0, BUM()) 1.0 1e-5
+@test_approx_eq_eps estimate_pi0(p1, BUM()) 0.10874 1e-5
+
+@test issubtype(typeof(BUM()), Pi0Estimator)
+
 end

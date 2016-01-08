@@ -1,7 +1,5 @@
 ### estimators for π0 (pi0) ###
 
-
-
 ## Storey estimator ##
 
 type Storey <: Pi0Estimator
@@ -171,4 +169,169 @@ function rightboundary_pi0{T<:AbstractFloat}(pValues::Vector{T}, λseq)
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
     return(min(pi0,1))
+end
+
+type CensoredBUM <: Pi0Estimator
+    γ0::Float64
+    λ::Float64
+    xtol::Float64
+    maxiter::Int64
+
+    function CensoredBUM(γ0, λ, xtol, maxiter)
+        if isin(γ0, 0., 1.) && isin(λ, 0., 1.) && isin(xtol, 0., 1.)
+            new(γ0, λ, xtol, maxiter)
+        else
+            throw(DomainError())
+        end
+    end
+end
+
+CensoredBUM() = CensoredBUM(0.5, 0.05, 1e-6, 10000)
+
+type CensoredBUMFit <: Pi0Fit
+    π0::Float64
+    param::Vector{Float64}
+    is_converged::Bool
+end
+
+function fit(pi0estimator::CensoredBUM, pValues;
+             kw...)
+    π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0,  pi0estimator.λ,
+                                       pi0estimator.xtol, pi0estimator.maxiter;
+                                       kw...)
+    return CensoredBUMFit(π0, param, is_converged)
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::CensoredBUM;
+                                        verbose = false)
+    estimate_pi0(fit(pi0estimator, pValues, verbose = verbose))
+end
+
+function estimate_pi0(pi0fit::CensoredBUMFit)
+    if pi0fit.is_converged
+        π0 = pi0fit.π0
+    else
+        π0 = NaN
+        warn("Estimation did not converge")
+    end
+    return π0
+end
+
+function cbum_pi0{T<:AbstractFloat}(pValues::Vector{T}, γ0::T = 0.5, λ::T = 0.05,
+                                    xtol::Float64 = 1e-6, maxiter::Int = 10000;
+                                    verbose::Bool = false)
+    n = length(pValues)
+    idx_right = pValues .>= λ
+    n2 = sum(idx_right)
+    n1 = n - n2
+    sz = (1-γ0)*n
+    szr = (1-γ0)*n2
+    szl = sz - szr
+    ## compute constant values only once
+    pr = pValues[idx_right]
+    lpr = log(pr)
+    ll = log(λ)
+    zr = fill(1-γ0, n2)
+    γ0 = α = γ = Inf
+    for i in 1:maxiter
+        γ = 1 - sz/n
+        α = -szr / ( ll * szl + sum(zr .* lpr) )
+        γ = max(min(γ, 1.), 0.)
+        α = max(min(α, 1.), 0.)
+        xl = (1-γ) * (λ^α)
+        szl = (xl ./ (γ*λ + xl)) * n1
+        xr = (1-γ) * α * pr.^(α-1)
+        zr = xr ./ (γ + xr)
+        szr = sum(zr)
+        sz = szl + szr
+        if verbose
+            cbum_verbose(i, α, γ)
+        end
+        if abs(γ - γ0) <= xtol
+            pi0 = γ + (1-γ)*α
+            return pi0, [γ, α], true
+        end
+        γ0 = γ
+    end
+    return NaN, [γ, α], false
+end
+
+function cbum_pi0_naive(pValues, γ0 = 0.5, λ = 0.05,
+                        xtol = 1e-6, maxiter = 10000;
+                        verbose = false)
+    n = length(pValues)
+    z = fill(1-γ0, n)
+    idx_left = pValues .< λ
+    idx_right = !idx_left
+    γ0 = α = γ = Inf
+    ## compute constant values only once
+    lpr = log(pValues[idx_right])
+    ll = log(λ)
+    for i in 1:maxiter
+        γ = sum(1-z) / n
+        α = -sum(z[idx_right])
+        α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
+        xl = (1-γ) * (λ^α)
+        z[idx_left] = xl ./ (γ*λ + xl)
+        xr = (1-γ) * α * pValues[idx_right].^(α-1)
+        z[idx_right] = xr ./ (γ + xr)
+        if verbose
+            cbum_verbose(i, α, γ)
+        end
+        if abs(γ - γ0) <= xtol
+            pi0 = γ + (1-γ)*α
+            return pi0, [γ, α], true
+        end
+        γ0 = γ
+    end
+    return NaN, [γ, α], false
+end
+
+@eval cbum_verbose(i, α, γ) = @printf("Iteration: %d\tα: %g\tγ: %g\n", i, α, γ)
+
+type BUM <: Pi0Estimator
+    γ0::Float64
+    xtol::Float64
+    maxiter::Int64
+
+    function BUM(γ0, xtol, maxiter)
+        if isin(γ0, 0., 1.) && isin(xtol, 0., 1.)
+            new(γ0, xtol, maxiter)
+        else
+            throw(DomainError())
+        end
+    end
+end
+
+BUM() = BUM(0.5, 1e-6, 10000)
+
+BUM(y0::Float64) = BUM(y0, 1e-6, 10000)
+
+type BUMFit <: Pi0Fit
+    π0::Float64
+    param::Vector{Float64}
+    is_converged::Bool
+end
+
+function fit(pi0estimator::BUM, pValues;
+             kw...)
+    π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0,  eps(),
+                                       pi0estimator.xtol, pi0estimator.maxiter;
+                                       kw...)
+    return BUMFit(π0, param, is_converged)
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::BUM;
+                                        verbose = false)
+    estimate_pi0(fit(pi0estimator, pValues, verbose = verbose))
+end
+
+function estimate_pi0(pi0fit::BUMFit)
+    if pi0fit.is_converged
+        π0 = pi0fit.π0
+    else
+        π0 = NaN
+        warn("Estimation did not converge")
+    end
+    return π0
 end
