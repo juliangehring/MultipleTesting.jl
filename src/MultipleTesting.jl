@@ -3,6 +3,7 @@ __precompile__()
 module MultipleTesting
 
 using StatsBase
+import StatsBase: fit
 
 export
     qValues,
@@ -38,7 +39,12 @@ export
     Oracle,
     TwoStep,
     RightBoundary,
-    isin
+    CensoredBUM,
+    CensoredBUMFit,
+    BUM,
+    BUMFit,
+    isin,
+    fit
 
 include("types.jl")
 include("utils.jl")
