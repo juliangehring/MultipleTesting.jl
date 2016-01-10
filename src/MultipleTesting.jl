@@ -6,7 +6,6 @@ using StatsBase
 import StatsBase: fit
 
 export
-    qValues,
     storey_pi0,
     bootstrap_pi0,
     lsl_pi0,

@@ -45,6 +45,8 @@ adjust(pvals, Sidak())
 * Least SLope (LSL)
 * Two STep (TST)
 * RightBoundary (Storey's estimate with dynamically chosen λ)
+* Censored BUM
+* BUM
 
 ```julia
 estimate_pi0(pvals, Storey())
@@ -52,4 +54,6 @@ estimate_pi0(pvals, StoreyBootstrap())
 estimate_pi0(pvals, LeastSlope())
 estimate_pi0(pvals, TwoStep(0.05))
 estimate_pi0(pvals, RightBoundary())
+estimate_pi0(pvals, CensoredBUM())
+estimate_pi0(pvals, BUM())
 ```
