@@ -113,7 +113,6 @@ println(" ** ", "oracle")
 println(" ** ", "twostep_pi0")
 
 alpha = 0.05
-alpha2 = 0.1
 
 ## checked against mutoss::TSBKY_pi0_est
 @test_approx_eq twostep_pi0(p, alpha) 0.665
@@ -121,6 +120,7 @@ alpha2 = 0.1
 @test_approx_eq twostep_pi0(p1, alpha) 0.29
 
 @test issubtype(typeof(TwoStep(alpha)), Pi0Estimator)
+@test_approx_eq estimate_pi0(p, TwoStep()) 0.665
 @test_approx_eq estimate_pi0(p, TwoStep(alpha)) 0.665
 @test_approx_eq estimate_pi0(p0, TwoStep(alpha)) 1.0
 @test_approx_eq estimate_pi0(p1, TwoStep(alpha)) 0.29
@@ -128,8 +128,6 @@ alpha2 = 0.1
 @test_approx_eq estimate_pi0(p, TwoStep(0.1)) 0.63
 @test_approx_eq estimate_pi0(p, TwoStep(0.0)) 1.0
 @test_approx_eq estimate_pi0(p, TwoStep(1.0)) 0.415
-
-@test_throws MethodError TwoStep()
 
 ## unsorted p-values
 p_unsort = unsort(p)
