@@ -126,6 +126,8 @@ type TwoStep <: Pi0Estimator
     TwoStep(α) = isin(α, 0., 1.) ? new(α) : throw(DomainError())
 end
 
+TwoStep() = TwoStep(0.05)
+
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::TwoStep)
     twostep_pi0(pValues, pi0estimator.α)
 end
