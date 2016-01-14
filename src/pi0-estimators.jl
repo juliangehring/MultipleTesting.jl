@@ -39,17 +39,13 @@ function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Storey
     bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
 end
 
-function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = collect(0.05:0.05:0.95), q::S = 0.1)
+function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = [0.05:0.05:0.95;], q::S = 0.1)
     #validPValues(pValues)
     n = length(pValues)
-    if !issorted(lambda)
-        lambda = sort(lambda)
-    end
-    pi0 = Float64[mean(pValues .>= l) / (1-l) for l in lambda]
+    w = Int[sum(pValues .>= l) for l in lambda] ## TODO: check >= or >
+    pi0 = w ./ n ./ (1. - lambda)
     min_pi0 = quantile(pi0, q)
-    ## in a loop? relevant only for very large vectors 'lambda'
-    w = Int[sum(pValues .>= l) for l in lambda]
-    mse = (w ./ (n .^ 2 .* (1-lambda) .^ 2 )) .* (1-w/n) + (pi0-min_pi0) .^2
+    mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
     pi0 = min(pi0[indmin(mse)], 1.)
     pi0
 end
