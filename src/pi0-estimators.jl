@@ -2,6 +2,26 @@
 
 ## Storey estimator ##
 
+"""
+Storey π0 estimator
+
+**Parameters**
+
+- λ : tuning parameter, FloatingPoint, default: 0.1
+
+**Examples**
+
+```julia
+Storey()
+Storey(0.1)
+```
+
+**References**
+
+Storey, JD (2002). "A Direct Approach to False Discovery Rates." Journal of the
+Royal Statistical Society, doi:10.1111/1467-9868.00346
+
+"""
 type Storey <: Pi0Estimator
     λ::AbstractFloat
 
@@ -23,7 +43,13 @@ end
 
 
 ## Storey bootstrap estimator ##
+"""
+Storey closed-form bootstrap π0 estimator
 
+StoreyBootstrap(λseq, q)
+
+Reference: David Robinson, 2012
+"""
 type StoreyBootstrap <: Pi0Estimator
     ## check range of arguments
     λseq::Vector{AbstractFloat}
@@ -53,6 +79,11 @@ end
 
 ## Least SLope (LSL) estimator ##
 
+"""
+Least SLope (LSL) π0 estimator
+
+LeastSlope()
+"""
 type LeastSlope <: Pi0Estimator
 end
 
@@ -100,7 +131,11 @@ end
 
 
 ## Oracle
+"""
+Oracle π0
 
+Oracle(π0)
+"""
 type Oracle <: Pi0Estimator
     π0::AbstractFloat
 
@@ -113,8 +148,16 @@ function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Oracle
     pi0estimator.π0
 end
 
+
 ## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006) ##
 
+"""
+Two step π0 estimator
+
+TwoStep(α)
+
+Reference: Benjamini, Krieger and Yekutieli, 2006
+"""
 type TwoStep <: Pi0Estimator
     α::AbstractFloat
     ## method::PValueAdjustmentMethod
@@ -137,6 +180,11 @@ end
 
 # RightBoundary procedure as defined in Definition 2 of Liang and Nettleton 2012
 # "Adaptive and dynamic adaptive procedures for false discovery rate control and estimation"
+"""
+Right boundary π0 estimator
+
+RightBoundary(λseq)
+"""
 type RightBoundary <: Pi0Estimator
     ## check range of arguments
     λseq::Vector{Float64}
@@ -169,6 +217,13 @@ function rightboundary_pi0{T<:AbstractFloat}(pValues::Vector{T}, λseq)
     return(min(pi0,1))
 end
 
+
+## Censored BUM
+"""
+Censored BUM π0 estimator
+
+CensoredBUM(γ0, λ, xtol, maxiter)
+"""
 type CensoredBUM <: Pi0Estimator
     γ0::Float64
     λ::Float64
@@ -287,6 +342,13 @@ end
 
 @eval cbum_verbose(i, α, γ) = @printf("Iteration: %d\tα: %g\tγ: %g\n", i, α, γ)
 
+
+## BUM
+"""
+BUM π0 estimator
+
+BUM(γ0, xtol, maxiter)
+"""
 type BUM <: Pi0Estimator
     γ0::Float64
     xtol::Float64

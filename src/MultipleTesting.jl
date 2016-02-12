@@ -1,5 +1,11 @@
-__precompile__()
+#__precompile__()
 
+"""
+*MultipleTesting* package
+
+* Adjusting p-values for multiple testing
+* Estimating the fraction π0 of tests under the null hypothesis
+"""
 module MultipleTesting
 
 using StatsBase
