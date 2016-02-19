@@ -22,6 +22,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 * Benjamini-Hochberg
 * Benjamini-Hochberg "Adaptive" with known π0 or π0 estimation method (see section below)
 * Benjamini-Yekutieli
+* Benjamini-Liu
 * Hochberg
 * Holm
 * Hommel
@@ -34,6 +35,7 @@ adjust(pvals, BenjaminiHochberg())
 adjust(pvals, BenjaminiHochbergAdaptive(0.9))
 adjust(pvals, BenjaminiHochbergAdaptive(Storey()))
 adjust(pvals, BenjaminiYekutieli())
+adjust(pvals, BenjaminiLiu())
 adjust(pvals, Hochberg())
 adjust(pvals, Holm())
 adjust(pvals, Hommel())
