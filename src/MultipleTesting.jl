@@ -1,4 +1,4 @@
-#__precompile__()
+__precompile__()
 
 """
 *MultipleTesting* package
@@ -11,12 +11,15 @@ module MultipleTesting
 using StatsBase
 import StatsBase: fit
 
+using Distributions
+
 export
     storey_pi0,
     bootstrap_pi0,
     lsl_pi0,
     twostep_pi0,
     rightboundary_pi0,
+    flat_grenander_pi0,
     adjust,
     PValueAdjustmentMethod,
     Bonferroni,
@@ -39,7 +42,6 @@ export
     sidak,
     forwardstop,
     qValues,
-    isotonicregression,
     estimate_pi0,
     Pi0Estimator,
     Storey,
@@ -52,13 +54,16 @@ export
     CensoredBUMFit,
     BUM,
     BUMFit,
+    FlatGrenander,
     isin,
-    fit
+    fit,
+    BetaUniformMixtureModel
 
 include("types.jl")
 include("utils.jl")
 include("pval-adjustment.jl")
 include("pi0-estimators.jl")
 include("qvalue.jl")
+include("model.jl")
 
 end

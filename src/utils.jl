@@ -73,3 +73,68 @@ end
 function isotonicregression(y::Array{Float64,1})
   isotonicregression(y, ones(Float64, length(y)))
 end
+
+function isotonic_regression(y::Vector{Float64}, weights::Vector{Float64})
+    n = length(y)
+    if n <= 1
+        return y
+    end
+    if n != length(weights)
+        throw(DimensionMismatch("Lengths of values and weights mismatch"))
+    end
+    @inbounds begin
+        n -= 1
+        while true
+            i = 1
+            is_pooled = false
+            while i <= n
+                k = i
+                while k <= n && y[k] >= y[k+1]
+                    k += 1
+                end
+                if y[i] != y[k]
+                    numerator = 0.0
+                    denominator = 0.0
+                    for j in i:k
+                        numerator += y[j] * weights[j]
+                        denominator += weights[j]
+                    end
+                    m = numerator / denominator
+                    for j in i:k
+                        y[j] = m
+                    end
+                    is_pooled = true
+                end
+                i = k + 1
+            end
+            if !is_pooled
+               break
+            end
+        end
+    end
+    return y
+end
+
+function isotonic_regression(y::Vector{Float64})
+    isotonic_regression(y, ones(y))
+end
+
+
+function grenander(pv::Vector{Float64})
+    pv_sorted = sort(pv)
+    ## ecdf that handles duplicated values
+    pv_sorted_unique, counts = rle(pv_sorted)
+    ecdf_value = cumsum(counts)
+    ecdf_value = ecdf_value ./ ecdf_value[end]
+
+    Δx = diff(pv_sorted_unique)
+    Δy = diff(ecdf_value)
+
+    f = Δy ./ Δx
+    f = -isotonic_regression(-f, Δx)
+    F  = ecdf_value[1] + vcat(0, cumsum(f .* Δx))
+    f = push!(f, f[end])
+
+    return pv_sorted_unique, f, F
+end
+

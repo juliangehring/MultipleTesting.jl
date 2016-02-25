@@ -7,9 +7,13 @@
 
 ## Exported
 
+[MultipleTesting.BetaUniformMixtureModel](api.md#function__betauniformmixturemodel.1)  Beta Uniform Mixture Model (BUM)
+
 [MultipleTesting.BUM](api.md#type__bum.1)  BUM π0 estimator
 
 [MultipleTesting.CensoredBUM](api.md#type__censoredbum.1)  Censored BUM π0 estimator
+
+[MultipleTesting.FlatGrenander](api.md#type__flatgrenander.1)  Flat Grenander π0 estimator
 
 [MultipleTesting.LeastSlope](api.md#type__leastslope.1)  Least SLope (LSL) π0 estimator
 

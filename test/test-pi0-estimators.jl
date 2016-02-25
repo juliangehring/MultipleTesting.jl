@@ -181,27 +181,37 @@ println(" ** ", "censoredBUM_pi0")
 @test_approx_eq_eps estimate_pi0(p, CensoredBUM()) 0.55797 1e-5
 @test_approx_eq estimate_pi0(p, CensoredBUM()) MultipleTesting.cbum_pi0_naive(p)[1]
 @test_approx_eq_eps estimate_pi0(p0, CensoredBUM()) 1.0 1e-5
-@test_approx_eq_eps estimate_pi0(p1, CensoredBUM()) 0.1160817 1e-5
+@test_approx_eq_eps estimate_pi0(p1, CensoredBUM()) 0.11608 2e-5
 @test_approx_eq_eps estimate_pi0(ones(50), CensoredBUM()) 1.0 1e-5
 
-## test if not converging
-#@test isnan(estimate_pi0(p, CensoredBUM(0.5, 0.05, 1e-10, 10)))
+## test case that does not converge
+stderr_dump = redirect_stderr()
+@test isnan(estimate_pi0(p, CensoredBUM(0.5, 0.05, 1e-6, 2)))
 
 @test issubtype(typeof(CensoredBUM()), Pi0Estimator)
+@test issubtype(typeof(CensoredBUM(0.2, 0.1)), Pi0Estimator)
 
-let
-    f = fit(CensoredBUM(), p)
-    @test issubtype(typeof(f), CensoredBUMFit)
-    @test_approx_eq_eps f.π0 0.55797 1e-5
+@test_throws DomainError CensoredBUM(-0.5, 0.05)
+@test_throws DomainError CensoredBUM(1.5, 0.05)
+@test_throws DomainError CensoredBUM(0.5, -0.05)
+@test_throws DomainError CensoredBUM(0.5, 1.05)
 
-    pi0, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
-    @test_approx_eq pi0 1.0
-    @test is_converged
+@test_throws DomainError CensoredBUM(0.5, 0.05, -1e-6, 100)
+@test_throws DomainError CensoredBUM(0.5, 0.05, 1.1, 100)
+@test_throws DomainError CensoredBUM(0.5, 0.05, 1e-6, -10)
 
-    pi0, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
-    @test isnan(pi0)
-    @test !is_converged
-end
+f = fit(CensoredBUM(), p)
+@test issubtype(typeof(f), CensoredBUMFit)
+@test_approx_eq_eps f.π0 0.55797 1e-5
+
+pi0est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
+@test_approx_eq pi0est 1.0
+@test is_converged
+
+pi0est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
+@test isnan(pi0est)
+@test !is_converged
+
 
 ## BUM_pi0 ##
 ## needs better test cases and reference values
@@ -212,6 +222,52 @@ println(" ** ", "BUM_pi0")
 @test_approx_eq_eps estimate_pi0(p0, BUM()) 1.0 1e-5
 @test_approx_eq_eps estimate_pi0(p1, BUM()) 0.10874 1e-5
 
+## test case that does not converge
+@test isnan(estimate_pi0(p, BUM(0.5, 1e-6, 2)))
+
 @test issubtype(typeof(BUM()), Pi0Estimator)
+
+@test_throws DomainError BUM(-0.5)
+@test_throws DomainError BUM(1.5)
+
+
+## Flat grenander ##
+println(" ** ", "FlatGrenander_pi0")
+
+FlatGrenander = MultipleTesting.FlatGrenander
+
+@test issubtype(typeof(FlatGrenander()), Pi0Estimator)
+
+pu = collect(0.1:0.05:0.9)
+@test_approx_eq estimate_pi0(pu, FlatGrenander()) 1.0
+@test_approx_eq estimate_pi0(pu.^0.5, FlatGrenander()) 1.0
+
+@test_approx_eq estimate_pi0(p0, FlatGrenander()) 1.0
+@test estimate_pi0(p1, FlatGrenander()) < 0.15
+@test_approx_eq_eps estimate_pi0(p, FlatGrenander()) pi0 0.1
+
+## longest constant interval: low level
+lci = MultipleTesting.longest_constant_interval
+
+p = [0:0.1:1;];
+f = [1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.5
+
+f = [1.5, 1.5, 1.5, 1.5, 1.5, 1.2, 1.2, 1.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.2
+
+f = [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.2
+
+f = [0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.5
+
+p = [0.1, 0.3, 0.5, 0.9];
+f = [0.5, 0.5, 0.2, 0.2];
+@test_approx_eq lci(p, f) 0.2
+
+p = [0.1, 0.5, 0.7, 0.9];
+f = [0.5, 0.5, 0.2, 0.2];
+@test_approx_eq lci(p, f) 0.5
 
 end

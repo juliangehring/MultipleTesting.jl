@@ -11,7 +11,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 [![Linux/Mac Build Status](https://travis-ci.org/julian-gehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/julian-gehring/MultipleTesting.jl)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/julian-gehring/multipletesting-jl/branch/master)
 [![Coverage Status](http://codecov.io/github/julian-gehring/MultipleTesting.jl/coverage.svg?branch=master)](http://codecov.io/github/julian-gehring/MultipleTesting.jl?branch=master&view=all)
-[![Documentation Status](https://readthedocs.org/projects/multipletestingjl/badge/?version=docs)](http://multipletestingjl.readthedocs.org/en/docs/?badge=docs)
+[![Documentation Status](https://readthedocs.org/projects/multipletestingjl/badge/?version=master)](http://multipletestingjl.readthedocs.org/en/docs/)
 
 
 ## Features
@@ -43,6 +43,7 @@ adjust(pvals, Sidak())
 adjust(pvals, ForwardStop())
 ```
 
+
 ### π0 estimation
 
 * Storey
@@ -52,6 +53,7 @@ adjust(pvals, ForwardStop())
 * RightBoundary (Storey's estimate with dynamically chosen λ)
 * Censored BUM
 * BUM
+* FlatGrenander
 
 ```julia
 estimate_pi0(pvals, Storey())
@@ -62,4 +64,5 @@ estimate_pi0(pvals, TwoStep(0.05))
 estimate_pi0(pvals, RightBoundary())
 estimate_pi0(pvals, CensoredBUM())
 estimate_pi0(pvals, BUM())
+estimate_pi0(pvals, FlatGrenander())
 ```

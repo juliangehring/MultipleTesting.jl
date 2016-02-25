@@ -1,6 +1,43 @@
 # MultipleTesting
 
 
+## Functions [Exported]
+
+---
+
+<a id="function__betauniformmixturemodel.1" class="lexicon_definition"></a>
+#### MultipleTesting.BetaUniformMixtureModel
+Beta Uniform Mixture Model (BUM)
+
+**Arguments**
+
+- π0 : Contributing fraction of the uniform distribution to the full model
+- α, β : Parameters of the Beta distribution, Float64, default: 0.5, 3.0
+
+**Returns**
+
+`MixtureModel`, as defined in the `Distributions` package, composed of
+
+- a uniform distribution in the interval [0, 1], with weight/prior π0
+- a Beta distribution with parameters α and β, with weight/prior 1-π0
+
+**Examples**
+
+```julia
+bum = BetaUniformMixtureModel(0.2)
+bum = BetaUniformMixtureModel(0.2, 0.5, 1.0)
+
+using Distributions
+
+rand(bum, 10)
+
+pdf(bum, 0:0.05:1)
+
+cdf(bum, 0:0.05:1)
+```
+
+
+
 ## Types [Exported]
 
 ---
@@ -19,6 +56,19 @@ BUM(γ0, xtol, maxiter)
 Censored BUM π0 estimator
 
 CensoredBUM(γ0, λ, xtol, maxiter)
+
+
+---
+
+<a id="type__flatgrenander.1" class="lexicon_definition"></a>
+#### MultipleTesting.FlatGrenander
+Flat Grenander π0 estimator
+
+FlatGrenander()
+
+Estimates π0 by the longest constant interval in the Grenander estimator
+
+Reference: Langaas et al., 2005: section 4.3
 
 
 ---
