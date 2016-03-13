@@ -60,6 +60,19 @@ CensoredBUM(γ0, λ, xtol, maxiter)
 
 ---
 
+<a id="type__flatgrenander.1" class="lexicon_definition"></a>
+#### MultipleTesting.FlatGrenander
+Flat Grenander π0 estimator
+
+FlatGrenander()
+
+Estimates π0 by the longest constant interval in the Grenander estimator
+
+Reference: Langaas et al., 2005: section 4.3
+
+
+---
+
 <a id="type__leastslope.1" class="lexicon_definition"></a>
 #### MultipleTesting.LeastSlope
 Least SLope (LSL) π0 estimator

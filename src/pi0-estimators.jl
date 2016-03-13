@@ -376,3 +376,53 @@ function estimate_pi0(pi0fit::BUMFit)
     π0 = pi0fit.is_converged ? π0 = pi0fit.π0 : NaN
     return π0
 end
+
+
+## Longest constant interval in the Grenander estimator: Langaas et al., 2005
+# Leave unexported until thoroughly tested
+
+"""
+Flat Grenander π0 estimator
+
+FlatGrenander()
+
+Estimates π0 by the longest constant interval in the Grenander estimator
+
+Reference: Langaas et al., 2005: section 4.3
+"""
+type FlatGrenander <: Pi0Estimator
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::FlatGrenander)
+    flat_grenander_pi0(pValues)
+end
+
+function flat_grenander_pi0(pv::Vector{Float64})
+    p, f, F = grenander(pv)
+    pi0 = longest_constant_interval(p, f)
+    return pi0
+end
+
+function longest_constant_interval(p::Vector{Float64}, f::Vector{Float64})
+    p = [0.0; p]
+    f = [Inf; f]
+    i2 = length(f)
+    Δp_max = Δp = 0.0
+    pi0 = 1.0
+    for i1 in (length(f)-1):-1:1
+        if f[i2] ≈ f[i1] ## within constant interval
+            Δp = p[i2] - p[i1]
+        else
+            if Δp >= Δp_max
+                Δp_max = Δp
+                pi0 = f[i2]
+            end
+            i2 = i1
+            Δp = 0.0
+        end
+        if f[i1] > 1.0
+            break
+        end
+    end
+    return pi0
+end

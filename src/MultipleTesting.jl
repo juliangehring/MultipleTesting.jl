@@ -19,6 +19,7 @@ export
     lsl_pi0,
     twostep_pi0,
     rightboundary_pi0,
+    flat_grenander_pi0,
     adjust,
     PValueAdjustmentMethod,
     Bonferroni,
@@ -41,7 +42,6 @@ export
     sidak,
     forwardstop,
     qValues,
-    isotonicregression,
     estimate_pi0,
     Pi0Estimator,
     Storey,
@@ -54,6 +54,7 @@ export
     CensoredBUMFit,
     BUM,
     BUMFit,
+    FlatGrenander,
     isin,
     fit,
     BetaUniformMixtureModel

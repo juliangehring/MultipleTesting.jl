@@ -78,7 +78,8 @@ estimators = ["Storey",
               "TwoStep",
               "RightBoundary",
               "CensoredBUM",
-              "BUM"];
+              "BUM",
+              "FlatGrenander"];
 ```
 
 

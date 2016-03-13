@@ -13,6 +13,8 @@
 
 [MultipleTesting.CensoredBUM](api.md#type__censoredbum.1)  Censored BUM π0 estimator
 
+[MultipleTesting.FlatGrenander](api.md#type__flatgrenander.1)  Flat Grenander π0 estimator
+
 [MultipleTesting.LeastSlope](api.md#type__leastslope.1)  Least SLope (LSL) π0 estimator
 
 [MultipleTesting.Oracle](api.md#type__oracle.1)  Oracle π0

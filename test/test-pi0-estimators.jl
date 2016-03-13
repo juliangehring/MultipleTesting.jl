@@ -229,4 +229,43 @@ println(" ** ", "BUM_pi0")
 @test_throws DomainError BUM(-0.5)
 @test_throws DomainError BUM(1.5)
 
+## Flat grenander ##
+println(" ** ", "FlatGrenander_pi0")
+
+FlatGrenander = MultipleTesting.FlatGrenander
+
+@test issubtype(typeof(FlatGrenander()), Pi0Estimator)
+
+pu = collect(0.1:0.05:0.9)
+@test_approx_eq estimate_pi0(pu, FlatGrenander()) 1.0
+@test_approx_eq estimate_pi0(pu.^0.5, FlatGrenander()) 1.0
+
+@test_approx_eq estimate_pi0(p0, FlatGrenander()) 1.0
+@test estimate_pi0(p1, FlatGrenander()) < 0.15
+@test_approx_eq_eps estimate_pi0(p, FlatGrenander()) pi0 0.1
+
+## longest constant interval: low level
+lci = MultipleTesting.longest_constant_interval
+
+p = [0:0.1:1;];
+f = [1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.5
+
+f = [1.5, 1.5, 1.5, 1.5, 1.5, 1.2, 1.2, 1.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.2
+
+f = [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.2
+
+f = [0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
+@test_approx_eq lci(p, f) 0.5
+
+p = [0.1, 0.3, 0.5, 0.9];
+f = [0.5, 0.5, 0.2, 0.2];
+@test_approx_eq lci(p, f) 0.2
+
+p = [0.1, 0.5, 0.7, 0.9];
+f = [0.5, 0.5, 0.2, 0.2];
+@test_approx_eq lci(p, f) 0.5
+
 end

@@ -43,6 +43,7 @@ adjust(pvals, Sidak())
 adjust(pvals, ForwardStop())
 ```
 
+
 ### π0 estimation
 
 * Storey
@@ -52,6 +53,7 @@ adjust(pvals, ForwardStop())
 * RightBoundary (Storey's estimate with dynamically chosen λ)
 * Censored BUM
 * BUM
+* FlatGrenander
 
 ```julia
 estimate_pi0(pvals, Storey())
@@ -62,4 +64,5 @@ estimate_pi0(pvals, TwoStep(0.05))
 estimate_pi0(pvals, RightBoundary())
 estimate_pi0(pvals, CensoredBUM())
 estimate_pi0(pvals, BUM())
+estimate_pi0(pvals, FlatGrenander())
 ```
