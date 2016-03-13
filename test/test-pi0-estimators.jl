@@ -204,14 +204,13 @@ f = fit(CensoredBUM(), p)
 @test issubtype(typeof(f), CensoredBUMFit)
 @test_approx_eq_eps f.π0 0.55797 1e-5
 
-pi0est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
-@test_approx_eq pi0est 1.0
+pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
+@test_approx_eq pi0_est 1.0
 @test is_converged
 
-pi0est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
-@test isnan(pi0est)
+pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
+@test isnan(pi0_est)
 @test !is_converged
-
 
 ## BUM_pi0 ##
 ## needs better test cases and reference values
@@ -229,7 +228,6 @@ println(" ** ", "BUM_pi0")
 
 @test_throws DomainError BUM(-0.5)
 @test_throws DomainError BUM(1.5)
-
 
 ## Flat grenander ##
 println(" ** ", "FlatGrenander_pi0")
