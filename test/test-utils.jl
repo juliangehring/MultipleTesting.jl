@@ -24,8 +24,20 @@ using Base.Test
 
     @testset "validPValues" begin
 
-        @test_throws DomainError MultipleTesting.validPValues([-1.])
-        @test_throws DomainError MultipleTesting.validPValues([2.])
+        validPValues = MultipleTesting.validPValues
+
+        # test against invalid vector inputs
+        @test_throws DomainError validPValues([-1.])
+        @test_throws DomainError validPValues([2.])
+        @test_throws DomainError validPValues([0.1, 0.2, 1.2])
+        @test_throws DomainError validPValues([0.1, -0.3, 0.2])
+
+        # test against valid vector inputs
+        @test validPValues([0.0]) == nothing
+        @test validPValues([1.0]) == nothing
+        @test validPValues(rand(1)) == nothing
+        @test validPValues([0.1, 0.2, 0.9]) == nothing
+        @test validPValues(rand(5)) == nothing
 
     end
 
