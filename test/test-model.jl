@@ -15,11 +15,11 @@ using Distributions
 
         x = collect(0:0.01:1)
 
-        @test_approx_eq cdf(bum0, x) cdf(Uniform(), x)
-        @test_approx_eq cdf(bum1, x) cdf(Beta(0.5, 1.0), x)
+        @test cdf(bum0, x) ≈ cdf(Uniform(), x)
+        @test cdf(bum1, x) ≈ cdf(Beta(0.5, 1.0), x)
 
-        @test_approx_eq pdf(bum0, x) pdf(Uniform(), x)
-        @test_approx_eq pdf(bum1, x) pdf(Beta(0.5, 1.0), x)
+        @test pdf(bum0, x) ≈ pdf(Uniform(), x)
+        @test pdf(bum1, x) ≈ pdf(Beta(0.5, 1.0), x)
 
         @test isin(rand(bum, 100), 0.0, 1.0)
         @test isin(rand(bum0, 100), 0.0, 1.0)

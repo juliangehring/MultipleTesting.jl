@@ -27,20 +27,20 @@ using StatsBase
     @testset "storey_pi0" begin
 
         @test_throws MethodError storey_pi0()
-        @test_approx_eq storey_pi0(p, 0.2) 0.6
-        @test_approx_eq storey_pi0(p, 0.0) 1.0
+        @test storey_pi0(p, 0.2) ≈ 0.6
+        @test storey_pi0(p, 0.0) ≈ 1.0
         #@test_throws DomainError storey_pi0(p, 1.) ## CHCK
 
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test_approx_eq storey_pi0(p_unsort, 0.2) 0.6
+        @test storey_pi0(p_unsort, 0.2) ≈ 0.6
         @test !issorted(p_unsort)
 
         @test issubtype(typeof(Storey()), Pi0Estimator)
         @test issubtype(typeof(Storey(0.5)), Pi0Estimator)
-        @test_approx_eq estimate_pi0(p, Storey(0.2)) 0.6
-        @test_approx_eq estimate_pi0(p, Storey(0.0)) 1.0
-        @test_approx_eq estimate_pi0(p, Storey(1.0)) 1.0
+        @test estimate_pi0(p, Storey(0.2)) ≈ 0.6
+        @test estimate_pi0(p, Storey(0.0)) ≈ 1.0
+        @test estimate_pi0(p, Storey(1.0)) ≈ 1.0
 
         @test_throws DomainError Storey(-0.1)
         @test_throws DomainError Storey(1.1)
@@ -52,25 +52,25 @@ using StatsBase
 
         @test_throws MethodError bootstrap_pi0()
 
-        @test_approx_eq bootstrap_pi0(p, lambdas) 0.6
-        @test_approx_eq bootstrap_pi0(p0, lambdas) 1.0
-        @test_approx_eq bootstrap_pi0(p1, lambdas) 0.15
+        @test bootstrap_pi0(p, lambdas) ≈ 0.6
+        @test bootstrap_pi0(p0, lambdas) ≈ 1.0
+        @test bootstrap_pi0(p1, lambdas) ≈ 0.15
 
         ## unsorted lambdas
         lambdas_unsort = unsort(lambdas)
         @test !issorted(lambdas_unsort)
-        @test_approx_eq bootstrap_pi0(p, lambdas_unsort) 0.6
+        @test bootstrap_pi0(p, lambdas_unsort) ≈ 0.6
         @test !issorted(lambdas_unsort)
 
         ## with default 'lambdas'
-        @test_approx_eq bootstrap_pi0(p) 0.6
-        @test_approx_eq bootstrap_pi0(p0) 1.0
-        @test_approx_eq bootstrap_pi0(p1) 0.15
+        @test bootstrap_pi0(p) ≈ 0.6
+        @test bootstrap_pi0(p0) ≈ 1.0
+        @test bootstrap_pi0(p1) ≈ 0.15
 
         @test issubtype(typeof(StoreyBootstrap()), Pi0Estimator)
-        @test_approx_eq estimate_pi0(p, StoreyBootstrap()) 0.6
-        @test_approx_eq estimate_pi0(p0, StoreyBootstrap()) 1.0
-        @test_approx_eq estimate_pi0(p1, StoreyBootstrap()) 0.15
+        @test estimate_pi0(p, StoreyBootstrap()) ≈ 0.6
+        @test estimate_pi0(p0, StoreyBootstrap()) ≈ 1.0
+        @test estimate_pi0(p1, StoreyBootstrap()) ≈ 0.15
 
         @test_throws DomainError StoreyBootstrap(lambdas, -0.1)
         @test_throws DomainError StoreyBootstrap(lambdas, 1.1)
@@ -83,9 +83,9 @@ using StatsBase
 
     @testset "lsl_pi0" begin
 
-        @test_approx_eq lsl_pi0(p) MultipleTesting.lsl_pi0_vec(p)
-        @test_approx_eq lsl_pi0(p0) MultipleTesting.lsl_pi0_vec(p0)
-        @test_approx_eq lsl_pi0(p1) MultipleTesting.lsl_pi0_vec(p1)
+        @test lsl_pi0(p) ≈ MultipleTesting.lsl_pi0_vec(p)
+        @test lsl_pi0(p0) ≈ MultipleTesting.lsl_pi0_vec(p0)
+        @test lsl_pi0(p1) ≈ MultipleTesting.lsl_pi0_vec(p1)
 
         ## checked against structSSI::pi0.lsl
         @test_approx_eq_eps lsl_pi0(p) 0.62 1e-2
@@ -127,24 +127,24 @@ using StatsBase
         alpha = 0.05
 
         ## checked against mutoss::TSBKY_pi0_est
-        @test_approx_eq twostep_pi0(p, alpha) 0.665
-        @test_approx_eq twostep_pi0(p0, alpha) 1.0
-        @test_approx_eq twostep_pi0(p1, alpha) 0.29
+        @test twostep_pi0(p, alpha) ≈ 0.665
+        @test twostep_pi0(p0, alpha) ≈ 1.0
+        @test twostep_pi0(p1, alpha) ≈ 0.29
 
         @test issubtype(typeof(TwoStep(alpha)), Pi0Estimator)
-        @test_approx_eq estimate_pi0(p, TwoStep()) 0.665
-        @test_approx_eq estimate_pi0(p, TwoStep(alpha)) 0.665
-        @test_approx_eq estimate_pi0(p0, TwoStep(alpha)) 1.0
-        @test_approx_eq estimate_pi0(p1, TwoStep(alpha)) 0.29
+        @test estimate_pi0(p, TwoStep()) ≈ 0.665
+        @test estimate_pi0(p, TwoStep(alpha)) ≈ 0.665
+        @test estimate_pi0(p0, TwoStep(alpha)) ≈ 1.0
+        @test estimate_pi0(p1, TwoStep(alpha)) ≈ 0.29
 
-        @test_approx_eq estimate_pi0(p, TwoStep(0.1)) 0.63
-        @test_approx_eq estimate_pi0(p, TwoStep(0.0)) 1.0
-        @test_approx_eq estimate_pi0(p, TwoStep(1.0)) 0.415
+        @test estimate_pi0(p, TwoStep(0.1)) ≈ 0.63
+        @test estimate_pi0(p, TwoStep(0.0)) ≈ 1.0
+        @test estimate_pi0(p, TwoStep(1.0)) ≈ 0.415
 
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test_approx_eq twostep_pi0(p_unsort, alpha) 0.665
+        @test twostep_pi0(p_unsort, alpha) ≈ 0.665
         @test !issorted(p_unsort)
 
     end
@@ -168,18 +168,18 @@ using StatsBase
 
         # only eps because pi0 package uses right closed histograms
         @test_approx_eq_eps rightboundary_pi0(p, lambdas) 0.5714286 0.02
-        @test_approx_eq rightboundary_pi0(p0, lambdas) 1.0
+        @test rightboundary_pi0(p0, lambdas) ≈ 1.0
         @test_approx_eq_eps rightboundary_pi0(p1, lambdas) 0.1428571 10.0^(-7)
 
-        @test_approx_eq rightboundary_pi0(p, lambdas) rightboundary_pi0(p, unsort(lambdas))
+        @test rightboundary_pi0(p, lambdas) ≈ rightboundary_pi0(p, unsort(lambdas))
 
         @test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
         @test_approx_eq_eps estimate_pi0(p, RightBoundary(lambdas)) 0.5714286 0.02
-        @test_approx_eq estimate_pi0(p0, RightBoundary(lambdas)) 1.0
+        @test estimate_pi0(p0, RightBoundary(lambdas)) ≈ 1.0
         @test_approx_eq_eps estimate_pi0(p1, RightBoundary(lambdas)) 0.1428571 10.0^(-7)
 
         # not checked against R implementation but should hold (check for default lambda grid)
-        @test_approx_eq estimate_pi0(p0, RightBoundary()) 1.0
+        @test estimate_pi0(p0, RightBoundary()) ≈ 1.0
 
         @test issubtype(typeof(RightBoundary()), Pi0Estimator)
 
@@ -194,7 +194,7 @@ using StatsBase
     @testset "censoredBUM_pi0" begin
 
         @test_approx_eq_eps estimate_pi0(p, CensoredBUM()) 0.55797 1e-5
-        @test_approx_eq estimate_pi0(p, CensoredBUM()) MultipleTesting.cbum_pi0_naive(p)[1]
+        @test estimate_pi0(p, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p)[1]
         @test_approx_eq_eps estimate_pi0(p0, CensoredBUM()) 1.0 1e-5
         @test_approx_eq_eps estimate_pi0(p1, CensoredBUM()) 0.11608 2e-5
         @test_approx_eq_eps estimate_pi0(ones(50), CensoredBUM()) 1.0 1e-5
@@ -220,7 +220,7 @@ using StatsBase
         @test_approx_eq_eps f.π0 0.55797 1e-5
 
         pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
-        @test_approx_eq pi0_est 1.0
+        @test pi0_est ≈ 1.0
         @test is_converged
 
         pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
@@ -255,10 +255,10 @@ using StatsBase
         @test issubtype(typeof(FlatGrenander()), Pi0Estimator)
 
         pu = collect(0.1:0.05:0.9)
-        @test_approx_eq estimate_pi0(pu, FlatGrenander()) 1.0
-        @test_approx_eq estimate_pi0(pu.^0.5, FlatGrenander()) 1.0
+        @test estimate_pi0(pu, FlatGrenander()) ≈ 1.0
+        @test estimate_pi0(pu.^0.5, FlatGrenander()) ≈ 1.0
 
-        @test_approx_eq estimate_pi0(p0, FlatGrenander()) 1.0
+        @test estimate_pi0(p0, FlatGrenander()) ≈ 1.0
         @test estimate_pi0(p1, FlatGrenander()) < 0.15
         @test_approx_eq_eps estimate_pi0(p, FlatGrenander()) pi0 0.1
 
@@ -267,24 +267,24 @@ using StatsBase
 
         p = [0:0.1:1;];
         f = [1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.1];
-        @test_approx_eq lci(p, f) 0.5
+        @test lci(p, f) ≈ 0.5
 
         f = [1.5, 1.5, 1.5, 1.5, 1.5, 1.2, 1.2, 1.2, 0.2, 0.2, 0.1];
-        @test_approx_eq lci(p, f) 0.2
+        @test lci(p, f) ≈ 0.2
 
         f = [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
-        @test_approx_eq lci(p, f) 0.2
+        @test lci(p, f) ≈ 0.2
 
         f = [0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
-        @test_approx_eq lci(p, f) 0.5
+        @test lci(p, f) ≈ 0.5
 
         p = [0.1, 0.3, 0.5, 0.9];
         f = [0.5, 0.5, 0.2, 0.2];
-        @test_approx_eq lci(p, f) 0.2
+        @test lci(p, f) ≈ 0.2
 
         p = [0.1, 0.5, 0.7, 0.9];
         f = [0.5, 0.5, 0.2, 0.2];
-        @test_approx_eq lci(p, f) 0.5
+        @test lci(p, f) ≈ 0.5
 
     end
 
