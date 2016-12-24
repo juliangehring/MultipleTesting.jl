@@ -3,7 +3,7 @@ os:
   - linux
   - osx
 julia:
-  - 0.4
+  - 0.5
 sudo: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
