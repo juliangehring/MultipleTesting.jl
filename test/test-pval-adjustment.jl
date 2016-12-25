@@ -44,7 +44,7 @@ using Base.Test
         @test_throws DomainError adjust([-1.0, 0.5], method())
         @test_throws DomainError adjust([0.5, 1.5], method())
 
-        ## single p-value is returned unchanged
+        ## any single p-value is returned unchanged
         if method != ForwardStop  # this test is not valid for ForwardStop
             pval = rand(1)
             @test adjust(pval, method()) == pval

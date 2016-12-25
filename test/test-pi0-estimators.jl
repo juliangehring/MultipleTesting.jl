@@ -169,14 +169,14 @@ using StatsBase
         # only eps because pi0 package uses right closed histograms
         @test_approx_eq_eps rightboundary_pi0(p, lambdas) 0.5714286 0.02
         @test rightboundary_pi0(p0, lambdas) ≈ 1.0
-        @test_approx_eq_eps rightboundary_pi0(p1, lambdas) 0.1428571 10.0^(-7)
+        @test_approx_eq_eps rightboundary_pi0(p1, lambdas) 0.1428571 1e-7
 
         @test rightboundary_pi0(p, lambdas) ≈ rightboundary_pi0(p, unsort(lambdas))
 
         @test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
         @test_approx_eq_eps estimate_pi0(p, RightBoundary(lambdas)) 0.5714286 0.02
         @test estimate_pi0(p0, RightBoundary(lambdas)) ≈ 1.0
-        @test_approx_eq_eps estimate_pi0(p1, RightBoundary(lambdas)) 0.1428571 10.0^(-7)
+        @test_approx_eq_eps estimate_pi0(p1, RightBoundary(lambdas)) 0.1428571 1e-7
 
         # not checked against R implementation but should hold (check for default lambda grid)
         @test estimate_pi0(p0, RightBoundary()) ≈ 1.0
@@ -185,7 +185,7 @@ using StatsBase
 
         p_unsort = unsort(p1)
         @test !issorted(p_unsort)
-        @test_approx_eq_eps rightboundary_pi0(p_unsort, lambdas) 0.1428571 10.0^(-7)
+        @test_approx_eq_eps rightboundary_pi0(p_unsort, lambdas) 0.1428571 1e-7
         @test !issorted(p_unsort)
 
     end
