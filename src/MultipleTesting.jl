@@ -57,7 +57,17 @@ export
     FlatGrenander,
     isin,
     fit,
-    BetaUniformMixtureModel
+    BetaUniformMixtureModel,
+    PValueCombinationMethod,
+    combine,
+    FisherCombination,
+    LogitCombination,
+    StoufferCombination,
+    TippettCombination,
+    fisher_combination,
+    logit_combination,
+    stouffer_combination,
+    tippett_combination
 
 include("types.jl")
 include("utils.jl")
@@ -65,5 +75,6 @@ include("pval-adjustment.jl")
 include("pi0-estimators.jl")
 include("qvalue.jl")
 include("model.jl")
+include("combinations.jl")
 
 end

@@ -3,7 +3,8 @@ tests = ["test-pval-adjustment",
          "test-pi0-estimators",
          "test-grenander",
          "test-utils",
-         "test-model"
+         "test-model",
+         "test-combinations"
          ]
 
 for t in tests
