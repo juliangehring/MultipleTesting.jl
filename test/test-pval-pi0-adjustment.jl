@@ -38,14 +38,14 @@ using Base.Test
         @test adjust(pval, t(pi0)) == pval .* pi0
 
         ## compare with reference values
-        @test_approx_eq_eps m(pval1, pi0) ref 1e-6
-        @test_approx_eq_eps adjust(pval1, t(pi0)) ref 1e-6
+        @test isapprox( m(pval1, pi0), ref, atol = 1e-6 )
+        @test isapprox( adjust(pval1, t(pi0)), ref, atol = 1e-6 )
 
         ## BH Adaptive same as BH for π0 missing or 1
-        @test_approx_eq_eps m(pval1, 1.0) ref0 1e-6
-        @test_approx_eq_eps adjust(pval1, t(1.0)) ref0 1e-6
-        @test_approx_eq_eps adjust(pval1, t()) ref0 1e-6
-        @test_approx_eq_eps adjust(pval1, t(0.0)) zeros(ref0) 1e-6
+        @test isapprox( m(pval1, 1.0), ref0, atol = 1e-6 )
+        @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-6 )
+        @test isapprox( adjust(pval1, t()), ref0, atol = 1e-6 )
+        @test isapprox( adjust(pval1, t(0.0)), zeros(ref0), atol = 1e-6 )
 
         # adaptive with pi0 estimator == oracle with estimated pi0
         @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate_pi0(pval1, Storey())))
@@ -77,8 +77,8 @@ using Base.Test
         @test m(pval, pi0) == pval .* pi0
 
         ## compare with reference values
-        @test_approx_eq_eps m(pval1, pi0) ref 1e-6
-        @test_approx_eq_eps m(pval1, pi0, false) ref 1e-6
+        @test isapprox( m(pval1, pi0), ref, atol = 1e-6 )
+        @test isapprox( m(pval1, pi0, false), ref, atol = 1e-6 )
 
     end
 
@@ -105,7 +105,7 @@ using Base.Test
         @test m(pval, pi0) == pval .* pi0
 
         ## compare with reference values
-        @test_approx_eq_eps m(pval1, pi0, true) ref 1e-6
+        @test isapprox( m(pval1, pi0, true), ref, atol = 1e-6 )
 
     end
 

@@ -54,10 +54,10 @@ using Base.Test
         end
 
         ## compare with reference values
-        @test_approx_eq_eps adjust(pval1, method()) ref1[method] 1e-9
+        @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
 
         ## compare with reference values having ties
-        @test_approx_eq_eps adjust(pval2, method()) ref2[method] 1e-9
+        @test isapprox( adjust(pval2, method()), ref2[method], atol = 1e-9 )
 
     end
 

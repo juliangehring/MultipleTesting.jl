@@ -88,26 +88,26 @@ using StatsBase
         @test lsl_pi0(p1) ≈ MultipleTesting.lsl_pi0_vec(p1)
 
         ## checked against structSSI::pi0.lsl
-        @test_approx_eq_eps lsl_pi0(p) 0.62 1e-2
-        @test_approx_eq_eps lsl_pi0(p0) 1.0 1e-2
-        @test_approx_eq_eps lsl_pi0(p1) 0.16 1e-2
+        @test isapprox( lsl_pi0(p), 0.62, atol = 1e-2 )
+        @test isapprox( lsl_pi0(p0), 1.0, atol = 1e-2 )
+        @test isapprox( lsl_pi0(p1), 0.16, atol = 1e-2 )
 
         @test issubtype(typeof(LeastSlope()), Pi0Estimator)
-        @test_approx_eq_eps estimate_pi0(p, LeastSlope()) 0.62 1e-2
-        @test_approx_eq_eps estimate_pi0(p0, LeastSlope()) 1.0 1e-2
-        @test_approx_eq_eps estimate_pi0(p1, LeastSlope()) 0.16 1e-2
+        @test isapprox( estimate_pi0(p, LeastSlope()), 0.62, atol = 1e-2 )
+        @test isapprox( estimate_pi0(p0, LeastSlope()), 1.0, atol = 1e-2 )
+        @test isapprox( estimate_pi0(p1, LeastSlope()), 0.16, atol = 1e-2 )
 
         @test_throws MethodError LeastSlope(0.1)
 
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test_approx_eq_eps lsl_pi0(p_unsort) 0.62 1e-2
+        @test isapprox( lsl_pi0(p_unsort), 0.62, atol = 1e-2 )
         @test !issorted(p_unsort)
 
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test_approx_eq_eps MultipleTesting.lsl_pi0_vec(p_unsort) 0.62 1e-2
+        @test isapprox( MultipleTesting.lsl_pi0_vec(p_unsort), 0.62, atol = 1e-2 )
         @test !issorted(p_unsort)
 
     end
@@ -167,16 +167,16 @@ using StatsBase
         # ```
 
         # only eps because pi0 package uses right closed histograms
-        @test_approx_eq_eps rightboundary_pi0(p, lambdas) 0.5714286 0.02
+        @test isapprox( rightboundary_pi0(p, lambdas), 0.5714286, atol = 0.02 )
         @test rightboundary_pi0(p0, lambdas) ≈ 1.0
-        @test_approx_eq_eps rightboundary_pi0(p1, lambdas) 0.1428571 1e-7
+        @test isapprox( rightboundary_pi0(p1, lambdas), 0.1428571, atol = 1e-7 )
 
         @test rightboundary_pi0(p, lambdas) ≈ rightboundary_pi0(p, unsort(lambdas))
 
         @test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
-        @test_approx_eq_eps estimate_pi0(p, RightBoundary(lambdas)) 0.5714286 0.02
+        @test isapprox( estimate_pi0(p, RightBoundary(lambdas)), 0.5714286, atol = 0.02 )
         @test estimate_pi0(p0, RightBoundary(lambdas)) ≈ 1.0
-        @test_approx_eq_eps estimate_pi0(p1, RightBoundary(lambdas)) 0.1428571 1e-7
+        @test isapprox( estimate_pi0(p1, RightBoundary(lambdas)), 0.1428571, atol = 1e-7 )
 
         # not checked against R implementation but should hold (check for default lambda grid)
         @test estimate_pi0(p0, RightBoundary()) ≈ 1.0
@@ -185,7 +185,7 @@ using StatsBase
 
         p_unsort = unsort(p1)
         @test !issorted(p_unsort)
-        @test_approx_eq_eps rightboundary_pi0(p_unsort, lambdas) 0.1428571 1e-7
+        @test isapprox( rightboundary_pi0(p_unsort, lambdas), 0.1428571, atol = 1e-7 )
         @test !issorted(p_unsort)
 
     end
@@ -193,11 +193,12 @@ using StatsBase
 
     @testset "censoredBUM_pi0" begin
 
-        @test_approx_eq_eps estimate_pi0(p, CensoredBUM()) 0.55797 1e-5
         @test estimate_pi0(p, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p)[1]
-        @test_approx_eq_eps estimate_pi0(p0, CensoredBUM()) 1.0 1e-5
-        @test_approx_eq_eps estimate_pi0(p1, CensoredBUM()) 0.11608 2e-5
-        @test_approx_eq_eps estimate_pi0(ones(50), CensoredBUM()) 1.0 1e-5
+
+        @test isapprox( estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5 )
+        @test isapprox( estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5 )
+        @test isapprox( estimate_pi0(p1, CensoredBUM()), 0.11608, atol = 2e-5 )
+        @test isapprox( estimate_pi0(ones(50), CensoredBUM()), 1.0, atol = 1e-5 )
 
         ## test case that does not converge
         stderr_dump = redirect_stderr()
@@ -217,7 +218,7 @@ using StatsBase
 
         f = fit(CensoredBUM(), p)
         @test issubtype(typeof(f), CensoredBUMFit)
-        @test_approx_eq_eps f.π0 0.55797 1e-5
+        @test isapprox( f.π0, 0.55797, atol = 1e-5 )
 
         pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
         @test pi0_est ≈ 1.0
@@ -232,10 +233,10 @@ using StatsBase
 
     @testset "BUM_pi0" begin
 
-        @test_approx_eq_eps estimate_pi0(p, BUM(0.5)) 0.55528 1e-5
-        @test_approx_eq_eps estimate_pi0(p, BUM()) 0.55528 1e-5
-        @test_approx_eq_eps estimate_pi0(p0, BUM()) 1.0 1e-5
-        @test_approx_eq_eps estimate_pi0(p1, BUM()) 0.10874 1e-5
+        @test isapprox( estimate_pi0(p, BUM(0.5)), 0.55528, atol = 1e-5 )
+        @test isapprox( estimate_pi0(p, BUM()), 0.55528, atol = 1e-5 )
+        @test isapprox( estimate_pi0(p0, BUM()), 1.0, atol = 1e-5 )
+        @test isapprox( estimate_pi0(p1, BUM()), 0.10874, atol = 1e-5 )
 
         ## test case that does not converge
         @test isnan(estimate_pi0(p, BUM(0.5, 1e-6, 2)))
@@ -260,7 +261,7 @@ using StatsBase
 
         @test estimate_pi0(p0, FlatGrenander()) ≈ 1.0
         @test estimate_pi0(p1, FlatGrenander()) < 0.15
-        @test_approx_eq_eps estimate_pi0(p, FlatGrenander()) pi0 0.1
+        @test isapprox( estimate_pi0(p, FlatGrenander()), pi0, atol = 0.1)
 
         ## longest constant interval: low level
         lci = MultipleTesting.longest_constant_interval
