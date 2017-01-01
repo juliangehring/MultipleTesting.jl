@@ -3,8 +3,7 @@ os:
   - linux
   - osx
 julia:
-  - 0.4
-sudo: false
+  - 0.5
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("MultipleTesting"); Pkg.test("MultipleTesting"; coverage=true)'
