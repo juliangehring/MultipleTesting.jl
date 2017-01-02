@@ -28,6 +28,8 @@ using Base.Test
         StoufferCombination => 0.1916892 # metap::sumz(p, w)
     )
 
+    p_single = rand(1)
+
     # invalid p-value inputs
     p1_invalid = [-1.0, 0.5]
     p2_invalid = [0.5, 1.5]
@@ -47,10 +49,12 @@ using Base.Test
         @test_throws DomainError combine(p1_invalid, method())
         @test_throws DomainError combine(p2_invalid, method())
 
+        @test combine(p_single, method()) == p_single[1]
+
     end
 
 
-    @testset "Stouffer combination weighted" begin
+    @testset "Weighted StoufferCombination" begin
 
         method = StoufferCombination
 
@@ -69,6 +73,8 @@ using Base.Test
 
         @test_throws DomainError combine(p1_invalid, ones(p1_invalid), method())
         @test_throws DomainError combine(p2_invalid, ones(p2_invalid), method())
+
+        @test combine(p_single, ones(p_single), method()) == p_single[1]
 
     end
 

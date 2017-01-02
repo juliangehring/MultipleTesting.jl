@@ -15,6 +15,9 @@ function fisher_combination(pValues)
     # TODO limit to p > 0
     validPValues(pValues)
     k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     x = -2 * sum(log(pValues))
     p = ccdf(Chisq(2k), x)
     return p
@@ -34,6 +37,9 @@ function logit_combination(pValues)
     # TODO limit to p > 0 and p < 1
     validPValues(pValues)
     k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     c = sqrt( (5k+2)*k*pi^2 / ((5k+4)*3) )
     x = -sum(log(pValues./(1-pValues))) / c # or name 't'
     p = ccdf(TDist(5k+4), x)
@@ -57,6 +63,9 @@ end
 function stouffer_combination(pValues)
     validPValues(pValues)
     k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     z = cquantile(Normal(), pValues)
     z = sum(z) ./ sqrt(k)
     p = ccdf(Normal(), z)
@@ -66,6 +75,9 @@ end
 function stouffer_combination(pValues, weights)
     validPValues(pValues)
     k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     z = cquantile(Normal(), pValues) .* weights
     z = sum(z) ./ sqrt(sum(weights.^2))
     p = ccdf(Normal(), z)
@@ -85,6 +97,9 @@ end
 function tippett_combination(pValues)
     validPValues(pValues)
     k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     p = 1.0 - (1.0 - minimum(pValues))^k
     return p
 end
