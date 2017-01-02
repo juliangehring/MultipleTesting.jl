@@ -20,28 +20,6 @@ function fisher_combination(pValues)
     return p
 end
 
-#using Distributions
-#p = [0.01, 0.02, 0.1]
-#w = [2, 2, 2]
-#x = [quantile(Chisq(w[i]), 1-p[i]) for i in 1:length(p)]
-#y = sum(x)
-#q = ccdf(Chisq(sum(w)), y)
-#v = 2.*sum(w).^2./(2.*sum(w))
-
-## Negative Fisher combination ##
-
-type NegativeFisherCombination <: PValueCombinationMethod
-end
-
-function combine{T<:AbstractFloat}(pValues::Vector{T}, method::NegativeFisherCombination)
-    negative_fisher_combination(pValues)
-end
-
-function negative_fisher_combination(pValues)
-    p = 1.0 - fisher_combination(1.0-pValues)
-    return p
-end
-
 
 ## Logit combination ##
 
@@ -102,24 +80,6 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::TippettCombinatio
     tippett_combination(pValues)
 end
 
-"""
-    tippett_combination(pValues)
-
-Combine p-values to a global p-value using Tippett's method.
-
-# Examples
-
-```jldoctests
-tippett_combination([0.01, 0.2])
-# output
-0.01990000000000003
-```
-
-# Related
-
-- [`TippettCombination`](@ref)
-
-"""
 function tippett_combination(pValues)
     k = length(pValues)
     p = 1.0 - (1.0 - minimum(pValues))^k
