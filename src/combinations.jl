@@ -1,6 +1,5 @@
 ### Combination methods for p-values ###
 
-# TODO require at least two p-values as input?
 
 ## Fisher combination ##
 
@@ -12,13 +11,15 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::FisherCombination
 end
 
 function fisher_combination(pValues)
-    # TODO limit to p > 0
     validPValues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
     end
-    x = -2 * sum(log(pValues))
+    if minimum(pValues) == 0.0
+        return NaN
+    end
+    x = -2 * sum(log(pValues)) # p = 0 => Inf
     p = ccdf(Chisq(2k), x)
     return p
 end
@@ -34,14 +35,17 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::LogitCombination)
 end
 
 function logit_combination(pValues)
-    # TODO limit to p > 0 and p < 1
     validPValues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
     end
+    pmin, pmax = extrema(pValues)
+    if pmin == 0.0 || pmax == 1.0
+        return NaN
+    end
     c = sqrt( (5k+2)*k*pi^2 / ((5k+4)*3) )
-    x = -sum(log(pValues./(1-pValues))) / c # or name 't'
+    x = -sum(log(pValues./(1-pValues))) / c
     p = ccdf(TDist(5k+4), x)
     return p
 end
@@ -66,6 +70,10 @@ function stouffer_combination(pValues)
     if k == 1
         return pValues[1]
     end
+    pmin, pmax = extrema(pValues)
+    if pmin == 0.0 || pmax == 1.0
+        return NaN
+    end
     z = cquantile(Normal(), pValues)
     z = sum(z) ./ sqrt(k)
     p = ccdf(Normal(), z)
@@ -77,6 +85,10 @@ function stouffer_combination(pValues, weights)
     k = length(pValues)
     if k == 1
         return pValues[1]
+    end
+    pmin, pmax = extrema(pValues)
+    if pmin == 0.0 || pmax == 1.0
+        return NaN
     end
     z = cquantile(Normal(), pValues) .* weights
     z = sum(z) ./ sqrt(sum(weights.^2))

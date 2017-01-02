@@ -78,6 +78,30 @@ using Base.Test
 
     end
 
+
+    @testset "Edge cases" begin
+
+        p0 = [0.01, 0.05, 0.2, 0.8, 0.0]
+        p1 = [0.01, 0.05, 0.2, 0.8, 1.0]
+
+        @test isnan( combine(p0, FisherCombination()) )
+        @test isapprox( combine(p1, FisherCombination()), 0.04198529, atol = 1e-8 )
+
+        @test isnan( combine(p0, LogitCombination()) )
+        @test isnan( combine(p1, LogitCombination()) )
+
+        @test isnan( combine(p0, StoufferCombination()) )
+        @test isnan( combine(p1, StoufferCombination()) )
+
+        @test isnan( combine(p0, ones(p0), StoufferCombination()) )
+        @test isnan( combine(p1, ones(p1), StoufferCombination()) )
+
+        @test isapprox( combine(p0, TippettCombination()), 0.0 )
+        @test isapprox( combine(p1, TippettCombination()), 0.04900995, atol = 1e-8 )
+
+    end
+
+
 end
 
 end
