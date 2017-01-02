@@ -66,3 +66,19 @@ estimate_pi0(pvals, CensoredBUM())
 estimate_pi0(pvals, BUM())
 estimate_pi0(pvals, FlatGrenander())
 ```
+
+
+### p-values combination
+
+* Fisher
+* Stouffer, optionally with weights
+* Logit
+* Tippett
+
+```julia
+combine(pvals, FisherCombination())
+combine(pvals, StoufferCombination())
+combine(pvals, weights, StoufferCombination())
+combine(pvals, LogitCombination())
+combine(pvals, TippettCombination())
+```
