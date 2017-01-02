@@ -28,6 +28,11 @@ using Base.Test
         StoufferCombination => 0.1916892 # metap::sumz(p, w)
     )
 
+    # invalid p-value inputs
+    p1_invalid = [-1.0, 0.5]
+    p2_invalid = [0.5, 1.5]
+
+
     @testset "$(method)" for method in keys(ref2)
 
         @test issubtype(method, PValueCombinationMethod)
@@ -38,6 +43,9 @@ using Base.Test
 
         ref = ref2[method]
         @test isapprox( combine(p2, method()), ref, atol = 1e-8)
+
+        @test_throws DomainError combine(p1_invalid, method())
+        @test_throws DomainError combine(p2_invalid, method())
 
     end
 
@@ -58,6 +66,9 @@ using Base.Test
         @test isapprox( combine(p3, w3, method()), ref, atol = 1e-8 )
         # normalised weights
         @test isapprox( combine(p3, w3norm, method()), ref, atol = 1e-8 )
+
+        @test_throws DomainError combine(p1_invalid, ones(p1_invalid), method())
+        @test_throws DomainError combine(p2_invalid, ones(p2_invalid), method())
 
     end
 

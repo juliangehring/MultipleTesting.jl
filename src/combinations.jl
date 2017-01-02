@@ -13,7 +13,7 @@ end
 
 function fisher_combination(pValues)
     # TODO limit to p > 0
-    #validPValues(pValues)
+    validPValues(pValues)
     k = length(pValues)
     x = -2 * sum(log(pValues))
     p = ccdf(Chisq(2k), x)
@@ -32,7 +32,7 @@ end
 
 function logit_combination(pValues)
     # TODO limit to p > 0 and p < 1
-    #validPValues(pValues)
+    validPValues(pValues)
     k = length(pValues)
     c = sqrt( (5k+2)*k*pi^2 / ((5k+4)*3) )
     x = -sum(log(pValues./(1-pValues))) / c # or name 't'
@@ -55,6 +55,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, weights::Vector{T}, metho
 end
 
 function stouffer_combination(pValues)
+    validPValues(pValues)
     k = length(pValues)
     z = cquantile(Normal(), pValues)
     z = sum(z) ./ sqrt(k)
@@ -63,6 +64,7 @@ function stouffer_combination(pValues)
 end
 
 function stouffer_combination(pValues, weights)
+    validPValues(pValues)
     k = length(pValues)
     z = cquantile(Normal(), pValues) .* weights
     z = sum(z) ./ sqrt(sum(weights.^2))
@@ -81,6 +83,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::TippettCombinatio
 end
 
 function tippett_combination(pValues)
+    validPValues(pValues)
     k = length(pValues)
     p = 1.0 - (1.0 - minimum(pValues))^k
     return p
