@@ -1,6 +1,6 @@
 ## p-value adjustment methods ##
 
-type Bonferroni <: PValueAdjustmentMethod
+type Bonferroni <: PValueAdjustmentMethod{FWER}
 end
 
 adjust(pvals, method::Bonferroni) = bonferroni(pvals)
@@ -10,7 +10,7 @@ function bonferroni{T<:AbstractFloat}(pValues::Vector{T})
     return min(pValues * length(pValues), 1.)
 end
 
-type BenjaminiHochberg <: PValueAdjustmentMethod
+type BenjaminiHochberg <: PValueAdjustmentMethod{FDR}
 end
 
 adjust(pvals, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
@@ -29,7 +29,7 @@ end
 
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
-type BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
+type BenjaminiHochbergAdaptive <: PValueAdjustmentMethod{FDR}
     pi0estimator::Pi0Estimator
 end
 
@@ -49,7 +49,7 @@ function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
 end
 
 
-type BenjaminiYekutieli <: PValueAdjustmentMethod
+type BenjaminiYekutieli <: PValueAdjustmentMethod{FDR}
 end
 
 adjust(pvals, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
@@ -99,7 +99,7 @@ function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
     end
 end
 
-type Hochberg <: PValueAdjustmentMethod
+type Hochberg <: PValueAdjustmentMethod{FWER}
 end
 
 adjust(pvals, method::Hochberg) = hochberg(pvals)
@@ -119,7 +119,7 @@ end
 hochberg_multiplier(i::Int, n::Int) = (i+1)
 
 
-type Holm <: PValueAdjustmentMethod
+type Holm <: PValueAdjustmentMethod{FWER}
 end
 
 adjust(pvals, method::Holm) = holm(pvals)
@@ -139,7 +139,7 @@ end
 holm_multiplier(i::Int, n::Int) = (n-i+1)
 
 
-type Hommel <: PValueAdjustmentMethod
+type Hommel <: PValueAdjustmentMethod{FWER}
 end
 
 adjust(pvals, method::Hommel) = hommel(pvals)
@@ -166,7 +166,7 @@ function hommel{T<:AbstractFloat}(pValues::Vector{T})
 end
 
 
-type Sidak <: PValueAdjustmentMethod
+type Sidak <: PValueAdjustmentMethod{FWER}
 end
 
 adjust(pvals, method::Sidak) = sidak(pvals)
