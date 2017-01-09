@@ -22,7 +22,7 @@ Storey, JD (2002). "A Direct Approach to False Discovery Rates." Journal of the
 Royal Statistical Society, doi:10.1111/1467-9868.00346
 
 """
-type Storey <: Pi0Estimator
+immutable Storey <: Pi0Estimator
     λ::AbstractFloat
 
     Storey(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
@@ -50,7 +50,7 @@ StoreyBootstrap(λseq, q)
 
 Reference: David Robinson, 2012
 """
-type StoreyBootstrap <: Pi0Estimator
+immutable StoreyBootstrap <: Pi0Estimator
     ## check range of arguments
     λseq::Vector{AbstractFloat}
     q   ::AbstractFloat
@@ -84,7 +84,7 @@ Least SLope (LSL) π0 estimator
 
 LeastSlope()
 """
-type LeastSlope <: Pi0Estimator
+immutable LeastSlope <: Pi0Estimator
 end
 
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::LeastSlope)
@@ -136,7 +136,7 @@ Oracle π0
 
 Oracle(π0)
 """
-type Oracle <: Pi0Estimator
+immutable Oracle <: Pi0Estimator
     π0::AbstractFloat
 
     Oracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
@@ -158,7 +158,7 @@ TwoStep(α)
 
 Reference: Benjamini, Krieger and Yekutieli, 2006
 """
-type TwoStep <: Pi0Estimator
+immutable TwoStep <: Pi0Estimator
     α::AbstractFloat
     method::PValueAdjustmentMethod
 
@@ -187,7 +187,7 @@ Right boundary π0 estimator
 
 RightBoundary(λseq)
 """
-type RightBoundary <: Pi0Estimator
+immutable RightBoundary <: Pi0Estimator
     ## check range of arguments
     λseq::Vector{Float64}
 
@@ -226,7 +226,7 @@ Censored BUM π0 estimator
 
 CensoredBUM(γ0, λ, xtol, maxiter)
 """
-type CensoredBUM <: Pi0Estimator
+immutable CensoredBUM <: Pi0Estimator
     γ0::Float64
     λ::Float64
     xtol::Float64
@@ -244,7 +244,7 @@ end
 CensoredBUM() = CensoredBUM(0.5, 0.05, 1e-6, 10000)
 CensoredBUM(γ0, λ) = CensoredBUM(γ0, λ, 1e-6, 10000)
 
-type CensoredBUMFit <: Pi0Fit
+immutable CensoredBUMFit <: Pi0Fit
     π0::Float64
     param::Vector{Float64}
     is_converged::Bool
@@ -338,7 +338,7 @@ BUM π0 estimator
 
 BUM(γ0, xtol, maxiter)
 """
-type BUM <: Pi0Estimator
+immutable BUM <: Pi0Estimator
     γ0::Float64
     xtol::Float64
     maxiter::Int64
@@ -356,7 +356,7 @@ BUM() = BUM(0.5, 1e-6, 10000)
 
 BUM(y0::Float64) = BUM(y0, 1e-6, 10000)
 
-type BUMFit <: Pi0Fit
+immutable BUMFit <: Pi0Fit
     π0::Float64
     param::Vector{Float64}
     is_converged::Bool
@@ -392,7 +392,7 @@ Estimates π0 by the longest constant interval in the Grenander estimator
 
 Reference: Langaas et al., 2005: section 4.3
 """
-type FlatGrenander <: Pi0Estimator
+immutable FlatGrenander <: Pi0Estimator
 end
 
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::FlatGrenander)
