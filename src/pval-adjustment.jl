@@ -1,6 +1,6 @@
 ## p-value adjustment methods ##
 
-type Bonferroni <: PValueAdjustmentMethod
+immutable Bonferroni <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::Bonferroni) = bonferroni(pvals)
@@ -10,7 +10,7 @@ function bonferroni{T<:AbstractFloat}(pValues::Vector{T})
     return min(pValues * length(pValues), 1.)
 end
 
-type BenjaminiHochberg <: PValueAdjustmentMethod
+immutable BenjaminiHochberg <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
@@ -29,7 +29,7 @@ end
 
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
 
-type BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
+immutable BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
     pi0estimator::Pi0Estimator
 end
 
@@ -49,7 +49,7 @@ function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
 end
 
 
-type BenjaminiYekutieli <: PValueAdjustmentMethod
+immutable BenjaminiYekutieli <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
@@ -71,7 +71,7 @@ function benjamini_yekutieli_multiplier(i::Int, n::Int)
     return ((n*c)/(n-i))
 end
 
-type BenjaminiLiu <: PValueAdjustmentMethod
+immutable BenjaminiLiu <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::BenjaminiLiu) = benjamini_liu(pvals)
@@ -99,7 +99,7 @@ function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
     end
 end
 
-type Hochberg <: PValueAdjustmentMethod
+immutable Hochberg <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::Hochberg) = hochberg(pvals)
@@ -119,7 +119,7 @@ end
 hochberg_multiplier(i::Int, n::Int) = (i+1)
 
 
-type Holm <: PValueAdjustmentMethod
+immutable Holm <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::Holm) = holm(pvals)
@@ -139,7 +139,7 @@ end
 holm_multiplier(i::Int, n::Int) = (n-i+1)
 
 
-type Hommel <: PValueAdjustmentMethod
+immutable Hommel <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::Hommel) = hommel(pvals)
@@ -166,7 +166,7 @@ function hommel{T<:AbstractFloat}(pValues::Vector{T})
 end
 
 
-type Sidak <: PValueAdjustmentMethod
+immutable Sidak <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::Sidak) = sidak(pvals)
@@ -176,7 +176,7 @@ function sidak{T<:AbstractFloat}(pValues::Vector{T})
     return min(1-(1-pValues).^length(pValues), 1.)
 end
 
-type ForwardStop <: PValueAdjustmentMethod
+immutable ForwardStop <: PValueAdjustmentMethod
 end
 
 adjust(pvals, method::ForwardStop) = forwardstop(pvals)
