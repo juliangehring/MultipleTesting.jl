@@ -64,6 +64,10 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, weights::Vector{T}, metho
     stouffer_combination(pValues, weights)
 end
 
+function combine{T<:AbstractFloat}(pValues::Vector{T}, weights::WeightVec, method::StoufferCombination)
+    stouffer_combination(pValues, values(weights))
+end
+
 function stouffer_combination(pValues)
     validPValues(pValues)
     k = length(pValues)
