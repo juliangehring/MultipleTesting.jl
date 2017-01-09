@@ -54,6 +54,7 @@ adjust(pvals, ForwardStop())
 * Censored BUM
 * BUM
 * FlatGrenander
+* Oracle for known π0
 
 ```julia
 estimate_pi0(pvals, Storey())
@@ -66,4 +67,5 @@ estimate_pi0(pvals, RightBoundary())
 estimate_pi0(pvals, CensoredBUM())
 estimate_pi0(pvals, BUM())
 estimate_pi0(pvals, FlatGrenander())
+estimate_pi0(pvals, Oracle(0.9))
 ```
