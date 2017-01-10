@@ -64,10 +64,12 @@ export
     LogitCombination,
     StoufferCombination,
     TippettCombination,
+    MinimumCombination,
     fisher_combination,
     logit_combination,
     stouffer_combination,
-    tippett_combination
+    tippett_combination,
+    minimum_combination
 
 include("types.jl")
 include("utils.jl")

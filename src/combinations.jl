@@ -119,3 +119,21 @@ function tippett_combination(pValues)
     p = 1.0 - (1.0 - minimum(pValues))^k
     return p
 end
+
+
+## Generalised minimum combination ##
+
+type MinimumCombination <: PValueCombinationMethod
+    method::PValueAdjustmentMethod
+end
+
+function combine{T<:AbstractFloat}(pValues::Vector{T}, method::MinimumCombination)
+    minimum_combination(pValues, method.method)
+end
+
+function minimum_combination(pValues, pAdjustMethod::PValueAdjustmentMethod)
+    validPValues(pValues)
+    padj = adjust(pValues, pAdjustMethod)
+    p = minimum(padj)
+    return p
+end

@@ -55,6 +55,27 @@ using Base.Test
     end
 
 
+    @testset "Minimum combination" begin
+
+        @test_throws MethodError MinimumCombination()  # TODO
+
+        sidak_min_method = MinimumCombination( Sidak() )
+
+        @test issubtype(typeof(sidak_min_method), PValueCombinationMethod)
+
+        ref = ref1[TippettCombination]
+        @test isapprox( combine(p1, sidak_min_method), ref, atol = 1e-8)
+
+        ref = ref2[TippettCombination]
+        @test isapprox( combine(p2, sidak_min_method), ref, atol = 1e-8)
+
+        @test_throws DomainError combine(p1_invalid, sidak_min_method)
+        @test_throws DomainError combine(p2_invalid, sidak_min_method)
+
+        @test combine(p_single, sidak_min_method) == p_single[1]
+    end
+
+
     @testset "Weighted StoufferCombination" begin
 
         method = StoufferCombination
