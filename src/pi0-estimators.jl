@@ -68,7 +68,7 @@ end
 function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = [0.05:0.05:0.95;], q::S = 0.1)
     #validPValues(pValues)
     n = length(pValues)
-    w = Int[sum(pValues .>= l) for l in lambda] ## TODO: check >= or >
+    w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1. - lambda)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
