@@ -2,7 +2,7 @@
 
 ## Related Software Packages
 
-- [PValueAdjust.jl](https://github.com/dirkschumacher/PValueAdjust.jl): P-value adjustment methods for multiple testing correction [julia]
+- [PValueAdjust.jl](https://github.com/dirkschumacher/PValueAdjust.jl): P-value adjustment methods for multiple testing correction, *deprecated* [julia]
 
 - [`p.adjust`](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/p.adjust.html) in the [stats](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html) package [R]
 
