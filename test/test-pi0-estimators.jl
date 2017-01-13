@@ -127,24 +127,27 @@ using StatsBase
         alpha = 0.05
 
         ## checked against mutoss::TSBKY_pi0_est
-        @test twostep_pi0(p, alpha) ≈ 0.665
-        @test twostep_pi0(p0, alpha) ≈ 1.0
-        @test twostep_pi0(p1, alpha) ≈ 0.29
+        @test twostep_pi0(p, alpha, BenjaminiHochberg()) ≈ 0.665
+        @test twostep_pi0(p0, alpha, BenjaminiHochberg()) ≈ 1.0
+        @test twostep_pi0(p1, alpha, BenjaminiHochberg()) ≈ 0.29
 
         @test issubtype(typeof(TwoStep(alpha)), Pi0Estimator)
+        @test estimate_pi0(p, TwoStep()) ≈ 0.665
         @test estimate_pi0(p, TwoStep()) ≈ 0.665
         @test estimate_pi0(p, TwoStep(alpha)) ≈ 0.665
         @test estimate_pi0(p0, TwoStep(alpha)) ≈ 1.0
         @test estimate_pi0(p1, TwoStep(alpha)) ≈ 0.29
+        @test estimate_pi0(p, TwoStep(alpha, BenjaminiHochberg())) ≈ 0.665
 
         @test estimate_pi0(p, TwoStep(0.1)) ≈ 0.63
         @test estimate_pi0(p, TwoStep(0.0)) ≈ 1.0
         @test estimate_pi0(p, TwoStep(1.0)) ≈ 0.415
+        @test estimate_pi0(p, TwoStep(0.1, BenjaminiHochberg())) ≈ 0.63
 
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test twostep_pi0(p_unsort, alpha) ≈ 0.665
+        @test estimate_pi0(p_unsort, TwoStep(alpha)) ≈ 0.665
         @test !issorted(p_unsort)
 
     end

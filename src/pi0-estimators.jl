@@ -160,18 +160,20 @@ Reference: Benjamini, Krieger and Yekutieli, 2006
 """
 immutable TwoStep <: Pi0Estimator
     α::AbstractFloat
-    ## method::PValueAdjustmentMethod
+    method::PValueAdjustmentMethod
 
-    TwoStep(α) = isin(α, 0., 1.) ? new(α) : throw(DomainError())
+    TwoStep(α, method) = isin(α, 0., 1.) ? new(α, method) : throw(DomainError())
 end
 
 TwoStep() = TwoStep(0.05)
 
+TwoStep(α) = TwoStep(α, BenjaminiHochberg())
+
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::TwoStep)
-    twostep_pi0(pValues, pi0estimator.α)
+    twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod = BenjaminiHochberg())
+function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)
