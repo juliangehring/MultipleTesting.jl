@@ -12,11 +12,11 @@ abstract PValueAdjustmentMethod
 # PValues
 
 type PValues{T<:AbstractFloat} <: AbstractVector{T}
-    values::Vector{T}
+    values::AbstractVector{T}
     min::T
     max::T
 
-    function PValues(values::Vector{T}, min::T, max::T)
+    function PValues(values::AbstractVector{T}, min::T, max::T)
         if min < 0.0 || max > 1.0
             throw(DomainError())
         end
@@ -24,12 +24,14 @@ type PValues{T<:AbstractFloat} <: AbstractVector{T}
     end
 end
 
-PValues{T<:AbstractFloat}(values::Vector{T}, min::T, max::T) = PValues{T}(values, min, max)
+PValues{T<:AbstractFloat}(values::AbstractVector{T}, min::T, max::T) = PValues{T}(values, min, max)
 
-function PValues{T<:AbstractFloat}(values::Vector{T})
+function PValues{T<:AbstractFloat}(values::AbstractVector{T})
     minp, maxp = extrema(values)
     PValues(values, minp, maxp)
 end
+
+Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x) # TODO define test
 
 Base.size(pv::PValues) = (length(pv.values), )
 Base.linearindexing{T<:PValues}(::Type{T}) = Base.LinearFast()

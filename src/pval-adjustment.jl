@@ -1,22 +1,24 @@
 ## p-value adjustment methods ##
 
+adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::AbstractVector{T}, method::M) = adjust(PValues(pvals), method)
+
+
 immutable Bonferroni <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::Bonferroni) = bonferroni(pvals)
+adjust(pvals::PValues, method::Bonferroni) = bonferroni(pvals)
 
-function bonferroni{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+
+function bonferroni(pValues::PValues)
     return min(pValues * length(pValues), 1.)
 end
 
 immutable BenjaminiHochberg <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
+adjust(pvals::PValues, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
 
-function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function benjamini_hochberg(pValues::PValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -34,16 +36,16 @@ immutable BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
 end
 
 ## default to BenjaminiHochberg
-BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle(π0))
+BenjaminiHochbergAdaptive{T<:AbstractFloat}(π0::T) = BenjaminiHochbergAdaptive(Oracle(π0))
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-function adjust(pvals, method::BenjaminiHochbergAdaptive)
+function adjust(pvals::PValues, method::BenjaminiHochbergAdaptive)
   π0 = estimate_pi0(pvals, method.pi0estimator)
   benjamini_hochberg(pvals, π0)
 end
 
-function benjamini_hochberg{T<:AbstractFloat}(pValues::Vector{T}, pi0::T)
+function benjamini_hochberg{T<:AbstractFloat}(pValues::PValues, pi0::T)
     validPValues([pi0])
     benjamini_hochberg(pValues) .* pi0
 end
@@ -52,10 +54,9 @@ end
 immutable BenjaminiYekutieli <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
+adjust(pvals::PValues, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
 
-function benjamini_yekutieli{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function benjamini_yekutieli(pValues::PValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -74,16 +75,15 @@ end
 immutable BenjaminiLiu <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::BenjaminiLiu) = benjamini_liu(pvals)
+adjust(pvals::PValues, method::BenjaminiLiu) = benjamini_liu(pvals)
 
-function benjamini_liu{T<:AbstractFloat}(pvalues::Vector{T})
-    validPValues(pvalues)
-    n = length(pvalues)
+function benjamini_liu(pValues::PValues)
+    n = length(pValues)
     if n <= 1
-        return pvalues
+        return pValues
     end
-    sortedIndexes, originalOrder = reorder(pvalues)
-    sortedPValues = pvalues[sortedIndexes]
+    sortedIndexes, originalOrder = reorder(pValues)
+    sortedPValues = pValues[sortedIndexes]
     general_stepdown!(sortedPValues, benjamini_liu_step, n)
     min(sortedPValues[originalOrder], 1.)
 end
@@ -102,10 +102,9 @@ end
 immutable Hochberg <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::Hochberg) = hochberg(pvals)
+adjust(pvals::PValues, method::Hochberg) = hochberg(pvals)
 
-function hochberg{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function hochberg(pValues::PValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -122,10 +121,9 @@ hochberg_multiplier(i::Int, n::Int) = (i+1)
 immutable Holm <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::Holm) = holm(pvals)
+adjust(pvals::PValues, method::Holm) = holm(pvals)
 
-function holm{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function holm(pValues::PValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -142,10 +140,9 @@ holm_multiplier(i::Int, n::Int) = (n-i+1)
 immutable Hommel <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::Hommel) = hommel(pvals)
+adjust(pvals::PValues, method::Hommel) = hommel(pvals)
 
-function hommel{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function hommel(pValues::PValues)
     n = length(pValues)
     if n <= 1
         return pValues
@@ -169,24 +166,22 @@ end
 immutable Sidak <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::Sidak) = sidak(pvals)
+adjust(pvals::PValues, method::Sidak) = sidak(pvals)
 
-function sidak{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+function sidak(pValues::PValues)
     return min(1-(1-pValues).^length(pValues), 1.)
 end
 
 immutable ForwardStop <: PValueAdjustmentMethod
 end
 
-adjust(pvals, method::ForwardStop) = forwardstop(pvals)
+adjust(pvals::PValues, method::ForwardStop) = forwardstop(pvals)
 
-function forwardstop{T<:AbstractFloat}(pvalues::Vector{T})
-    validPValues(pvalues)
+function forwardstop(pvalues::PValues)
     n = length(pvalues)
-    logsums = - cumsum(log(1-pvalues))
+    logsums = -cumsum(log(1-pvalues))
     stepup!(logsums, forwardstop_multiplier, n)
-    max(min(logsums, 1.),0.)
+    max(min(logsums, 1.), 0.)
 end
 
 forwardstop_multiplier(i::Int, n::Int) = 1/(n-i)

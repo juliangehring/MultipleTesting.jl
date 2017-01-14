@@ -1,5 +1,8 @@
 ### estimators for π0 (pi0) ###
 
+estimate_pi0{T<:AbstractFloat, M<:Pi0Estimator}(pValues::AbstractVector{T}, method::M) = estimate_pi0(PValues(pValues), method)
+
+
 ## Storey estimator ##
 
 """
@@ -30,12 +33,11 @@ end
 
 Storey() = Storey(0.1)
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Storey)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Storey)
     storey_pi0(pValues, pi0estimator.λ)
 end
 
-function storey_pi0{T<:AbstractFloat}(pValues::Vector{T}, lambda::T)
-    validPValues(pValues)
+function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::T)
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
     pi0 = min(pi0, 1.)
     return pi0
@@ -52,7 +54,7 @@ Reference: David Robinson, 2012
 """
 immutable StoreyBootstrap <: Pi0Estimator
     ## check range of arguments
-    λseq::Vector{AbstractFloat}
+    λseq::AbstractVector{AbstractFloat}
     q   ::AbstractFloat
 
     StoreyBootstrap(λseq, q) =
@@ -61,12 +63,11 @@ end
 
 StoreyBootstrap() = StoreyBootstrap(collect(0.05:0.05:0.95), 0.1)
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::StoreyBootstrap)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::StoreyBootstrap)
     bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
 end
 
-function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = [0.05:0.05:0.95;], q::S = 0.1)
-    #validPValues(pValues)
+function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractVector{S} = [0.05:0.05:0.95;], q::S = 0.1)
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1. - lambda)
@@ -87,11 +88,11 @@ LeastSlope()
 immutable LeastSlope <: Pi0Estimator
 end
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::LeastSlope)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::LeastSlope)
     lsl_pi0(pValues)
 end
 
-function lsl_pi0{T<:AbstractFloat}(pValues::Vector{T})
+function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
     if !issorted(pValues)
         pValues = sort(pValues)
@@ -110,14 +111,14 @@ function lsl_pi0{T<:AbstractFloat}(pValues::Vector{T})
     return(pi0)
 end
 
-function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::Vector{T})
+function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::AbstractVector{T})
     s = (1 - pval[i]) / (n - i + 1)
     return s
 end
 
 ## alternative, vectorized version
 ## used for comparison and compactness
-function lsl_pi0_vec{T<:AbstractFloat}(pValues::Vector{T})
+function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
     if !issorted(pValues)
         pValues = sort(pValues)
@@ -144,7 +145,7 @@ end
 
 Oracle() = Oracle(1.0)
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::Oracle)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Oracle)
     pi0estimator.π0
 end
 
@@ -169,11 +170,11 @@ TwoStep() = TwoStep(0.05)
 
 TwoStep(α) = TwoStep(α, BenjaminiHochberg())
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::TwoStep)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::TwoStep)
     twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod)
+function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::T, method::PValueAdjustmentMethod)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)
@@ -189,7 +190,7 @@ RightBoundary(λseq)
 """
 immutable RightBoundary <: Pi0Estimator
     ## check range of arguments
-    λseq::Vector{Float64}
+    λseq::AbstractVector{Float64}
 
     RightBoundary(λseq) =
         isin(λseq, 0., 1.) ? new(λseq) : throw(DomainError())
@@ -198,12 +199,11 @@ end
 # λseq used in Liang, Nettleton 2012
 RightBoundary() = RightBoundary([collect(0.02:0.02:0.1); collect(0.15:0.05:0.95)])
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::RightBoundary)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::RightBoundary)
     rightboundary_pi0(pValues, pi0estimator.λseq)
 end
 
-function rightboundary_pi0{T<:AbstractFloat}(pValues::Vector{T}, λseq)
-    validPValues(pValues)
+function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq)
     n = length(pValues)
     if !issorted(λseq)
         λseq = sort(λseq)
@@ -246,7 +246,7 @@ CensoredBUM(γ0, λ) = CensoredBUM(γ0, λ, 1e-6, 10000)
 
 immutable CensoredBUMFit <: Pi0Fit
     π0::Float64
-    param::Vector{Float64}
+    param::AbstractVector{Float64}
     is_converged::Bool
 end
 
@@ -258,7 +258,7 @@ function fit(pi0estimator::CensoredBUM, pValues;
     return CensoredBUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::CensoredBUM)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::CensoredBUM)
     estimate_pi0(fit(pi0estimator, pValues))
 end
 
@@ -267,7 +267,7 @@ function estimate_pi0(pi0fit::CensoredBUMFit)
     return π0
 end
 
-function cbum_pi0{T<:AbstractFloat}(pValues::Vector{T}, γ0::T = 0.5, λ::T = 0.05,
+function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
                                     xtol::Float64 = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
@@ -358,7 +358,7 @@ BUM(y0::Float64) = BUM(y0, 1e-6, 10000)
 
 immutable BUMFit <: Pi0Fit
     π0::Float64
-    param::Vector{Float64}
+    param::AbstractVector{Float64}
     is_converged::Bool
 end
 
@@ -370,7 +370,7 @@ function fit(pi0estimator::BUM, pValues;
     return BUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::BUM)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::BUM)
     estimate_pi0(fit(pi0estimator, pValues))
 end
 
@@ -395,17 +395,17 @@ Reference: Langaas et al., 2005: section 4.3
 immutable FlatGrenander <: Pi0Estimator
 end
 
-function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::FlatGrenander)
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::FlatGrenander)
     flat_grenander_pi0(pValues)
 end
 
-function flat_grenander_pi0(pv::Vector{Float64})
+function flat_grenander_pi0(pv::AbstractVector{Float64})
     p, f, F = grenander(pv)
     pi0 = longest_constant_interval(p, f)
     return pi0
 end
 
-function longest_constant_interval(p::Vector{Float64}, f::Vector{Float64})
+function longest_constant_interval(p::AbstractVector{Float64}, f::AbstractVector{Float64})
     p = [0.0; p]
     f = [Inf; f]
     i2 = length(f)
