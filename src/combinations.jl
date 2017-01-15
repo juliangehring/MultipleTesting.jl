@@ -3,7 +3,7 @@
 
 ## Fisher combination ##
 
-type FisherCombination <: PValueCombinationMethod
+immutable FisherCombination <: PValueCombinationMethod
 end
 
 function combine{T<:AbstractFloat}(pValues::Vector{T}, method::FisherCombination)
@@ -27,7 +27,7 @@ end
 
 ## Logit combination ##
 
-type LogitCombination <: PValueCombinationMethod
+immutable LogitCombination <: PValueCombinationMethod
 end
 
 function combine{T<:AbstractFloat}(pValues::Vector{T}, method::LogitCombination)
@@ -53,7 +53,7 @@ end
 
 ## Stouffer combination ##
 
-type StoufferCombination <: PValueCombinationMethod
+immutable StoufferCombination <: PValueCombinationMethod
 end
 
 function combine{T<:AbstractFloat}(pValues::Vector{T}, method::StoufferCombination)
@@ -103,7 +103,7 @@ end
 
 ## Tippett combination ##
 
-type TippettCombination <: PValueCombinationMethod
+immutable TippettCombination <: PValueCombinationMethod
 end
 
 function combine{T<:AbstractFloat}(pValues::Vector{T}, method::TippettCombination)
@@ -123,7 +123,7 @@ end
 
 ## Generalised minimum combination ##
 
-type MinimumCombination <: PValueCombinationMethod
+immutable MinimumCombination <: PValueCombinationMethod
     method::PValueAdjustmentMethod
 end
 
