@@ -1,6 +1,6 @@
 # MultipleTesting
 
-The `MultipleTesting` package offers common algorithms for p-value adjustment and π0 estimation.
+The `MultipleTesting` package offers common algorithms for p-value adjustment and the estimation of the proportion π₀ of true null hypotheses.
 
 ![xkcd p-value guide](pvalues.png)
 
@@ -15,18 +15,18 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 
 ## Features
 
-### p-values adjustment
+### Adjustment of p-values
 
 * Bonferroni
 * Benjamini-Hochberg
-* Benjamini-Hochberg "Adaptive" with known π0 or π0 estimation method (see section below)
+* Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
 * Benjamini-Yekutieli
 * Benjamini-Liu
 * Hochberg
 * Holm
 * Hommel
 * Sidak
-* ForwardStop
+* Forward Stop
 
 ```julia
 adjust(pvals, Bonferroni())
@@ -43,17 +43,17 @@ adjust(pvals, ForwardStop())
 ```
 
 
-### π0 estimation
+### Estimation of π₀
 
 * Storey
 * Storey's closed-form bootstrap
-* Least SLope (LSL)
-* Two STep (TST)
+* Least Slope
+* Two Step
 * RightBoundary (Storey's estimate with dynamically chosen λ)
+* Beta-Uniform Mixture (BUM)
 * Censored BUM
-* BUM
-* FlatGrenander
-* Oracle for known π0
+* Flat Grenander
+* Oracle for known π₀
 
 ```julia
 estimate_pi0(pvals, Storey())
