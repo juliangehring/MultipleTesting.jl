@@ -1,7 +1,9 @@
 The MultipleTesting.jl package is licensed under the MIT "Expat" License:
 
-> Copyright (c) 2014-2016: Julian Gehring, Nikolaos Ignatiadis.
+> Copyright (c) 2014-2017: Julian Gehring, Nikolaos Ignatiadis.
+>
 > Copyright (c) 2014: Dirk Schumacher.
+>
 > Copyright (c) 2014: Andrew Tulloch.
 >
 > Permission is hereby granted, free of charge, to any person obtaining
