@@ -16,19 +16,13 @@ type PValues{T<:AbstractFloat} <: AbstractVector{T}
     min::T
     max::T
 
-    function PValues(values::AbstractVector{T}, min::T, max::T)
+    function(::Type{PValues}){T}(values::AbstractVector{T})
+        min, max = extrema(values)
         if min < 0.0 || max > 1.0
             throw(DomainError())
         end
-        new(values, min, max)
+        new{T}(values, min, max)
     end
-end
-
-PValues{T<:AbstractFloat}(values::AbstractVector{T}, min::T, max::T) = PValues{T}(values, min, max)
-
-function PValues{T<:AbstractFloat}(values::AbstractVector{T})
-    minp, maxp = extrema(values)
-    PValues(values, minp, maxp)
 end
 
 Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x)
