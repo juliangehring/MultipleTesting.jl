@@ -7,9 +7,9 @@ abstract Pi0Fit
 abstract PValueAdjustmentMethod
 
 
-## types ##
+## concrete types ##
 
-# PValues
+## PValues
 
 type PValues{T<:AbstractFloat} <: AbstractVector{T}
     values::AbstractVector{T}
@@ -31,7 +31,7 @@ function PValues{T<:AbstractFloat}(values::AbstractVector{T})
     PValues(values, minp, maxp)
 end
 
-Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x) # TODO define test
+Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x)
 
 Base.size(pv::PValues) = (length(pv.values), )
 Base.linearindexing{T<:PValues}(::Type{T}) = Base.LinearFast()
@@ -41,6 +41,4 @@ Base.values(pv::PValues) = pv.values
 Base.minimum(pv::PValues) = pv.min
 Base.maximum(pv::PValues) = pv.max
 Base.extrema(pv::PValues) = (minimum(pv), maximum(pv))
-# not essential: defaults to prod(size(pv))
-# store in extra field 'n'?
 Base.length(pv::PValues) = length(pv.values)

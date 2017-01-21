@@ -14,7 +14,7 @@ using Base.Test
         pv = PValues(vals)
 
         # basic vector functionality
-        @test values(pv) === vals
+        @test values(pv) ≡ vals
         @test sum(pv) == sum(vals)
         @test length(pv) == n
         @test ones(pv) == ones(eltype(vals), n)
@@ -26,6 +26,8 @@ using Base.Test
         pvt = PValues(vals, 0.0, 1.0)
         @test minimum(pvt) == 0.0
         @test maximum(pvt) == 1.0
+
+        @test convert(PValues, vals) == PValues(vals)
 
         for T in (Float16, Float32, Float64)
             vals = rand(T, n)
