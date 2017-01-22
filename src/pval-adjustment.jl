@@ -91,12 +91,8 @@ end
 function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
-    adjp = (1-(1-p)^(n-i+1))*(n-i+1)/n
-    if adjp*n/(n-i+1) > 1
-        return 0.0
-    else
-        return adjp
-    end
+    s = n-i+1
+    return (1 - (1-p)^s) * s / n
 end
 
 immutable Hochberg <: PValueAdjustmentMethod

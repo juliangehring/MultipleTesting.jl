@@ -1,5 +1,12 @@
 # MultipleTesting.jl News and Changes
 
+## Unreleased
+
+### Changes
+
+- Optimised Benjamini-Liu π0 estimator
+
+
 ## Version 0.1.0
 
 ### New Features
