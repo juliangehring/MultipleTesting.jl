@@ -47,6 +47,11 @@ using Base.Test
         @test_throws DomainError PValues([0.1, 0.2, 2.0])
         @test_throws DomainError PValues([0.1, 0.2, -2.0])
 
+        # TODO discuss expected behaviour in edge cases
+        @test_throws MethodError PValues(0.5)
+        @test_throws ArgumentError PValues([])
+        @test_throws TypeError PValues([0, 1])
+
     end
 
 end
