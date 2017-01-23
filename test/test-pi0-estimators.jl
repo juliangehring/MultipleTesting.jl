@@ -24,17 +24,7 @@ using StatsBase
     end
 
 
-    @testset "storey_pi0" begin
-
-        @test_throws MethodError storey_pi0()
-        @test storey_pi0(p, 0.2) ≈ 0.6
-        @test storey_pi0(p, 0.0) ≈ 1.0
-        #@test_throws DomainError storey_pi0(p, 1.) ## CHCK
-
-        p_unsort = unsort(p)
-        @test !issorted(p_unsort)
-        @test storey_pi0(p_unsort, 0.2) ≈ 0.6
-        @test !issorted(p_unsort)
+    @testset "Storey π0" begin
 
         @test issubtype(typeof(Storey()), Pi0Estimator)
         @test issubtype(typeof(Storey(0.5)), Pi0Estimator)
@@ -42,35 +32,37 @@ using StatsBase
         @test estimate_pi0(p, Storey(0.0)) ≈ 1.0
         @test estimate_pi0(p, Storey(1.0)) ≈ 1.0
 
+        p_unsort = unsort(p)
+        @test !issorted(p_unsort)
+        @test estimate_pi0(p_unsort, Storey(0.2)) ≈ 0.6
+        @test !issorted(p_unsort)
+
         @test_throws DomainError Storey(-0.1)
         @test_throws DomainError Storey(1.1)
+        #@test_throws DomainError estimate_pi0(p, Storey(1.0)) ## CHCK
 
     end
 
 
-    @testset "bootstrap_pi0" begin
+    @testset "StoreyBootstrap π0" begin
 
-        @test_throws MethodError bootstrap_pi0()
+        q = 0.1
 
-        @test bootstrap_pi0(p, lambdas) ≈ 0.6
-        @test bootstrap_pi0(p0, lambdas) ≈ 1.0
-        @test bootstrap_pi0(p1, lambdas) ≈ 0.15
+        @test issubtype(typeof(StoreyBootstrap()), Pi0Estimator)
+
+        @test estimate_pi0(p, StoreyBootstrap()) ≈ 0.6
+        @test estimate_pi0(p0, StoreyBootstrap()) ≈ 1.0
+        @test estimate_pi0(p1, StoreyBootstrap()) ≈ 0.15
+
+        @test estimate_pi0(p, StoreyBootstrap(lambdas, q)) ≈ 0.6
+        @test estimate_pi0(p0, StoreyBootstrap(lambdas, q)) ≈ 1.0
+        @test estimate_pi0(p1, StoreyBootstrap(lambdas, q)) ≈ 0.15
 
         ## unsorted lambdas
         lambdas_unsort = unsort(lambdas)
         @test !issorted(lambdas_unsort)
-        @test bootstrap_pi0(p, lambdas_unsort) ≈ 0.6
+        @test estimate_pi0(p, StoreyBootstrap(lambdas_unsort, q)) ≈ 0.6
         @test !issorted(lambdas_unsort)
-
-        ## with default 'lambdas'
-        @test bootstrap_pi0(p) ≈ 0.6
-        @test bootstrap_pi0(p0) ≈ 1.0
-        @test bootstrap_pi0(p1) ≈ 0.15
-
-        @test issubtype(typeof(StoreyBootstrap()), Pi0Estimator)
-        @test estimate_pi0(p, StoreyBootstrap()) ≈ 0.6
-        @test estimate_pi0(p0, StoreyBootstrap()) ≈ 1.0
-        @test estimate_pi0(p1, StoreyBootstrap()) ≈ 0.15
 
         @test_throws DomainError StoreyBootstrap(lambdas, -0.1)
         @test_throws DomainError StoreyBootstrap(lambdas, 1.1)
@@ -81,28 +73,26 @@ using StatsBase
     end
 
 
-    @testset "lsl_pi0" begin
-
-        @test lsl_pi0(p) ≈ MultipleTesting.lsl_pi0_vec(p)
-        @test lsl_pi0(p0) ≈ MultipleTesting.lsl_pi0_vec(p0)
-        @test lsl_pi0(p1) ≈ MultipleTesting.lsl_pi0_vec(p1)
-
-        ## checked against structSSI::pi0.lsl
-        @test isapprox( lsl_pi0(p), 0.62, atol = 1e-2 )
-        @test isapprox( lsl_pi0(p0), 1.0, atol = 1e-2 )
-        @test isapprox( lsl_pi0(p1), 0.16, atol = 1e-2 )
+    @testset "LeastSlope π0" begin
 
         @test issubtype(typeof(LeastSlope()), Pi0Estimator)
+
+        ## checked against structSSI::pi0.lsl
         @test isapprox( estimate_pi0(p, LeastSlope()), 0.62, atol = 1e-2 )
         @test isapprox( estimate_pi0(p0, LeastSlope()), 1.0, atol = 1e-2 )
         @test isapprox( estimate_pi0(p1, LeastSlope()), 0.16, atol = 1e-2 )
+
+        ## check against internal reference implementation
+        @test estimate_pi0(p, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p)
+        @test estimate_pi0(p0, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p0)
+        @test estimate_pi0(p1, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p1)
 
         @test_throws MethodError LeastSlope(0.1)
 
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test isapprox( lsl_pi0(p_unsort), 0.62, atol = 1e-2 )
+        @test isapprox( estimate_pi0(p_unsort, LeastSlope()), 0.62, atol = 1e-2 )
         @test !issorted(p_unsort)
 
         p_unsort = unsort(p)
@@ -113,7 +103,7 @@ using StatsBase
     end
 
 
-    @testset "oracle" begin
+    @testset "Oracle π0" begin
 
         @test estimate_pi0(p, Oracle(0.5)) == 0.5
         @test estimate_pi0(p0, Oracle(0.6)) == 0.6
@@ -122,35 +112,34 @@ using StatsBase
     end
 
 
-    @testset "twostep_pi0" begin
+    @testset "TwoStep π0" begin
 
         alpha = 0.05
 
-        ## checked against mutoss::TSBKY_pi0_est
-        @test twostep_pi0(p, alpha) ≈ 0.665
-        @test twostep_pi0(p0, alpha) ≈ 1.0
-        @test twostep_pi0(p1, alpha) ≈ 0.29
-
         @test issubtype(typeof(TwoStep(alpha)), Pi0Estimator)
+
+        ## checked against mutoss::TSBKY_pi0_est
         @test estimate_pi0(p, TwoStep()) ≈ 0.665
         @test estimate_pi0(p, TwoStep(alpha)) ≈ 0.665
         @test estimate_pi0(p0, TwoStep(alpha)) ≈ 1.0
         @test estimate_pi0(p1, TwoStep(alpha)) ≈ 0.29
+        @test estimate_pi0(p, TwoStep(alpha, BenjaminiHochberg())) ≈ 0.665
 
         @test estimate_pi0(p, TwoStep(0.1)) ≈ 0.63
         @test estimate_pi0(p, TwoStep(0.0)) ≈ 1.0
         @test estimate_pi0(p, TwoStep(1.0)) ≈ 0.415
+        @test estimate_pi0(p, TwoStep(0.1, BenjaminiHochberg())) ≈ 0.63
 
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test twostep_pi0(p_unsort, alpha) ≈ 0.665
+        @test estimate_pi0(p_unsort, TwoStep(alpha)) ≈ 0.665
         @test !issorted(p_unsort)
 
     end
 
 
-    @testset "rightboundary_pi0" begin
+    @testset "RightBoundary π0" begin
 
         # R code tested against (note this uses equidistant grid so we have to use
         # λseq as in Storey for comparison
@@ -166,46 +155,45 @@ using StatsBase
         # [1] 0.5714286
         # ```
 
-        # only eps because pi0 package uses right closed histograms
-        @test isapprox( rightboundary_pi0(p, lambdas), 0.5714286, atol = 0.02 )
-        @test rightboundary_pi0(p0, lambdas) ≈ 1.0
-        @test isapprox( rightboundary_pi0(p1, lambdas), 0.1428571, atol = 1e-7 )
-
-        @test rightboundary_pi0(p, lambdas) ≈ rightboundary_pi0(p, unsort(lambdas))
-
+        @test issubtype(typeof(RightBoundary()), Pi0Estimator)
         @test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
+
+        # only eps because pi0 package uses right closed histograms
         @test isapprox( estimate_pi0(p, RightBoundary(lambdas)), 0.5714286, atol = 0.02 )
         @test estimate_pi0(p0, RightBoundary(lambdas)) ≈ 1.0
         @test isapprox( estimate_pi0(p1, RightBoundary(lambdas)), 0.1428571, atol = 1e-7 )
 
+        @test estimate_pi0(p, RightBoundary(lambdas)) ≈ estimate_pi0(p, RightBoundary(unsort(lambdas)))
+
         # not checked against R implementation but should hold (check for default lambda grid)
         @test estimate_pi0(p0, RightBoundary()) ≈ 1.0
 
-        @test issubtype(typeof(RightBoundary()), Pi0Estimator)
-
         p_unsort = unsort(p1)
         @test !issorted(p_unsort)
-        @test isapprox( rightboundary_pi0(p_unsort, lambdas), 0.1428571, atol = 1e-7 )
+        @test isapprox( estimate_pi0(p_unsort, RightBoundary(lambdas)), 0.1428571, atol = 1e-7 )
         @test !issorted(p_unsort)
 
     end
 
 
-    @testset "censoredBUM_pi0" begin
+    @testset "CensoredBUM π0" begin
 
-        @test estimate_pi0(p, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p)[1]
+        @test issubtype(typeof(CensoredBUM()), Pi0Estimator)
+        @test issubtype(typeof(CensoredBUM(0.2, 0.1)), Pi0Estimator)
 
         @test isapprox( estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5 )
         @test isapprox( estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5 )
         @test isapprox( estimate_pi0(p1, CensoredBUM()), 0.11608, atol = 2e-5 )
         @test isapprox( estimate_pi0(ones(50), CensoredBUM()), 1.0, atol = 1e-5 )
 
+        # test against internal reference implementation
+        # p0 case is not handled well by naive implementation
+        @test estimate_pi0(p, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p)[1]
+        @test estimate_pi0(p1, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p1)[1]
+
         ## test case that does not converge
         stderr_dump = redirect_stderr()
         @test isnan(estimate_pi0(p, CensoredBUM(0.5, 0.05, 1e-6, 2)))
-
-        @test issubtype(typeof(CensoredBUM()), Pi0Estimator)
-        @test issubtype(typeof(CensoredBUM(0.2, 0.1)), Pi0Estimator)
 
         @test_throws DomainError CensoredBUM(-0.5, 0.05)
         @test_throws DomainError CensoredBUM(1.5, 0.05)
@@ -231,7 +219,7 @@ using StatsBase
     end
 
 
-    @testset "BUM_pi0" begin
+    @testset "BUM π0" begin
 
         @test isapprox( estimate_pi0(p, BUM(0.5)), 0.55528, atol = 1e-5 )
         @test isapprox( estimate_pi0(p, BUM()), 0.55528, atol = 1e-5 )
@@ -249,9 +237,7 @@ using StatsBase
     end
 
 
-    @testset "Flat Grenander" begin
-
-        FlatGrenander = MultipleTesting.FlatGrenander
+    @testset "FlatGrenander π0" begin
 
         @test issubtype(typeof(FlatGrenander()), Pi0Estimator)
 
@@ -259,6 +245,7 @@ using StatsBase
         @test estimate_pi0(pu, FlatGrenander()) ≈ 1.0
         @test estimate_pi0(pu.^0.5, FlatGrenander()) ≈ 1.0
 
+        # TODO needs more precise test cases
         @test estimate_pi0(p0, FlatGrenander()) ≈ 1.0
         @test estimate_pi0(p1, FlatGrenander()) < 0.15
         @test isapprox( estimate_pi0(p, FlatGrenander()), pi0, atol = 0.1)

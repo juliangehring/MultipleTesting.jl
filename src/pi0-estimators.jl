@@ -68,7 +68,7 @@ end
 function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::Vector{T}, lambda::Vector{S} = [0.05:0.05:0.95;], q::S = 0.1)
     #validPValues(pValues)
     n = length(pValues)
-    w = Int[sum(pValues .>= l) for l in lambda] ## TODO: check >= or >
+    w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1. - lambda)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
@@ -160,18 +160,20 @@ Reference: Benjamini, Krieger and Yekutieli, 2006
 """
 immutable TwoStep <: Pi0Estimator
     α::AbstractFloat
-    ## method::PValueAdjustmentMethod
+    method::PValueAdjustmentMethod
 
-    TwoStep(α) = isin(α, 0., 1.) ? new(α) : throw(DomainError())
+    TwoStep(α, method) = isin(α, 0., 1.) ? new(α, method) : throw(DomainError())
 end
 
 TwoStep() = TwoStep(0.05)
 
+TwoStep(α) = TwoStep(α, BenjaminiHochberg())
+
 function estimate_pi0{T<:AbstractFloat}(pValues::Vector{T}, pi0estimator::TwoStep)
-    twostep_pi0(pValues, pi0estimator.α)
+    twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod = BenjaminiHochberg())
+function twostep_pi0{T<:AbstractFloat}(pValues::Vector{T}, alpha::T, method::PValueAdjustmentMethod)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)

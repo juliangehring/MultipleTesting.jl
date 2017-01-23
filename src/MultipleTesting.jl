@@ -14,12 +14,6 @@ import StatsBase: fit
 using Distributions
 
 export
-    storey_pi0,
-    bootstrap_pi0,
-    lsl_pi0,
-    twostep_pi0,
-    rightboundary_pi0,
-    flat_grenander_pi0,
     adjust,
     PValueAdjustmentMethod,
     Bonferroni,
@@ -32,15 +26,6 @@ export
     Hommel,
     Sidak,
     ForwardStop,
-    bonferroni,
-    benjamini_hochberg,
-    benjamini_yekutieli,
-    benjamini_liu,
-    holm,
-    hommel,
-    hochberg,
-    sidak,
-    forwardstop,
     qValues,
     estimate_pi0,
     Pi0Estimator,
