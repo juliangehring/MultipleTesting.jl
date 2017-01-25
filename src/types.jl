@@ -40,3 +40,18 @@ Base.minimum(pv::PValues) = pv.min
 Base.maximum(pv::PValues) = pv.max
 Base.extrema(pv::PValues) = (minimum(pv), maximum(pv))
 Base.length(pv::PValues) = length(pv.values)
+
+
+## ZScores
+
+type ZScores{T<:AbstractFloat} <: AbstractVector{T}
+    values::AbstractVector{T}
+end
+
+Base.convert{T<:AbstractFloat}(::Type{ZScores}, x::AbstractVector{T}) = ZScores(x)
+
+Base.size(zs::ZScores) = (length(zs.values), )
+Base.linearindexing{T<:ZScores}(::Type{T}) = Base.LinearFast()
+Base.getindex(zs::ZScores, i::Int) = zs.values[i]
+
+Base.values(zs::ZScores) = zs.values

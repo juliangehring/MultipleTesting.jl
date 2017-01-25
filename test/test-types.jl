@@ -75,6 +75,41 @@ using Base.Test
 
     end
 
+
+    @testset "ZScores type" begin
+
+        n = 10
+        vals = randn(n)
+
+        zs = ZScores(vals)
+
+        # basic vector functionality
+        @test values(zs) ≡ vals
+        @test sum(zs) == sum(vals)
+        @test length(zs) == n
+        @test ones(zs) == ones(eltype(vals), n)
+        @test minimum(zs) == minimum(vals)
+        @test maximum(zs) == maximum(vals)
+        @test extrema(zs) == extrema(vals)
+        @test [x for x in zs] == vals
+        @test convert(ZScores, vals) == ZScores(vals)
+
+        # parametric type that keeps input float type
+        for T in (Float16, Float32, Float64)
+            vals = randn(T, n)
+            zs = ZScores(vals)
+            @test eltype(zs) == T
+            @test eltype(values(zs)) == T
+        end
+
+        # TODO discuss expected behaviour in edge cases
+        @test_throws MethodError ZScores(0.1)
+        # differ from PValues behaviour
+        @test_throws MethodError ZScores([])
+        @test_throws MethodError ZScores(rand(Int, n))
+
+    end
+
 end
 
 end

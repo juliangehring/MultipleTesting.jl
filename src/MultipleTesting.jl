@@ -53,7 +53,9 @@ export
     TippettCombination,
     SimesCombination,
     WilkinsonCombination,
-    MinimumCombination
+    MinimumCombination,
+    PValues,
+    ZScores
 
 
 include("types.jl")
