@@ -32,7 +32,7 @@ end
 reorder(pv::PValues) = reorder(values(pv))
 
 
-function validPValues{T<:AbstractFloat}(x::AbstractVector{T})
+function valid_pvalues{T<:AbstractFloat}(x::AbstractVector{T})
     if !isin(x)
         throw(DomainError())
     end

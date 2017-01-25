@@ -22,22 +22,22 @@ using Base.Test
     end
 
 
-    @testset "validPValues" begin
+    @testset "valid_pvalues" begin
 
-        validPValues = MultipleTesting.validPValues
+        valid_pvalues = MultipleTesting.valid_pvalues
 
         # test against invalid vector inputs
-        @test_throws DomainError validPValues([-1.])
-        @test_throws DomainError validPValues([2.])
-        @test_throws DomainError validPValues([0.1, 0.2, 1.2])
-        @test_throws DomainError validPValues([0.1, -0.3, 0.2])
+        @test_throws DomainError valid_pvalues([-1.])
+        @test_throws DomainError valid_pvalues([2.])
+        @test_throws DomainError valid_pvalues([0.1, 0.2, 1.2])
+        @test_throws DomainError valid_pvalues([0.1, -0.3, 0.2])
 
         # test against valid vector inputs
-        @test validPValues([0.0]) == nothing
-        @test validPValues([1.0]) == nothing
-        @test validPValues(rand(1)) == nothing
-        @test validPValues([0.1, 0.2, 0.9]) == nothing
-        @test validPValues(rand(5)) == nothing
+        @test valid_pvalues([0.0]) == nothing
+        @test valid_pvalues([1.0]) == nothing
+        @test valid_pvalues(rand(1)) == nothing
+        @test valid_pvalues([0.1, 0.2, 0.9]) == nothing
+        @test valid_pvalues(rand(5)) == nothing
 
     end
 

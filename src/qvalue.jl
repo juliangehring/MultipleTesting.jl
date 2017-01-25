@@ -1,8 +1,8 @@
 ## qValues ##
 
 function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::T, pfdr::Bool = false)
-    validPValues(pValues)
-    validPValues([pi0])
+    valid_pvalues(pValues)
+    valid_pvalues([pi0])
     n = length(pValues)
     u = sortperm(pValues)
     v = competerank(pValues) ## ties with 'min'

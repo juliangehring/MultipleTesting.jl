@@ -46,7 +46,7 @@ function adjust(pvals::PValues, method::BenjaminiHochbergAdaptive)
 end
 
 function benjamini_hochberg{T<:AbstractFloat}(pValues::PValues, pi0::T)
-    validPValues([pi0])
+    valid_pvalues([pi0])
     benjamini_hochberg(pValues) .* pi0
 end
 
