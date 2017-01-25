@@ -47,8 +47,9 @@ using Base.Test
 
         # TODO discuss expected behaviour in edge cases
         @test_throws MethodError PValues(0.5)
-        @test_throws ArgumentError PValues([])
         @test_throws TypeError PValues([0, 1])
+        @test_throws ArgumentError PValues([]) # Any
+        @test_throws ArgumentError PValues(Float64[]) # Float
 
     end
 
@@ -103,10 +104,11 @@ using Base.Test
         end
 
         # TODO discuss expected behaviour in edge cases
-        @test_throws MethodError ZScores(0.1)
-        # differ from PValues behaviour
-        @test_throws MethodError ZScores([])
-        @test_throws MethodError ZScores(rand(Int, n))
+        @test_throws MethodError ZScores(0.5)
+        @test_throws TypeError ZScores([0, 1])
+        # differences from PValues behaviour
+        @test_throws TypeError ZScores([]) # Any
+        @test isa( ZScores(Float64[]), ZScores ) # Float
 
     end
 

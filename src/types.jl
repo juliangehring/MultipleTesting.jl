@@ -46,6 +46,10 @@ Base.length(pv::PValues) = length(pv.values)
 
 type ZScores{T<:AbstractFloat} <: AbstractVector{T}
     values::AbstractVector{T}
+
+    function(::Type{ZScores}){T}(values::AbstractVector{T})
+        new{T}(values)
+    end
 end
 
 Base.convert{T<:AbstractFloat}(::Type{ZScores}, x::AbstractVector{T}) = ZScores(x)
