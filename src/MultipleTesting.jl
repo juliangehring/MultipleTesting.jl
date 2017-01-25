@@ -42,7 +42,8 @@ export
     FlatGrenander,
     isin,
     fit,
-    BetaUniformMixtureModel
+    BetaUniformMixtureModel,
+    PValues
 
 include("types.jl")
 include("utils.jl")
