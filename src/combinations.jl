@@ -10,7 +10,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::FisherCombination
     fisher_combination(pValues)
 end
 
-function fisher_combination(pValues)
+function fisher_combination{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     k = length(pValues)
     if k == 1
@@ -34,7 +34,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::LogitCombination)
     logit_combination(pValues)
 end
 
-function logit_combination(pValues)
+function logit_combination{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     k = length(pValues)
     if k == 1
@@ -68,7 +68,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, weights::WeightVec, metho
     stouffer_combination(pValues, values(weights))
 end
 
-function stouffer_combination(pValues)
+function stouffer_combination{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     k = length(pValues)
     if k == 1
@@ -84,7 +84,7 @@ function stouffer_combination(pValues)
     return p
 end
 
-function stouffer_combination(pValues, weights)
+function stouffer_combination{T<:AbstractFloat}(pValues::Vector{T}, weights::Vector{T})
     validPValues(pValues)
     k = length(pValues)
     if k == 1
@@ -110,7 +110,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::TippettCombinatio
     tippett_combination(pValues)
 end
 
-function tippett_combination(pValues)
+function tippett_combination{T<:AbstractFloat}(pValues::Vector{T})
     validPValues(pValues)
     k = length(pValues)
     if k == 1
@@ -131,7 +131,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::MinimumCombinatio
     minimum_combination(pValues, method.method)
 end
 
-function minimum_combination(pValues, pAdjustMethod::PValueAdjustmentMethod)
+function minimum_combination{T<:AbstractFloat}(pValues::Vector{T}, pAdjustMethod::PValueAdjustmentMethod)
     validPValues(pValues)
     padj = adjust(pValues, pAdjustMethod)
     p = minimum(padj)
