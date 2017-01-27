@@ -73,6 +73,7 @@ using Base.Test
         @test_throws DomainError combine(p2_invalid, sidak_min_method)
 
         @test combine(p_single, sidak_min_method) == p_single[1]
+
     end
 
 

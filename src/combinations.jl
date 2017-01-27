@@ -133,6 +133,10 @@ end
 
 function minimum_combination{T<:AbstractFloat}(pValues::Vector{T}, pAdjustMethod::PValueAdjustmentMethod)
     validPValues(pValues)
+    k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
     padj = adjust(pValues, pAdjustMethod)
     p = minimum(padj)
     return p
