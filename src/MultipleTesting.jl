@@ -49,6 +49,7 @@ export
     LogitCombination,
     StoufferCombination,
     TippettCombination,
+    WilkinsonCombination,
     MinimumCombination
 
 include("types.jl")

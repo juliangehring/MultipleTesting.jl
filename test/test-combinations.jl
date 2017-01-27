@@ -5,6 +5,7 @@ using MultipleTesting
 using StatsBase
 using Base.Test
 
+
 @testset "p-Value combinations" begin
 
     p1 = [0.01, 0.05, 0.2, 0.8]
@@ -51,6 +52,42 @@ using Base.Test
         @test_throws DomainError combine(p2_invalid, method())
 
         @test combine(p_single, method()) == p_single[1]
+
+    end
+
+
+    @testset "Wilkinson combination" begin
+
+        method = WilkinsonCombination(1)
+
+        @test_throws MethodError WilkinsonCombination()  # TODO default value
+        @test_throws ArgumentError WilkinsonCombination(0)
+
+        @test issubtype(typeof(method), PValueCombinationMethod)
+
+        # Wilkinson with rank = 1 is Tippett's method
+        ref = ref1[TippettCombination]
+        @test isapprox( combine(p1, method), ref, atol = 1e-8)
+
+        ref = ref2[TippettCombination]
+        @test isapprox( combine(p2, method), ref, atol = 1e-8)
+
+        @test_throws ArgumentError combine(rand(5), WilkinsonCombination(6))
+
+        @test_throws DomainError combine(p1_invalid, method)
+        @test_throws DomainError combine(p2_invalid, method)
+
+        @test combine(p_single, method) == p_single[1]
+
+        # tested against metap::wilkinsonp(p, r, alpha = 1e-16)$p
+        ref = [0.03940399, 0.01401875, 0.0272, 0.4096]
+        p = [combine(p1, WilkinsonCombination(r)) for r in 1:length(p1)]
+        @test isapprox( p, ref, atol = 1e-7 )
+
+        ref = [7.997201e-04, 2.788821e-05, 5.393332e-05, 3.717514e-04,
+               4.316500e-04, 1.231360e-03, 8.519680e-03, 1.001129e-01]
+        p = [combine(p2, WilkinsonCombination(r)) for r in 1:length(p2)]
+        @test isapprox( p, ref, atol = 1e-7 )
 
     end
 

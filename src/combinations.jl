@@ -121,6 +121,38 @@ function tippett_combination{T<:AbstractFloat}(pValues::Vector{T})
 end
 
 
+## Wilkinson combination ##
+
+immutable WilkinsonCombination <: PValueCombinationMethod
+    rank::Int
+
+    function WilkinsonCombination(rank)
+        if rank < 1
+            throw(ArgumentError("Rank must be positive."))
+        end
+        return new(rank)
+    end
+end
+
+function combine{T<:AbstractFloat}(pValues::Vector{T}, method::WilkinsonCombination)
+    wilkinson_combination(pValues, method.rank)
+end
+
+function wilkinson_combination{T<:AbstractFloat}(pValues::Vector{T}, rank::Int)
+    validPValues(pValues)
+    k = length(pValues)
+    if rank < 1 || rank > k
+        throw(ArgumentError("Rank must be in 1,..,$(k)"))
+    end
+    if k == 1
+        return pValues[1]
+    end
+    p_rank = sort(pValues)[rank]
+    p = cdf(Beta(rank, k-rank+1), p_rank)
+    return p
+end
+
+
 ## Generalised minimum combination ##
 
 immutable MinimumCombination <: PValueCombinationMethod
