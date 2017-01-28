@@ -121,6 +121,27 @@ function tippett_combination{T<:AbstractFloat}(pValues::Vector{T})
 end
 
 
+## Simes combination ##
+
+immutable SimesCombination <: PValueCombinationMethod
+end
+
+function combine{T<:AbstractFloat}(pValues::Vector{T}, method::SimesCombination)
+    simes_combination(pValues)
+end
+
+function simes_combination{T<:AbstractFloat}(pValues::Vector{T})
+    validPValues(pValues)
+    k = length(pValues)
+    if k == 1
+        return pValues[1]
+    end
+    pValues = sort(pValues)  # faster than `sortperm`
+    p = k * minimum(pValues./(1:k))
+    return p
+end
+
+
 ## Wilkinson combination ##
 
 immutable WilkinsonCombination <: PValueCombinationMethod

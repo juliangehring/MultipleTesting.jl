@@ -49,6 +49,7 @@ export
     LogitCombination,
     StoufferCombination,
     TippettCombination,
+    SimesCombination,
     WilkinsonCombination,
     MinimumCombination
 
