@@ -1,6 +1,6 @@
 ## utility functions ##
 
-function stepup!{T<:AbstractFloat}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
+function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
     sortedPValues[n] *= multiplier(0, n)
     for i in 1:(n-1)
         sortedPValues[n-i] = min(sortedPValues[n-i+1], sortedPValues[n-i] * multiplier(i, n))
@@ -9,13 +9,13 @@ function stepup!{T<:AbstractFloat}(sortedPValues::Vector{T}, multiplier::Functio
 end
 
 # multiplier stepdown
-function stepdown!{T<:AbstractFloat}(sortedPValues::Vector{T}, multiplier::Function, n::Integer = length(sortedPValues))
+function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
   stepfun(p::T, i::Int, n::Int) = p * multiplier(i, n)
   general_stepdown!(sortedPValues, stepfun, n)
   return sortedPValues
 end
 
-function general_stepdown!{T<:AbstractFloat}(sortedPValues::Vector{T}, stepfun::Function, n::Integer = length(sortedPValues))
+function general_stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, n::Integer = length(sortedPValues))
     sortedPValues[1] = stepfun(sortedPValues[1], 1, n)
     for i in 2:n
         sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, n))
@@ -23,15 +23,16 @@ function general_stepdown!{T<:AbstractFloat}(sortedPValues::Vector{T}, stepfun::
     return sortedPValues
 end
 
-
-function reorder{T<:Number}(values::Vector{T})
+function reorder{T<:Real}(values::AbstractVector{T})
     newOrder = sortperm(values)
     oldOrder = sortperm(newOrder)
     return newOrder, oldOrder
 end
 
+reorder(pv::PValues) = reorder(values(pv))
 
-function validPValues{T<:AbstractFloat}(x::Vector{T})
+
+function valid_pvalues{T<:AbstractFloat}(x::AbstractVector{T})
     if !isin(x)
         throw(DomainError())
     end
@@ -42,13 +43,13 @@ function isin(x::Real, lower::Real = 0., upper::Real = 1.)
     x >= lower && x <= upper
 end
 
-function isin{T<:Real}(x::Vector{T}, lower::Real = 0., upper::Real = 1.)
+function isin{T<:Real}(x::AbstractVector{T}, lower::Real = 0., upper::Real = 1.)
     ex = extrema(x)
     ex[1] >= lower && ex[2] <= upper
 end
 
 
-function isotonic_regression_reference{T<:AbstractFloat}(y::Vector{T}, w::Vector{T})
+function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T}, w::AbstractVector{T})
     #todo: ignore zero weights
     y = copy(y)
     w = copy(w)
@@ -72,12 +73,12 @@ function isotonic_regression_reference{T<:AbstractFloat}(y::Vector{T}, w::Vector
     return yisotonic
 end
 
-function isotonic_regression_reference{T<:AbstractFloat}(y::Vector{T})
+function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T})
     isotonic_regression_reference(y, ones(y))
 end
 
 
-function isotonic_regression{T<:AbstractFloat}(y::Vector{T}, weights::Vector{T})
+function isotonic_regression{T<:AbstractFloat}(y::AbstractVector{T}, weights::AbstractVector{T})
     n = length(y)
     if n <= 1
         return y
@@ -118,12 +119,12 @@ function isotonic_regression{T<:AbstractFloat}(y::Vector{T}, weights::Vector{T})
     return y
 end
 
-function isotonic_regression{T<:AbstractFloat}(y::Vector{T})
+function isotonic_regression{T<:AbstractFloat}(y::AbstractVector{T})
     isotonic_regression(y, ones(y))
 end
 
 
-function grenander{T<:AbstractFloat}(pv::Vector{T})
+function grenander{T<:AbstractFloat}(pv::AbstractVector{T})
     pv_sorted = sort(pv)
     ## ecdf that handles duplicated values
     pv_sorted_unique, counts = rle(pv_sorted)

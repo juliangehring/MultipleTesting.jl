@@ -11,7 +11,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::FisherCombination
 end
 
 function fisher_combination{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -35,7 +35,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::LogitCombination)
 end
 
 function logit_combination{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -69,7 +69,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, weights::WeightVec, metho
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -85,7 +85,7 @@ function stouffer_combination{T<:AbstractFloat}(pValues::Vector{T})
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::Vector{T}, weights::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -111,7 +111,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::TippettCombinatio
 end
 
 function tippett_combination{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -131,7 +131,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::SimesCombination)
 end
 
 function simes_combination{T<:AbstractFloat}(pValues::Vector{T})
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -160,7 +160,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::WilkinsonCombinat
 end
 
 function wilkinson_combination{T<:AbstractFloat}(pValues::Vector{T}, rank::Int)
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if rank < 1 || rank > k
         throw(ArgumentError("Rank must be in 1,..,$(k)"))
@@ -185,7 +185,7 @@ function combine{T<:AbstractFloat}(pValues::Vector{T}, method::MinimumCombinatio
 end
 
 function minimum_combination{T<:AbstractFloat}(pValues::Vector{T}, pAdjustMethod::PValueAdjustmentMethod)
-    validPValues(pValues)
+    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]

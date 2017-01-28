@@ -14,6 +14,7 @@ import StatsBase: fit
 using Distributions
 
 export
+    PValues,
     adjust,
     PValueAdjustmentMethod,
     Bonferroni,
@@ -52,6 +53,7 @@ export
     SimesCombination,
     WilkinsonCombination,
     MinimumCombination
+
 
 include("types.jl")
 include("utils.jl")
