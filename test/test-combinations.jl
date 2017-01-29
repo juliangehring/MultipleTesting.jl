@@ -50,14 +50,19 @@ using Base.Test
         @test issubtype(typeof(method()), PValueCombinationMethod)
 
         ref = ref1[method]
+        @test isapprox( combine(PValues(p1), method()), ref, atol = 1e-8)
         @test isapprox( combine(p1, method()), ref, atol = 1e-8)
 
         ref = ref2[method]
+        @test isapprox( combine(PValues(p2), method()), ref, atol = 1e-8)
         @test isapprox( combine(p2, method()), ref, atol = 1e-8)
 
+        @test_throws DomainError combine(PValues(p1_invalid), method())
         @test_throws DomainError combine(p1_invalid, method())
+        @test_throws DomainError combine(PValues(p2_invalid), method())
         @test_throws DomainError combine(p2_invalid, method())
 
+        @test combine(PValues(p_single), method()) == p_single[1]
         @test combine(p_single, method()) == p_single[1]
 
     end
@@ -74,21 +79,27 @@ using Base.Test
 
         # Wilkinson with rank = 1 is Tippett's method
         ref = ref1[TippettCombination]
+        @test isapprox( combine(PValues(p1), method), ref, atol = 1e-8)
         @test isapprox( combine(p1, method), ref, atol = 1e-8)
 
         ref = ref2[TippettCombination]
+        @test isapprox( combine(PValues(p2), method), ref, atol = 1e-8)
         @test isapprox( combine(p2, method), ref, atol = 1e-8)
 
+        @test_throws ArgumentError combine(PValues(rand(5)), WilkinsonCombination(6))
         @test_throws ArgumentError combine(rand(5), WilkinsonCombination(6))
 
+        @test_throws DomainError combine(PValues(p1_invalid), method)
         @test_throws DomainError combine(p1_invalid, method)
+        @test_throws DomainError combine(PValues(p2_invalid), method)
         @test_throws DomainError combine(p2_invalid, method)
 
+        @test combine(PValues(p_single), method) == p_single[1]
         @test combine(p_single, method) == p_single[1]
 
         # tested against metap::wilkinsonp(p, r, alpha = 1e-16)$p
         ref = [0.03940399, 0.01401875, 0.0272, 0.4096]
-        p = [combine(p1, WilkinsonCombination(r)) for r in 1:length(p1)]
+        p = [combine(PValues(p1), WilkinsonCombination(r)) for r in 1:length(p1)]
         @test isapprox( p, ref, atol = 1e-7 )
 
         ref = [7.997201e-04, 2.788821e-05, 5.393332e-05, 3.717514e-04,
@@ -108,12 +119,17 @@ using Base.Test
 
         @test issubtype(typeof(padj_comb), PValueCombinationMethod)
 
+        @test isapprox( combine(PValues(p1), padj_comb), ref1[p_combination], atol = 1e-8)
         @test isapprox( combine(p1, padj_comb), ref1[p_combination], atol = 1e-8)
+        @test isapprox( combine(PValues(p2), padj_comb), ref2[p_combination], atol = 1e-8)
         @test isapprox( combine(p2, padj_comb), ref2[p_combination], atol = 1e-8)
 
+        @test_throws DomainError combine(PValues(p1_invalid), padj_comb)
         @test_throws DomainError combine(p1_invalid, padj_comb)
+        @test_throws DomainError combine(PValues(p2_invalid), padj_comb)
         @test_throws DomainError combine(p2_invalid, padj_comb)
 
+        @test combine(PValues(p_single), padj_comb) == p_single[1]
         @test combine(p_single, padj_comb) == p_single[1]
 
     end
@@ -129,10 +145,12 @@ using Base.Test
         ref = ref1[method]
         @test isapprox( combine(p1, ones(p1), method()), ref, atol = 1e-8)
         @test isapprox( combine(p1, weights(ones(p1)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p1), weights(ones(p1)), method()), ref, atol = 1e-8)
 
         ref = ref2[method]
         @test isapprox( combine(p2, ones(p2), method()), ref, atol = 1e-8)
         @test isapprox( combine(p2, weights(ones(p2)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p2), weights(ones(p2)), method()), ref, atol = 1e-8)
 
         ref = ref3[method]
         w3norm = w3 ./ sum(w3)
