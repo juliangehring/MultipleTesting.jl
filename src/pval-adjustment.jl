@@ -1,17 +1,23 @@
 ## p-value adjustment methods ##
 
+# promotion from float vectors to PValues type
+
 adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::AbstractVector{T}, method::M) = adjust(PValues(pvals), method)
 
+
+# Bonferroni
 
 immutable Bonferroni <: PValueAdjustmentMethod
 end
 
 adjust(pvals::PValues, method::Bonferroni) = bonferroni(pvals)
 
-
 function bonferroni(pValues::PValues)
-    return min(pValues * length(pValues), 1.)
+    return min(pValues * length(pValues), 1)
 end
+
+
+# Benjamini-Hochberg
 
 immutable BenjaminiHochberg <: PValueAdjustmentMethod
 end
@@ -26,10 +32,13 @@ function benjamini_hochberg(pValues::PValues)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, bejamini_hochberg_multiplier, n)
-    min(sortedPValues[originalOrder], 1.)
+    return min(sortedPValues[originalOrder], 1)
 end
 
 bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
+
+
+# Benjamini-Hochberg Adaptive
 
 immutable BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
     pi0estimator::Pi0Estimator
@@ -42,14 +51,15 @@ BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
 function adjust(pvals::PValues, method::BenjaminiHochbergAdaptive)
   π0 = estimate_pi0(pvals, method.pi0estimator)
-  benjamini_hochberg(pvals, π0)
+  return benjamini_hochberg(pvals, π0)
 end
 
-function benjamini_hochberg{T<:AbstractFloat}(pValues::PValues, pi0::T)
-    valid_pvalues([pi0])
-    benjamini_hochberg(pValues) .* pi0
+function benjamini_hochberg{T<:AbstractFloat}(pValues::PValues, π0::T)
+    return benjamini_hochberg(pValues) * π0
 end
 
+
+# Benjamini-Yekutieli
 
 immutable BenjaminiYekutieli <: PValueAdjustmentMethod
 end
@@ -64,13 +74,15 @@ function benjamini_yekutieli(pValues::PValues)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, benjamini_yekutieli_multiplier, n)
-    min(sortedPValues[originalOrder], 1.)
+    return min(sortedPValues[originalOrder], 1)
 end
 
 function benjamini_yekutieli_multiplier(i::Int, n::Int)
-    c = sum([1/i for i in 1:n])
-    return ((n*c)/(n-i))
+    return sum(1./(1:n)) * n/ (n-i)
 end
+
+
+# Benjamini-Liu
 
 immutable BenjaminiLiu <: PValueAdjustmentMethod
 end
@@ -85,7 +97,7 @@ function benjamini_liu(pValues::PValues)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     general_stepdown!(sortedPValues, benjamini_liu_step, n)
-    min(sortedPValues[originalOrder], 1.)
+    return min(sortedPValues[originalOrder], 1)
 end
 
 function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
@@ -94,6 +106,9 @@ function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
     s = n-i+1
     return (1 - (1-p)^s) * s / n
 end
+
+
+# Hochberg
 
 immutable Hochberg <: PValueAdjustmentMethod
 end
@@ -108,11 +123,13 @@ function hochberg(pValues::PValues)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, hochberg_multiplier, n)
-    min(sortedPValues[originalOrder], 1.)
+    return min(sortedPValues[originalOrder], 1)
 end
 
 hochberg_multiplier(i::Int, n::Int) = (i+1)
 
+
+# Holm
 
 immutable Holm <: PValueAdjustmentMethod
 end
@@ -127,11 +144,13 @@ function holm(pValues::PValues)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepdown!(sortedPValues, holm_multiplier, n)
-    min(sortedPValues[originalOrder], 1.)
+    return min(sortedPValues[originalOrder], 1)
 end
 
 holm_multiplier(i::Int, n::Int) = (n-i+1)
 
+
+# Hommel
 
 immutable Hommel <: PValueAdjustmentMethod
 end
@@ -155,9 +174,11 @@ function hommel(pValues::PValues)
         q[i2] = q[n-j+1]
         pa = max(pa, q)
     end
-    max(pa, sortedPValues)[originalOrder]
+    return max(pa, sortedPValues)[originalOrder]
 end
 
+
+# Sidak
 
 immutable Sidak <: PValueAdjustmentMethod
 end
@@ -165,8 +186,11 @@ end
 adjust(pvals::PValues, method::Sidak) = sidak(pvals)
 
 function sidak(pValues::PValues)
-    return min(1-(1-pValues).^length(pValues), 1.)
+    return min(1-(1-pValues).^length(pValues), 1)
 end
+
+
+# Forward Stop
 
 immutable ForwardStop <: PValueAdjustmentMethod
 end
@@ -177,7 +201,7 @@ function forwardstop(pvalues::PValues)
     n = length(pvalues)
     logsums = -cumsum(log(1-pvalues))
     stepup!(logsums, forwardstop_multiplier, n)
-    max(min(logsums, 1.), 0.)
+    return max(min(logsums, 1), 0)
 end
 
 forwardstop_multiplier(i::Int, n::Int) = 1/(n-i)
