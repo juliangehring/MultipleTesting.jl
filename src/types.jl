@@ -6,6 +6,9 @@ abstract Pi0Fit
 
 abstract PValueAdjustmentMethod
 
+# consistent naming
+abstract PValueCombinationMethod
+
 
 ## concrete types ##
 

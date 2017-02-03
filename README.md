@@ -68,3 +68,25 @@ estimate_pi0(pvals, BUM())
 estimate_pi0(pvals, FlatGrenander())
 estimate_pi0(pvals, Oracle(0.9))
 ```
+
+
+### p-values combination
+
+* Fisher
+* Stouffer, optionally with weights
+* Logit
+* Tippett
+* Simes
+* Wilkinson
+* Minimum of adjusted p-values
+
+```julia
+combine(pvals, FisherCombination())
+combine(pvals, StoufferCombination())
+combine(pvals, weights, StoufferCombination())
+combine(pvals, LogitCombination())
+combine(pvals, TippettCombination())
+combine(pvals, SimesCombination())
+combine(pvals, WilkinsonCombination(rank))
+combine(pvals, MinimumCombination(PValueAdjustment()))
+```

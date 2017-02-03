@@ -41,6 +41,7 @@ using Base.Test
 
         @test issubtype(method, PValueAdjustmentMethod)
         @test issubtype(typeof(method()), PValueAdjustmentMethod)
+
         @test_throws MethodError method(0.1)
 
         ## no valid p-values as input
