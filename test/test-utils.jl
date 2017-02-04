@@ -4,6 +4,7 @@ module Test_utils
 using MultipleTesting
 using Base.Test
 
+
 @testset "Utility functions" begin
 
     @testset  "isin" begin
@@ -48,6 +49,31 @@ using Base.Test
         no, oo = MultipleTesting.reorder(x)
         @test x[no] == sort(x)
         @test x[no][oo] == x
+
+    end
+
+
+    @testset "sort_if_needed" begin
+
+        x = rand(20)
+
+        sort_if_needed = MultipleTesting.sort_if_needed
+        sort_if_needed! = MultipleTesting.sort_if_needed!
+
+        # behaves as standard `sort`
+        @test sort_if_needed(x) == sort(x)
+        @test sort_if_needed(sort(x)) == sort(x)
+
+        # `sort` keywords work
+        @test sort_if_needed(x, rev = true) == sort(x, rev = true)
+        @test sort_if_needed(sort(x, rev = true), rev = true) == sort(x, rev = true)
+
+        x = rand(20)
+        y = copy(x)
+        sort_if_needed!(y)
+        @test y == sort(x)
+        sort_if_needed!(y)
+        @test y == sort(x)
 
     end
 

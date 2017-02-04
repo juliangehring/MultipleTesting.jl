@@ -94,9 +94,7 @@ end
 
 function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
-    if !issorted(pValues)
-        pValues = sort(pValues)
-    end
+    pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
     sx = 0.
     for i in 2:n
@@ -120,9 +118,7 @@ end
 ## used for comparison and compactness
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
-    if !issorted(pValues)
-        pValues = sort(pValues)
-    end
+    pValues = sort_if_needed(pValues)
     s = (1 - pValues) ./ (n - collect(1:n) + 1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
@@ -205,9 +201,7 @@ end
 
 function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq)
     n = length(pValues)
-    if !issorted(λseq)
-        λseq = sort(λseq)
-    end
+    λseq = sort_if_needed(λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
