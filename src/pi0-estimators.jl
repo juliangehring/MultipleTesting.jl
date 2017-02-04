@@ -375,7 +375,6 @@ end
 
 
 ## Longest constant interval in the Grenander estimator: Langaas et al., 2005
-# Leave unexported until thoroughly tested
 
 """
 Flat Grenander π0 estimator

@@ -245,9 +245,9 @@ using StatsBase
         @test estimate_pi0(pu, FlatGrenander()) ≈ 1.0
         @test estimate_pi0(pu.^0.5, FlatGrenander()) ≈ 1.0
 
-        # TODO needs more precise test cases
+        # no reference values from literature/software available
         @test estimate_pi0(p0, FlatGrenander()) ≈ 1.0
-        @test estimate_pi0(p1, FlatGrenander()) < 0.15
+        @test isapprox( estimate_pi0(p1, FlatGrenander()), 0.10458, atol = 1e-4 )
         @test isapprox( estimate_pi0(p, FlatGrenander()), pi0, atol = 0.1)
 
         ## longest constant interval: low level
