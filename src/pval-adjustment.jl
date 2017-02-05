@@ -234,6 +234,64 @@ end
 forwardstop_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * 1/(k-i)
 
 
+
+
+
+# Barber-Candès
+immutable BarberCandes <: PValueAdjustment
+end
+
+function adjust(pvals::PValues, method::BarberCandes)
+    n = length(pvals)
+
+    if n <= 1
+        return one(pvals[1]) # unlike other p-adjust methods
+    end
+
+    sorted_indexes, original_order = reorder(pvals)
+    estimated_fdrs = pvals[sorted_indexes]
+
+    Rt = 1 # current number of discoveries
+    Vt = 1 # estimated false discoveries at t
+
+    left_pv = estimated_fdrs[1]
+    right_pv = estimated_fdrs[n]
+
+    while (left_pv < 0.5)
+        while ((1-right_pv <= left_pv) & (right_pv >= 0.5) & (Vt+Rt <= n))
+            estimated_fdrs[n-Vt+1] = 1.0;
+            right_pv = estimated_fdrs[n-Vt]
+            Vt +=1
+        end
+        estimated_fdrs[Rt] = Vt/Rt
+        Rt += 1
+        left_pv = estimated_fdrs[Rt]
+    end
+
+    stepup!(estimated_fdrs, identity_step, k, n) # just monotonize, no multiplier needed
+    return min(estimated_fdrs[original_order], 1)
+end
+
+# as test, inefficient implementation
+function barber_candes_brute_force(pvals)
+    n = length(pvals)
+    sorted_indexes, original_order = reorder(pvals)
+    sorted_pvals = pvals[sorted_indexes]
+    estimated_fdrs = ones(Float64,n)
+    for (i,pv) in enumerate(sorted_pvals)
+        if pv >= 0.5
+            break
+        else
+            estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
+        end
+    end
+    stepup!(estimated_fdrs, identity_step, k, n) # just monotonize, no multiplier needed
+    return min(estimated_fdrs[original_order], 1)
+end
+
+identity_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p
+
+
 ## internal ##
 
 # step-up / step-down

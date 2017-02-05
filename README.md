@@ -19,6 +19,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment an
 * Hommel
 * Sidak
 * Forward Stop
+* Barber-Candès
 
 ```julia
 adjust(pvals, Bonferroni())
@@ -32,6 +33,7 @@ adjust(pvals, Holm())
 adjust(pvals, Hommel())
 adjust(pvals, Sidak())
 adjust(pvals, ForwardStop())
+adjust(pvals, BarberCandes())
 ```
 
 The adjustment can also be performed on the `k` smallest out of `n` p-values:
