@@ -61,13 +61,13 @@ immutable StoreyBootstrap <: Pi0Estimator
         isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
 end
 
-StoreyBootstrap() = StoreyBootstrap(collect(0.05:0.05:0.95), 0.1)
+StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
 
 function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::StoreyBootstrap)
     bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
 end
 
-function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractVector{S} = [0.05:0.05:0.95;], q::S = 0.1)
+function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractVector{S} = 0.05:0.05:0.95, q::S = 0.1)
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1. - lambda)
@@ -119,7 +119,7 @@ end
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
     pValues = sort_if_needed(pValues)
-    s = (1 - pValues) ./ (n - collect(1:n) + 1)
+    s = (1 - pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
     pi0 = min( 1/s[idx] + 1, n ) / n
@@ -193,7 +193,7 @@ immutable RightBoundary <: Pi0Estimator
 end
 
 # λseq used in Liang, Nettleton 2012
-RightBoundary() = RightBoundary([collect(0.02:0.02:0.1); collect(0.15:0.05:0.95)])
+RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
 function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::RightBoundary)
     rightboundary_pi0(pValues, pi0estimator.λseq)
