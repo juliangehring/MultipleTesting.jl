@@ -17,7 +17,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::FisherCombinatio
 end
 
 function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -41,7 +40,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::LogitCombination
 end
 
 function logit_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -75,7 +73,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, weights::WeightVec, meth
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -91,7 +88,6 @@ function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T}, weights::Vector{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -117,7 +113,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::TippettCombinati
 end
 
 function tippett_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -137,7 +132,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::SimesCombination
 end
 
 function simes_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
@@ -166,7 +160,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::WilkinsonCombina
 end
 
 function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Int)
-    valid_pvalues(pValues)
     k = length(pValues)
     if rank < 1 || rank > k
         throw(ArgumentError("Rank must be in 1,..,$(k)"))
@@ -191,7 +184,6 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::MinimumCombinati
 end
 
 function minimum_combination{T<:AbstractFloat}(pValues::PValues{T}, pAdjustMethod::PValueAdjustmentMethod)
-    valid_pvalues(pValues)
     k = length(pValues)
     if k == 1
         return pValues[1]
