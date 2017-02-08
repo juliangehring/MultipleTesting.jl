@@ -2,7 +2,9 @@
 
 # promotion from float vectors to PValues type
 
-adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::AbstractVector{T}, method::M) = adjust(PValues(pvals), method)
+adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
+
+adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::Vector{T}, n::Int, method::M) = adjust(PValues(pvals), n, method)
 
 
 # Bonferroni
@@ -10,10 +12,14 @@ adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::AbstractVector{T}, me
 immutable Bonferroni <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::Bonferroni) = bonferroni(pvals)
+adjust(pvals::PValues, method::Bonferroni) = adjust(pvals, length(pvals), method)
 
-function bonferroni(pValues::PValues)
-    return min(pValues * length(pValues), 1)
+adjust(pvals::PValues, n::Integer, method::Bonferroni) = bonferroni(pvals, n)
+
+function bonferroni(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
+    return min(pValues * n, 1)
 end
 
 
@@ -22,20 +28,23 @@ end
 immutable BenjaminiHochberg <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::BenjaminiHochberg) = benjamini_hochberg(pvals)
+adjust(pvals::PValues, method::BenjaminiHochberg) = adjust(pvals, length(pvals), method)
 
-function benjamini_hochberg(pValues::PValues)
-    n = length(pValues)
-    if n <= 1
+adjust(pvals::PValues, n::Integer, method::BenjaminiHochberg) = benjamini_hochberg(pvals, n)
+
+function benjamini_hochberg(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
+    if k <= 1
         return pValues
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, bejamini_hochberg_multiplier, n)
+    stepup!(sortedPValues, bejamini_hochberg_multiplier, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-bejamini_hochberg_multiplier(i::Int, n::Int) = n/(n-i)
+bejamini_hochberg_multiplier(i::Int, k::Int, n::Int) = n/(k-i)
 
 
 # Benjamini-Hochberg Adaptive
@@ -49,13 +58,11 @@ BenjaminiHochbergAdaptive{T<:AbstractFloat}(π0::T) = BenjaminiHochbergAdaptive(
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-function adjust(pvals::PValues, method::BenjaminiHochbergAdaptive)
-  π0 = estimate_pi0(pvals, method.pi0estimator)
-  return benjamini_hochberg(pvals, π0)
-end
+adjust(pvals::PValues, method::BenjaminiHochbergAdaptive) = adjust(pvals, length(pvals), method)
 
-function benjamini_hochberg{T<:AbstractFloat}(pValues::PValues, π0::T)
-    return benjamini_hochberg(pValues) * π0
+function adjust(pvals::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
+    π0 = estimate_pi0(pvals, method.pi0estimator)
+    return benjamini_hochberg(pvals, n) * π0
 end
 
 
@@ -64,20 +71,23 @@ end
 immutable BenjaminiYekutieli <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals)
+adjust(pvals::PValues, method::BenjaminiYekutieli) = adjust(pvals, length(pvals), method)
 
-function benjamini_yekutieli(pValues::PValues)
-    n = length(pValues)
-    if n <= 1
+adjust(pvals::PValues, n::Integer, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals, n)
+
+function benjamini_yekutieli(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
+    if k <= 1
         return pValues
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, benjamini_yekutieli_multiplier, n)
+    stepup!(sortedPValues, benjamini_yekutieli_multiplier, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-benjamini_yekutieli_multiplier(i::Int, n::Int) = sum(1./(1:n))*n/(n-i)
+benjamini_yekutieli_multiplier(i::Int, k::Int, n::Int) = sum(1./(1:n))*n/(k-i)
 
 
 # Benjamini-Liu
@@ -85,16 +95,19 @@ benjamini_yekutieli_multiplier(i::Int, n::Int) = sum(1./(1:n))*n/(n-i)
 immutable BenjaminiLiu <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::BenjaminiLiu) = benjamini_liu(pvals)
+adjust(pvals::PValues, method::BenjaminiLiu) = adjust(pvals, length(pvals), method)
 
-function benjamini_liu(pValues::PValues)
-    n = length(pValues)
+adjust(pvals::PValues, n::Integer, method::BenjaminiLiu) = benjamini_liu(pvals, n)
+
+function benjamini_liu(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
     if n <= 1
         return pValues
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    general_stepdown!(sortedPValues, benjamini_liu_step, n)
+    general_stepdown!(sortedPValues, benjamini_liu_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
@@ -111,20 +124,23 @@ end
 immutable Hochberg <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::Hochberg) = hochberg(pvals)
+adjust(pvals::PValues, method::Hochberg) = adjust(pvals, length(pvals), method)
 
-function hochberg(pValues::PValues)
-    n = length(pValues)
-    if n <= 1
+adjust(pvals::PValues, n::Integer, method::Hochberg) = hochberg(pvals, n)
+
+function hochberg(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
+    if k <= 1
         return pValues
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, hochberg_multiplier, n)
+    stepup!(sortedPValues, hochberg_multiplier, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-hochberg_multiplier(i::Int, n::Int) = (i+1)
+hochberg_multiplier(i::Int, k::Int, n::Int) = n-k+i+1
 
 
 # Holm
@@ -132,20 +148,23 @@ hochberg_multiplier(i::Int, n::Int) = (i+1)
 immutable Holm <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::Holm) = holm(pvals)
+adjust(pvals::PValues, method::Holm) = adjust(pvals, length(pvals), method)
 
-function holm(pValues::PValues)
-    n = length(pValues)
+adjust(pvals::PValues, n::Integer, method::Holm) = holm(pvals, n)
+
+function holm(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
     if n <= 1
         return pValues
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepdown!(sortedPValues, holm_multiplier, n)
+    stepdown!(sortedPValues, holm_multiplier, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-holm_multiplier(i::Int, n::Int) = (n-i+1)
+holm_multiplier(i::Int, n::Int) = n-i+1
 
 
 # Hommel
@@ -153,13 +172,17 @@ holm_multiplier(i::Int, n::Int) = (n-i+1)
 immutable Hommel <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::Hommel) = hommel(pvals)
+adjust(pvals::PValues, method::Hommel) = adjust(pvals, length(pvals), method)
 
-function hommel(pValues::PValues)
-    n = length(pValues)
-    if n <= 1
+adjust(pvals::PValues, n::Integer, method::Hommel) = hommel(pvals, n)
+
+function hommel(pValues::PValues, n::Integer)
+    k = length(pValues)
+    check_number_tests(k, n)
+    if k <= 1
         return pValues
     end
+    pValues = vcat(pValues, ones(n-k))  # TODO avoid sorting of ones
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     q = fill(minimum(n .* pValues./(1:n)), n)
@@ -172,7 +195,7 @@ function hommel(pValues::PValues)
         q[i2] = q[n-j+1]
         pa = max(pa, q)
     end
-    return max(pa, sortedPValues)[originalOrder]
+    return max(pa, sortedPValues)[originalOrder[1:k]]
 end
 
 
@@ -181,10 +204,13 @@ end
 immutable Sidak <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::Sidak) = sidak(pvals)
+adjust(pvals::PValues, method::Sidak) = adjust(pvals, length(pvals), method)
 
-function sidak(pValues::PValues)
-    return min(1-(1-pValues).^length(pValues), 1)
+adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
+
+function sidak(pValues::PValues, n::Integer)
+    check_number_tests(length(pValues), n)
+    return min(1-(1-pValues).^n, 1)
 end
 
 
@@ -193,42 +219,53 @@ end
 immutable ForwardStop <: PValueAdjustmentMethod
 end
 
-adjust(pvals::PValues, method::ForwardStop) = forwardstop(pvals)
+adjust(pvals::PValues, method::ForwardStop) = adjust(pvals, length(pvals), method)
 
-function forwardstop(pvalues::PValues)
-    n = length(pvalues)
+adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
+
+function forwardstop(pvalues::PValues, n::Integer)
+    k = length(pvalues)
+    check_number_tests(k, n)
     logsums = -cumsum(log(1-pvalues))
-    stepup!(logsums, forwardstop_multiplier, n)
+    stepup!(logsums, forwardstop_multiplier, k, n)
     return max(min(logsums, 1), 0)
 end
 
-forwardstop_multiplier(i::Int, n::Int) = 1/(n-i)
+forwardstop_multiplier(i::Int, k::Int, n::Int) = 1/(k-i)
 
 
 ## internal ##
 
 # step-up / step-down
 
-function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
-    sortedPValues[n] *= multiplier(0, n)
-    for i in 1:(n-1)
-        sortedPValues[n-i] = min(sortedPValues[n-i+1], sortedPValues[n-i] * multiplier(i, n))
+function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, k::Integer, n::Integer)
+    sortedPValues[k] *= multiplier(0, k, n)
+    for i in 1:(k-1)
+        sortedPValues[k-i] = min(sortedPValues[k-i+1], sortedPValues[k-i] * multiplier(i, k, n))
     end
     return sortedPValues
 end
 
 
-function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
+function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, k::Integer, n::Integer)
   stepfun(p::T, i::Int, n::Int) = p * multiplier(i, n)
-  general_stepdown!(sortedPValues, stepfun, n)
+  general_stepdown!(sortedPValues, stepfun, k, n)
   return sortedPValues
 end
 
 
-function general_stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, n::Integer = length(sortedPValues))
+function general_stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
     sortedPValues[1] = stepfun(sortedPValues[1], 1, n)
-    for i in 2:n
+    for i in 2:k
         sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, n))
     end
     return sortedPValues
+end
+
+
+function check_number_tests(k::Integer, n::Integer)
+    if k > n
+        msg = "Number of total tests ($n) is smaller than number of p-values ($k)"
+        throw(ArgumentError(msg))
+    end
 end
