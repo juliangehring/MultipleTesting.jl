@@ -24,7 +24,7 @@ function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
     if minimum(pValues) == 0.0
         return NaN
     end
-    x = -2 * sum(log(pValues)) # p = 0 => Inf
+    x = -2 * sum(log(pValues))
     p = ccdf(Chisq(2k), x)
     return p
 end

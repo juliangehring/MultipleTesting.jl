@@ -199,7 +199,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Right
     rightboundary_pi0(pValues, pi0estimator.λseq)
 end
 
-function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq)
+function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq::AbstractVector{T})
     n = length(pValues)
     λseq = sort_if_needed(λseq)
     # make sure we catch p-values equal to 1 despite left closure
@@ -244,8 +244,8 @@ immutable CensoredBUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::CensoredBUM, pValues;
-             kw...)
+function fit{T<:AbstractFloat}(pi0estimator::CensoredBUM, pValues::AbstractVector{T};
+                               kw...)
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, pi0estimator.λ,
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
@@ -262,7 +262,7 @@ function estimate_pi0(pi0fit::CensoredBUMFit)
 end
 
 function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
-                                    xtol::Float64 = 1e-6, maxiter::Int = 10000)
+                                    xtol::T = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
@@ -297,8 +297,8 @@ function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ
     return NaN, [γ, α], false
 end
 
-function cbum_pi0_naive(pValues, γ0 = 0.5, λ = 0.05,
-                        xtol = 1e-6, maxiter = 10000)
+function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
+                        xtol::T = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ
@@ -356,8 +356,8 @@ immutable BUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::BUM, pValues;
-             kw...)
+function fit{T<:AbstractFloat}(pi0estimator::BUM, pValues::AbstractVector{T};
+                               kw...)
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, eps(),
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
@@ -392,13 +392,13 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::FlatG
     flat_grenander_pi0(pValues)
 end
 
-function flat_grenander_pi0(pv::AbstractVector{Float64})
+function flat_grenander_pi0{T<:AbstractFloat}(pv::AbstractVector{T})
     p, f, F = grenander(pv)
     pi0 = longest_constant_interval(p, f)
     return pi0
 end
 
-function longest_constant_interval(p::AbstractVector{Float64}, f::AbstractVector{Float64})
+function longest_constant_interval{T<:AbstractFloat}(p::AbstractVector{T}, f::AbstractVector{T})
     p = [0.0; p]
     f = [Inf; f]
     i2 = length(f)

@@ -77,9 +77,7 @@ function benjamini_yekutieli(pValues::PValues)
     return min(sortedPValues[originalOrder], 1)
 end
 
-function benjamini_yekutieli_multiplier(i::Int, n::Int)
-    return sum(1./(1:n)) * n/ (n-i)
-end
+benjamini_yekutieli_multiplier(i::Int, n::Int) = sum(1./(1:n))*n/(n-i)
 
 
 # Benjamini-Liu
