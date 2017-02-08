@@ -77,9 +77,7 @@ function benjamini_yekutieli(pValues::PValues)
     return min(sortedPValues[originalOrder], 1)
 end
 
-function benjamini_yekutieli_multiplier(i::Int, n::Int)
-    return sum(1./(1:n)) * n/ (n-i)
-end
+benjamini_yekutieli_multiplier(i::Int, n::Int) = sum(1./(1:n))*n/(n-i)
 
 
 # Benjamini-Liu
@@ -164,12 +162,12 @@ function hommel(pValues::PValues)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    q = fill(minimum(n .* pValues./[1:n; ]), n)
+    q = fill(minimum(n .* pValues./(1:n)), n)
     pa = fill(q[1], n)
     for j in (n-1):-1:2
         ij = 1:(n-j+1)
         i2 = (n-j+2):n
-        q1 = minimum(j .* sortedPValues[i2]./([2:j; ]))
+        q1 = minimum(j .* sortedPValues[i2]./((2:j)))
         q[ij] = min(j .* sortedPValues[ij], q1)
         q[i2] = q[n-j+1]
         pa = max(pa, q)

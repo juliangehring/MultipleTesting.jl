@@ -17,16 +17,15 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::FisherCombinatio
 end
 
 function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     if minimum(pValues) == 0.0
         return NaN
     end
-    x = -2 * sum(log(pValues)) # p = 0 => Inf
-    p = ccdf(Chisq(2k), x)
+    x = -2 * sum(log(pValues))
+    p = ccdf(Chisq(2n), x)
     return p
 end
 
@@ -41,18 +40,17 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::LogitCombination
 end
 
 function logit_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
     if pmin == 0.0 || pmax == 1.0
         return NaN
     end
-    c = sqrt( (5k+2)*k*pi^2 / ((5k+4)*3) )
+    c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
     x = -sum(log(pValues./(1-pValues))) / c
-    p = ccdf(TDist(5k+4), x)
+    p = ccdf(TDist(5n+4), x)
     return p
 end
 
@@ -75,9 +73,8 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, weights::WeightVec, meth
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
@@ -85,15 +82,14 @@ function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
         return NaN
     end
     z = cquantile(Normal(), pValues)
-    z = sum(z) ./ sqrt(k)
+    z = sum(z) ./ sqrt(n)
     p = ccdf(Normal(), z)
     return p
 end
 
 function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T}, weights::Vector{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
@@ -117,12 +113,11 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::TippettCombinati
 end
 
 function tippett_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
-    p = 1.0 - (1.0 - minimum(pValues))^k
+    p = 1.0 - (1.0 - minimum(pValues))^n
     return p
 end
 
@@ -137,13 +132,12 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::SimesCombination
 end
 
 function simes_combination{T<:AbstractFloat}(pValues::PValues{T})
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     pValues = sort(pValues)  # faster than `sortperm`
-    p = k * minimum(pValues./(1:k))
+    p = n * minimum(pValues./(1:n))
     return p
 end
 
@@ -166,16 +160,15 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::WilkinsonCombina
 end
 
 function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Int)
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if rank < 1 || rank > k
-        throw(ArgumentError("Rank must be in 1,..,$(k)"))
+    n = length(pValues)
+    if rank < 1 || rank > n
+        throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
-    if k == 1
+    if n == 1
         return pValues[1]
     end
     p_rank = sort(pValues)[rank]
-    p = cdf(Beta(rank, k-rank+1), p_rank)
+    p = cdf(Beta(rank, n-rank+1), p_rank)
     return p
 end
 
@@ -191,9 +184,8 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::MinimumCombinati
 end
 
 function minimum_combination{T<:AbstractFloat}(pValues::PValues{T}, pAdjustMethod::PValueAdjustmentMethod)
-    valid_pvalues(pValues)
-    k = length(pValues)
-    if k == 1
+    n = length(pValues)
+    if n == 1
         return pValues[1]
     end
     padj = adjust(pValues, pAdjustMethod)

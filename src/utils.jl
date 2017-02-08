@@ -32,6 +32,21 @@ end
 reorder(pv::PValues) = reorder(values(pv))
 
 
+function sort_if_needed(x; kws...)
+    if issorted(x; kws...)
+        return x
+    else
+        return sort(x; kws...)
+    end
+end
+
+function sort_if_needed!(x; kws...)
+    if !issorted(x; kws...)
+        sort!(x; kws...)
+    end
+end
+
+
 function valid_pvalues{T<:AbstractFloat}(x::AbstractVector{T})
     if !isin(x)
         throw(DomainError())
