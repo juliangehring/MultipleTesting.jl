@@ -1,28 +1,5 @@
 ## utility functions ##
 
-function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
-    sortedPValues[n] *= multiplier(0, n)
-    for i in 1:(n-1)
-        sortedPValues[n-i] = min(sortedPValues[n-i+1], sortedPValues[n-i] * multiplier(i, n))
-    end
-    return sortedPValues
-end
-
-# multiplier stepdown
-function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, n::Integer = length(sortedPValues))
-  stepfun(p::T, i::Int, n::Int) = p * multiplier(i, n)
-  general_stepdown!(sortedPValues, stepfun, n)
-  return sortedPValues
-end
-
-function general_stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, n::Integer = length(sortedPValues))
-    sortedPValues[1] = stepfun(sortedPValues[1], 1, n)
-    for i in 2:n
-        sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, n))
-    end
-    return sortedPValues
-end
-
 function reorder{T<:Real}(values::AbstractVector{T})
     newOrder = sortperm(values)
     oldOrder = sortperm(newOrder)
