@@ -24,6 +24,15 @@ function sort_if_needed!(x; kws...)
 end
 
 
+function unsort(x; kws...)
+    y = copy(x)
+    while issorted(y; kws...)
+        sample!(x, y, replace = false)
+    end
+    return y
+end
+
+
 function valid_pvalues{T<:AbstractFloat}(x::AbstractVector{T})
     if !isin(x)
         throw(DomainError())

@@ -15,13 +15,7 @@ using StatsBase
 
     lambdas = collect(0.05:0.05:0.95)
 
-    function unsort(x)
-        y = copy(x)
-        while issorted(y)
-            sample!(x, y, replace = false)
-        end
-        return y
-    end
+    unsort = MultipleTesting.unsort
 
 
     @testset "Storey π0" begin
