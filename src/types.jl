@@ -4,10 +4,10 @@ abstract Pi0Estimator
 
 abstract Pi0Fit
 
-abstract PValueAdjustmentMethod
+abstract PValueAdjustment
 
 # consistent naming
-abstract PValueCombinationMethod
+abstract PValueCombination
 
 
 ## concrete types ##

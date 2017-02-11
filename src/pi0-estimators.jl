@@ -157,7 +157,7 @@ Reference: Benjamini, Krieger and Yekutieli, 2006
 """
 immutable TwoStep <: Pi0Estimator
     α::AbstractFloat
-    method::PValueAdjustmentMethod
+    method::PValueAdjustment
 
     TwoStep(α, method) = isin(α, 0., 1.) ? new(α, method) : throw(DomainError())
 end
@@ -170,7 +170,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::TwoSt
     twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::T, method::PValueAdjustmentMethod)
+function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::T, method::PValueAdjustment)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)

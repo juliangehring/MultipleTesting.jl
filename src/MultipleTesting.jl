@@ -16,7 +16,7 @@ using Distributions
 export
     PValues,
     adjust,
-    PValueAdjustmentMethod,
+    PValueAdjustment,
     Bonferroni,
     BenjaminiHochberg,
     BenjaminiHochbergAdaptive,
@@ -44,7 +44,7 @@ export
     isin,
     fit,
     BetaUniformMixtureModel,
-    PValueCombinationMethod,
+    PValueCombination,
     combine,
     FisherCombination,
     LogitCombination,
