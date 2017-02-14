@@ -31,7 +31,7 @@ cdf(bum, 0:0.05:1)
 """
 function BetaUniformMixtureModel end
 
-function BetaUniformMixtureModel{T<:AbstractFloat}(π0::T, α::T = 0.5, β::T = 1.0)
+function BetaUniformMixtureModel(π0::AbstractFloat, α::AbstractFloat = 0.5, β::AbstractFloat = 1.0)
     if !isin(π0, 0., 1.)
         throw(DomainError())
     end

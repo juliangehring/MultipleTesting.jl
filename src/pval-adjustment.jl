@@ -54,7 +54,7 @@ immutable BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
 end
 
 ## default to BenjaminiHochberg
-BenjaminiHochbergAdaptive{T<:AbstractFloat}(π0::T) = BenjaminiHochbergAdaptive(Oracle(π0))
+BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle(π0))
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
@@ -111,7 +111,7 @@ function benjamini_liu(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-function benjamini_liu_step{T<:AbstractFloat}(p::T, i::Int, n::Int)
+function benjamini_liu_step(p::AbstractFloat, i::Int, n::Int)
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n-i+1
@@ -248,7 +248,7 @@ end
 
 
 function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, k::Integer, n::Integer)
-  stepfun(p::T, i::Int, n::Int) = p * multiplier(i, n)
+  stepfun(p::AbstractFloat, i::Int, n::Int) = p * multiplier(i, n)
   general_stepdown!(sortedPValues, stepfun, k, n)
   return sortedPValues
 end

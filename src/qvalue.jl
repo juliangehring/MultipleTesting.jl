@@ -1,6 +1,6 @@
 ## qValues ##
 
-function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::T, pfdr::Bool = false)
+function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::AbstractFloat, pfdr::Bool = false)
     valid_pvalues(pValues)
     valid_pvalues([pi0])
     n = length(pValues)
