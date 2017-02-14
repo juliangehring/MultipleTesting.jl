@@ -37,7 +37,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Store
     storey_pi0(pValues, pi0estimator.λ)
 end
 
-function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::T)
+function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractFloat)
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
     pi0 = min(pi0, 1.)
     return pi0
@@ -170,7 +170,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::TwoSt
     twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::T, method::PValueAdjustmentMethod)
+function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::AbstractFloat, method::PValueAdjustmentMethod)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)
@@ -261,8 +261,9 @@ function estimate_pi0(pi0fit::CensoredBUMFit)
     return π0
 end
 
-function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
-                                    xtol::T = 1e-6, maxiter::Int = 10000)
+function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
+                                    γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
+                                    xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
@@ -297,8 +298,9 @@ function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ
     return NaN, [γ, α], false
 end
 
-function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
-                        xtol::T = 1e-6, maxiter::Int = 10000)
+function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
+                                          γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
+                                          xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ
