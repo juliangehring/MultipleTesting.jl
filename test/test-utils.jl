@@ -4,6 +4,7 @@ module Test_utils
 using MultipleTesting
 using Base.Test
 
+
 @testset "Utility functions" begin
 
     @testset  "isin" begin
@@ -50,6 +51,57 @@ using Base.Test
         @test x[no][oo] == x
 
     end
+
+
+    @testset "sort_if_needed" begin
+
+        x = rand(20)
+
+        sort_if_needed = MultipleTesting.sort_if_needed
+        sort_if_needed! = MultipleTesting.sort_if_needed!
+
+        # behaves as standard `sort`
+        @test sort_if_needed(x) == sort(x)
+        @test sort_if_needed(sort(x)) == sort(x)
+
+        # `sort` keywords work
+        @test sort_if_needed(x, rev = true) == sort(x, rev = true)
+        @test sort_if_needed(sort(x, rev = true), rev = true) == sort(x, rev = true)
+
+        x = rand(20)
+        y = copy(x)
+        sort_if_needed!(y)
+        @test y == sort(x)
+        sort_if_needed!(y)
+        @test y == sort(x)
+
+    end
+
+
+    @testset "unsort" begin
+
+        n = 20
+        xs = sort(rand(n))
+        xr = reverse(xs) # reverse sorted
+        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        @test !issorted(xu)
+
+        unsort = MultipleTesting.unsort
+
+        @test issorted(xs)
+        @test !issorted(unsort(xs))
+
+        # unsorted input gets returned unchanged
+        @test unsort(xu) == xu
+
+        # `sort` keywords work
+        @test !issorted(xr)
+        @test issorted(xr, rev = true)
+        @test issorted(unsort(xr), rev = true)
+        @test !issorted(unsort(xr, rev = true), rev = true)
+
+    end
+
 
 end
 

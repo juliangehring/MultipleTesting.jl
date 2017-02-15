@@ -37,7 +37,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Store
     storey_pi0(pValues, pi0estimator.λ)
 end
 
-function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::T)
+function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractFloat)
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
     pi0 = min(pi0, 1.)
     return pi0
@@ -61,13 +61,13 @@ immutable StoreyBootstrap <: Pi0Estimator
         isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
 end
 
-StoreyBootstrap() = StoreyBootstrap(collect(0.05:0.05:0.95), 0.1)
+StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
 
 function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::StoreyBootstrap)
     bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
 end
 
-function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractVector{S} = [0.05:0.05:0.95;], q::S = 0.1)
+function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractVector{S} = 0.05:0.05:0.95, q::S = 0.1)
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1. - lambda)
@@ -94,9 +94,7 @@ end
 
 function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
-    if !issorted(pValues)
-        pValues = sort(pValues)
-    end
+    pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
     sx = 0.
     for i in 2:n
@@ -120,10 +118,8 @@ end
 ## used for comparison and compactness
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
-    if !issorted(pValues)
-        pValues = sort(pValues)
-    end
-    s = (1 - pValues) ./ (n - collect(1:n) + 1)
+    pValues = sort_if_needed(pValues)
+    s = (1 - pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
     pi0 = min( 1/s[idx] + 1, n ) / n
@@ -174,7 +170,7 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::TwoSt
     twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
 end
 
-function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::T, method::PValueAdjustmentMethod)
+function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::AbstractFloat, method::PValueAdjustmentMethod)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return(pi0)
@@ -197,17 +193,15 @@ immutable RightBoundary <: Pi0Estimator
 end
 
 # λseq used in Liang, Nettleton 2012
-RightBoundary() = RightBoundary([collect(0.02:0.02:0.1); collect(0.15:0.05:0.95)])
+RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
 function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::RightBoundary)
     rightboundary_pi0(pValues, pi0estimator.λseq)
 end
 
-function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq)
+function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq::AbstractVector{T})
     n = length(pValues)
-    if !issorted(λseq)
-        λseq = sort(λseq)
-    end
+    λseq = sort_if_needed(λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
@@ -250,8 +244,8 @@ immutable CensoredBUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::CensoredBUM, pValues;
-             kw...)
+function fit{T<:AbstractFloat}(pi0estimator::CensoredBUM, pValues::AbstractVector{T};
+                               kw...)
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, pi0estimator.λ,
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
@@ -267,8 +261,9 @@ function estimate_pi0(pi0fit::CensoredBUMFit)
     return π0
 end
 
-function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ::T = 0.05,
-                                    xtol::Float64 = 1e-6, maxiter::Int = 10000)
+function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
+                                    γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
+                                    xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
@@ -303,8 +298,9 @@ function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, γ0::T = 0.5, λ
     return NaN, [γ, α], false
 end
 
-function cbum_pi0_naive(pValues, γ0 = 0.5, λ = 0.05,
-                        xtol = 1e-6, maxiter = 10000)
+function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
+                                          γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
+                                          xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ
@@ -362,8 +358,8 @@ immutable BUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::BUM, pValues;
-             kw...)
+function fit{T<:AbstractFloat}(pi0estimator::BUM, pValues::AbstractVector{T};
+                               kw...)
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, eps(),
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
@@ -381,7 +377,6 @@ end
 
 
 ## Longest constant interval in the Grenander estimator: Langaas et al., 2005
-# Leave unexported until thoroughly tested
 
 """
 Flat Grenander π0 estimator
@@ -399,13 +394,13 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::FlatG
     flat_grenander_pi0(pValues)
 end
 
-function flat_grenander_pi0(pv::AbstractVector{Float64})
+function flat_grenander_pi0{T<:AbstractFloat}(pv::AbstractVector{T})
     p, f, F = grenander(pv)
     pi0 = longest_constant_interval(p, f)
     return pi0
 end
 
-function longest_constant_interval(p::AbstractVector{Float64}, f::AbstractVector{Float64})
+function longest_constant_interval{T<:AbstractFloat}(p::AbstractVector{T}, f::AbstractVector{T})
     p = [0.0; p]
     f = [Inf; f]
     i2 = length(f)

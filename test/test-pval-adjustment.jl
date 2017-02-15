@@ -36,6 +36,13 @@ using Base.Test
         ForwardStop        => [0.0001000050, 0.0001000050, 0.0004001701, 0.0028127115, 0.0125088281, 0.0279841094, 0.0390378817, 0.0980113495, 0.2411539063, 1.0]
     )
 
+    # smallest p-values from larger set
+    k3 = 6
+    n3 = length(pval1)
+    pval3 = pval1[1:k3]
+    pval3pad = [pval3; ones(n3-k3)]  # non-observed p-values equal to 1
+    methods3 = [Bonferroni, Holm, Hochberg, Hommel, BenjaminiHochberg,
+                BenjaminiYekutieli, BenjaminiLiu, Sidak, ForwardStop]
 
     @testset "pvalue adjustment $method" for method in keys(ref1)
 
@@ -56,9 +63,31 @@ using Base.Test
 
         ## compare with reference values
         @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
+        @test isapprox( adjust(PValues(pval1), method()), ref1[method], atol = 1e-9 )
 
         ## compare with reference values having ties
         @test isapprox( adjust(pval2, method()), ref2[method], atol = 1e-9 )
+        @test isapprox( adjust(PValues(pval2), method()), ref2[method], atol = 1e-9 )
+
+        ## total number of tests explicitly specified
+        if method in methods3
+            # all p-values present
+            @test adjust(pval3, length(pval3), method()) == adjust(pval3, method())
+            @test adjust(PValues(pval3), length(pval3), method()) == adjust(pval3, method())
+            # k smallest p-values present, total number n known
+            @test adjust(pval3, n3, method()) == adjust(pval3pad, n3, method())[1:k3]
+            # k > n not allowed: test for any n in [1,k-1]
+            @test_throws ArgumentError adjust(pval3, rand(1:k3-1), method())
+        end
+
+    end
+
+
+    @testset "argument checking for number of tests" begin
+
+        @test_throws ArgumentError MultipleTesting.check_number_tests(3, 2)
+        @test MultipleTesting.check_number_tests(2, 2) == nothing
+        @test MultipleTesting.check_number_tests(2, 3) == nothing
 
     end
 

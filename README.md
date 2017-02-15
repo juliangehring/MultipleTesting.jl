@@ -34,6 +34,12 @@ adjust(pvals, Sidak())
 adjust(pvals, ForwardStop())
 ```
 
+The adjustment can also be performed on the `k` smallest out of `n` p-values:
+
+```julia
+adjust(pvals, n, PValueAdjustmentMethod)
+```
+
 
 ### Estimation of π₀
 
