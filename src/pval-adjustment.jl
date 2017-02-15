@@ -87,7 +87,7 @@ function benjamini_yekutieli(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-benjamini_yekutieli_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * sum(1./(1:n))*n/(k-i)
+benjamini_yekutieli_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * harmonic_number(n) * n/(k-i)
 
 
 # Benjamini-Liu
@@ -261,3 +261,6 @@ function check_number_tests(k::Integer, n::Integer)
         throw(ArgumentError(msg))
     end
 end
+
+
+harmonic_number(n::Integer) =  digamma(n+1) + γ
