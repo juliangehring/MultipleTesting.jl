@@ -8,6 +8,8 @@ abstract type PValueAdjustment end
 
 abstract type PValueCombination end
 
+abstract Alternative
+
 
 ## concrete types ##
 
@@ -59,3 +61,51 @@ Base.linearindexing{T<:ZScores}(::Type{T}) = Base.LinearFast()
 Base.getindex(zs::ZScores, i::Int) = zs.values[i]
 
 Base.values(zs::ZScores) = zs.values
+
+
+# transformation between PValues and ZScores
+
+immutable Upper <: Alternative end
+
+immutable Lower <: Alternative end
+
+immutable Both  <: Alternative end
+
+
+# PValues to ZScores
+
+function transform(::Type{PValues}, zs::ZScores, alternative::Type{Lower})
+    p = cdf(Normal(), zs)
+    return PValues(p)
+end
+
+function transform(::Type{PValues}, zs::ZScores, alternative::Type{Upper})
+    p = ccdf(Normal(), zs)
+    return PValues(p)
+end
+
+function transform(::Type{PValues}, zs::ZScores, alternative::Type{Both})
+    p = 2 * min( ccdf(Normal(), zs), cdf(Normal(), zs) )
+    return PValues(p)
+end
+
+transform(pv::Type{PValues}, zs::ZScores) = transform(pv, zs, Both)
+
+transform(T::Type{PValues}, zs::ZScores, alt::Alternative) =
+    transform(T, zs, typeof(alt))
+
+
+# ZScores to PValues
+
+function transform(::Type{ZScores}, pv::PValues, alternative::Type{Upper})
+    z = cquantile(Normal(), pv)
+    return ZScores(z)
+end
+
+function transform(::Type{ZScores}, pv::PValues, alternative::Type{Lower})
+    z = quantile(Normal(), pv)
+    return ZScores(z)
+end
+
+transform(T::Type{ZScores}, pv::PValues, alt::Alternative) =
+    transform(T, pv, typeof(alt))

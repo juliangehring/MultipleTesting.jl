@@ -55,7 +55,12 @@ export
     WilkinsonCombination,
     MinimumCombination,
     PValues,
-    ZScores
+    ZScores,
+    Alternative,
+    Lower,
+    Upper,
+    Both,
+    transform
 
 
 include("types.jl")

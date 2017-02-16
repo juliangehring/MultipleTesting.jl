@@ -112,6 +112,48 @@ using Base.Test
 
     end
 
+
+    @testset "PValues - ZScores transformations" begin
+
+        z = [0.0, 1.0, -1.0, 2.0, -2.0, 3.0, -3.0]
+        pu = [0.5, 0.15866, 0.84135, 0.02275, 0.97725, 0.00135, 0.99865]
+
+        zs = ZScores(z)
+        pv = PValues(pu)
+
+        p1 = transform(PValues, zs, Upper)
+        @test typeof(p1) <: PValues
+        @test isapprox( p1, pu, atol = 1e-5  )
+        z1 = transform(ZScores, p1, Upper)
+        @test typeof(z1) <: ZScores
+        @test isapprox( z1, z )
+
+        p1 = transform(PValues, zs, Lower)
+        @test typeof(p1) <: PValues
+        @test isapprox( p1, 1-pu, atol = 1e-5  )
+        z1 = transform(ZScores, p1, Lower)
+        @test typeof(z1) <: ZScores
+        @test isapprox( z1, z )
+
+        p1 = transform(PValues, zs, Both)
+        @test typeof(p1) <: PValues
+        @test isapprox( p1, 2*min(pu, 1-pu), atol = 1e-4 )
+        # no transformation since sign of z-scores is unknown
+        @test_throws MethodError transform(ZScores, p1, Both)
+
+        # defaults and alternatives
+        @test transform(PValues, zs, Both) == transform(PValues, zs)
+        @test transform(PValues, zs, Both) == transform(PValues, zs, Both())
+        @test transform(ZScores, pv, Lower) == transform(ZScores, pv, Lower())
+
+        # only meaningful transformations
+        @test_throws MethodError transform(ZScores, zs)
+        @test_throws MethodError transform(ZScores, zs, Lower)
+        @test_throws MethodError transform(PValues, pv)
+        @test_throws MethodError transform(PValues, pv, Lower)
+
+    end
+
 end
 
 end
