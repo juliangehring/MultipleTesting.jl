@@ -6,7 +6,8 @@ tests = [
     "test-utils",
     "test-model",
     "test-combinations",
-    "test-pi0-estimators"
+    "test-pi0-estimators",
+    "test-higher-criticism"
 ]
 
 for t in tests

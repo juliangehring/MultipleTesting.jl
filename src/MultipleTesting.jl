@@ -62,5 +62,6 @@ include("pi0-estimators.jl")
 include("qvalue.jl")
 include("model.jl")
 include("combinations.jl")
+include("higher-criticism.jl")
 
 end
