@@ -121,36 +121,38 @@ using Base.Test
         zs = ZScores(z)
         pv = PValues(pu)
 
-        p1 = transform(PValues, zs, Upper)
+        p1 = PValues(zs, Upper)
         @test typeof(p1) <: PValues
         @test isapprox( p1, pu, atol = 1e-5  )
-        z1 = transform(ZScores, p1, Upper)
+        z1 = ZScores(p1, Upper)
         @test typeof(z1) <: ZScores
         @test isapprox( z1, z )
 
-        p1 = transform(PValues, zs, Lower)
+        p1 = PValues(zs, Lower)
         @test typeof(p1) <: PValues
         @test isapprox( p1, 1-pu, atol = 1e-5  )
-        z1 = transform(ZScores, p1, Lower)
+        z1 = ZScores(p1, Lower)
         @test typeof(z1) <: ZScores
         @test isapprox( z1, z )
 
-        p1 = transform(PValues, zs, Both)
+        p1 = PValues(zs, Both)
         @test typeof(p1) <: PValues
         @test isapprox( p1, 2*min(pu, 1-pu), atol = 1e-4 )
         # no transformation since sign of z-scores is unknown
-        @test_throws MethodError transform(ZScores, p1, Both)
+        @test_throws MethodError ZScores(p1, Both)
 
         # defaults and alternatives
-        @test transform(PValues, zs, Both) == transform(PValues, zs)
-        @test transform(PValues, zs, Both) == transform(PValues, zs, Both())
-        @test transform(ZScores, pv, Lower) == transform(ZScores, pv, Lower())
+        @test PValues(zs, Both) == PValues(zs)
+        @test PValues(zs, Both) == PValues(zs, Both())
+        @test ZScores(pv, Lower) == ZScores(pv, Lower())
 
         # only meaningful transformations
-        @test_throws MethodError transform(ZScores, zs)
-        @test_throws MethodError transform(ZScores, zs, Lower)
-        @test_throws MethodError transform(PValues, pv)
-        @test_throws MethodError transform(PValues, pv, Lower)
+        @test_throws MethodError ZScores(zs, Lower)
+        @test_throws MethodError PValues(pv, Lower)
+
+        # TODO define desired behaviour
+        @test ZScores(zs) == zs
+        @test PValues(pv) == pv
 
     end
 

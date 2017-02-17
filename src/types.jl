@@ -74,38 +74,36 @@ immutable Both  <: Alternative end
 
 # PValues to ZScores
 
-function transform(::Type{PValues}, zs::ZScores, alternative::Type{Lower})
+function PValues(zs::ZScores, alternative::Type{Lower})
     p = cdf(Normal(), zs)
     return PValues(p)
 end
 
-function transform(::Type{PValues}, zs::ZScores, alternative::Type{Upper})
+function PValues(zs::ZScores, alternative::Type{Upper})
     p = ccdf(Normal(), zs)
     return PValues(p)
 end
 
-function transform(::Type{PValues}, zs::ZScores, alternative::Type{Both})
+function PValues(zs::ZScores, alternative::Type{Both})
     p = 2 * min( ccdf(Normal(), zs), cdf(Normal(), zs) )
     return PValues(p)
 end
 
-transform(pv::Type{PValues}, zs::ZScores) = transform(pv, zs, Both)
+PValues(zs::ZScores) = PValues(zs, Both)
 
-transform(T::Type{PValues}, zs::ZScores, alt::Alternative) =
-    transform(T, zs, typeof(alt))
+PValues(zs::ZScores, alt::Alternative) = PValues(zs, typeof(alt))
 
 
 # ZScores to PValues
 
-function transform(::Type{ZScores}, pv::PValues, alternative::Type{Upper})
+function ZScores(pv::PValues, alternative::Type{Upper})
     z = cquantile(Normal(), pv)
     return ZScores(z)
 end
 
-function transform(::Type{ZScores}, pv::PValues, alternative::Type{Lower})
+function ZScores(pv::PValues, alternative::Type{Lower})
     z = quantile(Normal(), pv)
     return ZScores(z)
 end
 
-transform(T::Type{ZScores}, pv::PValues, alt::Alternative) =
-    transform(T, pv, typeof(alt))
+ZScores(pv::PValues, alt::Alternative) = ZScores(pv, typeof(alt))
