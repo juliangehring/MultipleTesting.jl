@@ -1,15 +1,15 @@
 ### Combination methods for p-values ###
 
-combine{T<:AbstractFloat, M<:PValueCombinationMethod}(pValues::AbstractVector{T}, method::M) = combine(PValues(pValues), method)
+combine{T<:AbstractFloat, M<:PValueCombination}(pValues::AbstractVector{T}, method::M) = combine(PValues(pValues), method)
 
-combine{T<:AbstractFloat, M<:PValueCombinationMethod}(pValues::AbstractVector{T}, weights::WeightVec, method::M) = combine(PValues(pValues), weights, method)
+combine{T<:AbstractFloat, M<:PValueCombination}(pValues::AbstractVector{T}, weights::WeightVec, method::M) = combine(PValues(pValues), weights, method)
 
-combine{T<:AbstractFloat, R<:Real, M<:PValueCombinationMethod}(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::M) = combine(PValues(pValues), weights, method)
+combine{T<:AbstractFloat, R<:Real, M<:PValueCombination}(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::M) = combine(PValues(pValues), weights, method)
 
 
 ## Fisher combination ##
 
-immutable FisherCombination <: PValueCombinationMethod
+immutable FisherCombination <: PValueCombination
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::FisherCombination)
@@ -32,7 +32,7 @@ end
 
 ## Logit combination ##
 
-immutable LogitCombination <: PValueCombinationMethod
+immutable LogitCombination <: PValueCombination
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::LogitCombination)
@@ -57,7 +57,7 @@ end
 
 ## Stouffer combination ##
 
-immutable StoufferCombination <: PValueCombinationMethod
+immutable StoufferCombination <: PValueCombination
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::StoufferCombination)
@@ -105,7 +105,7 @@ end
 
 ## Tippett combination ##
 
-immutable TippettCombination <: PValueCombinationMethod
+immutable TippettCombination <: PValueCombination
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::TippettCombination)
@@ -124,7 +124,7 @@ end
 
 ## Simes combination ##
 
-immutable SimesCombination <: PValueCombinationMethod
+immutable SimesCombination <: PValueCombination
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::SimesCombination)
@@ -144,7 +144,7 @@ end
 
 ## Wilkinson combination ##
 
-immutable WilkinsonCombination <: PValueCombinationMethod
+immutable WilkinsonCombination <: PValueCombination
     rank::Int
 
     function WilkinsonCombination(rank)
@@ -175,15 +175,15 @@ end
 
 ## Generalised minimum combination ##
 
-immutable MinimumCombination <: PValueCombinationMethod
-    method::PValueAdjustmentMethod
+immutable MinimumCombination <: PValueCombination
+    method::PValueAdjustment
 end
 
 function combine{T<:AbstractFloat}(pValues::PValues{T}, method::MinimumCombination)
     minimum_combination(pValues, method.method)
 end
 
-function minimum_combination{T<:AbstractFloat}(pValues::PValues{T}, pAdjustMethod::PValueAdjustmentMethod)
+function minimum_combination{T<:AbstractFloat}(pValues::PValues{T}, pAdjustMethod::PValueAdjustment)
     n = length(pValues)
     if n == 1
         return pValues[1]
