@@ -46,8 +46,8 @@ using Base.Test
 
     @testset "pvalue adjustment $method" for method in keys(ref1)
 
-        @test issubtype(method, PValueAdjustmentMethod)
-        @test issubtype(typeof(method()), PValueAdjustmentMethod)
+        @test issubtype(method, PValueAdjustment)
+        @test issubtype(typeof(method()), PValueAdjustment)
 
         @test_throws MethodError method(0.1)
 

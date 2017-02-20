@@ -2,14 +2,14 @@
 
 # promotion from float vectors to PValues type
 
-adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
+adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
 
-adjust{T<:AbstractFloat, M<:PValueAdjustmentMethod}(pvals::Vector{T}, n::Int, method::M) = adjust(PValues(pvals), n, method)
+adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, n::Int, method::M) = adjust(PValues(pvals), n, method)
 
 
 # Bonferroni
 
-immutable Bonferroni <: PValueAdjustmentMethod
+immutable Bonferroni <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Bonferroni) = adjust(pvals, length(pvals), method)
@@ -25,7 +25,7 @@ end
 
 # Benjamini-Hochberg
 
-immutable BenjaminiHochberg <: PValueAdjustmentMethod
+immutable BenjaminiHochberg <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiHochberg) = adjust(pvals, length(pvals), method)
@@ -49,7 +49,7 @@ bejamini_hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * n/(k-i)
 
 # Benjamini-Hochberg Adaptive
 
-immutable BenjaminiHochbergAdaptive <: PValueAdjustmentMethod
+immutable BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
 end
 
@@ -68,7 +68,7 @@ end
 
 # Benjamini-Yekutieli
 
-immutable BenjaminiYekutieli <: PValueAdjustmentMethod
+immutable BenjaminiYekutieli <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiYekutieli) = adjust(pvals, length(pvals), method)
@@ -92,7 +92,7 @@ benjamini_yekutieli_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * harmoni
 
 # Benjamini-Liu
 
-immutable BenjaminiLiu <: PValueAdjustmentMethod
+immutable BenjaminiLiu <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiLiu) = adjust(pvals, length(pvals), method)
@@ -121,7 +121,7 @@ end
 
 # Hochberg
 
-immutable Hochberg <: PValueAdjustmentMethod
+immutable Hochberg <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Hochberg) = adjust(pvals, length(pvals), method)
@@ -145,7 +145,7 @@ hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-k+i+1)
 
 # Holm
 
-immutable Holm <: PValueAdjustmentMethod
+immutable Holm <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Holm) = adjust(pvals, length(pvals), method)
@@ -169,7 +169,7 @@ holm_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-i+1)
 
 # Hommel
 
-immutable Hommel <: PValueAdjustmentMethod
+immutable Hommel <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Hommel) = adjust(pvals, length(pvals), method)
@@ -201,7 +201,7 @@ end
 
 # Sidak
 
-immutable Sidak <: PValueAdjustmentMethod
+immutable Sidak <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Sidak) = adjust(pvals, length(pvals), method)
@@ -216,7 +216,7 @@ end
 
 # Forward Stop
 
-immutable ForwardStop <: PValueAdjustmentMethod
+immutable ForwardStop <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::ForwardStop) = adjust(pvals, length(pvals), method)
