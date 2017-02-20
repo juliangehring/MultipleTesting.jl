@@ -103,6 +103,24 @@ using Base.Test
     end
 
 
+    @testset "harmonic_number" begin
+
+        # Exact computation as reference
+        harm_n_exact(n::Integer) = sum([Rational(1, i) for i in 1:BigInt(n)])
+
+        n = [1:100; 200:200:1000; 10000]
+
+        max_d = 0.0
+        for i in n
+            hn1 = MultipleTesting.harmonic_number(i)
+            hn2 = harm_n_exact(i)
+            max_d = max(abs(hn1 - hn2), max_d)
+        end
+        # approximation error in the range of floating point inaccuracy
+        @test max_d < (10*eps())
+
+    end
+
 end
 
 end

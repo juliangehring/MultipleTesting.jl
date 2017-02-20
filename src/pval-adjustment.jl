@@ -40,11 +40,11 @@ function benjamini_hochberg(pValues::PValues, n::Integer)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, bejamini_hochberg_multiplier, k, n)
+    stepup!(sortedPValues, bejamini_hochberg_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-bejamini_hochberg_multiplier(i::Int, k::Int, n::Int) = n/(k-i)
+bejamini_hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * n/(k-i)
 
 
 # Benjamini-Hochberg Adaptive
@@ -83,11 +83,11 @@ function benjamini_yekutieli(pValues::PValues, n::Integer)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, benjamini_yekutieli_multiplier, k, n)
+    stepup!(sortedPValues, benjamini_yekutieli_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-benjamini_yekutieli_multiplier(i::Int, k::Int, n::Int) = sum(1./(1:n))*n/(k-i)
+benjamini_yekutieli_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * harmonic_number(n) * n/(k-i)
 
 
 # Benjamini-Liu
@@ -107,11 +107,11 @@ function benjamini_liu(pValues::PValues, n::Integer)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    general_stepdown!(sortedPValues, benjamini_liu_step, k, n)
+    stepdown!(sortedPValues, benjamini_liu_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-function benjamini_liu_step(p::AbstractFloat, i::Int, n::Int)
+function benjamini_liu_step(p::AbstractFloat, i::Int, k::Int, n::Int)
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n-i+1
@@ -136,11 +136,11 @@ function hochberg(pValues::PValues, n::Integer)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, hochberg_multiplier, k, n)
+    stepup!(sortedPValues, hochberg_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-hochberg_multiplier(i::Int, k::Int, n::Int) = n-k+i+1
+hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-k+i+1)
 
 
 # Holm
@@ -160,11 +160,11 @@ function holm(pValues::PValues, n::Integer)
     end
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    stepdown!(sortedPValues, holm_multiplier, k, n)
+    stepdown!(sortedPValues, holm_step, k, n)
     return min(sortedPValues[originalOrder], 1)
 end
 
-holm_multiplier(i::Int, n::Int) = n-i+1
+holm_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-i+1)
 
 
 # Hommel
@@ -227,37 +227,29 @@ function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
     logsums = -cumsum(log(1-pvalues))
-    stepup!(logsums, forwardstop_multiplier, k, n)
+    stepup!(logsums, forwardstop_step, k, n)
     return max(min(logsums, 1), 0)
 end
 
-forwardstop_multiplier(i::Int, k::Int, n::Int) = 1/(k-i)
+forwardstop_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * 1/(k-i)
 
 
 ## internal ##
 
 # step-up / step-down
 
-function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, k::Integer, n::Integer)
-    sortedPValues[k] *= multiplier(0, k, n)
+function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
+    sortedPValues[k] = stepfun(sortedPValues[k], 0, k, n)
     for i in 1:(k-1)
-        sortedPValues[k-i] = min(sortedPValues[k-i+1], sortedPValues[k-i] * multiplier(i, k, n))
+        sortedPValues[k-i] = min(sortedPValues[k-i+1], stepfun(sortedPValues[k-i], i, k, n))
     end
     return sortedPValues
 end
 
-
-function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, multiplier::Function, k::Integer, n::Integer)
-  stepfun(p::AbstractFloat, i::Int, n::Int) = p * multiplier(i, n)
-  general_stepdown!(sortedPValues, stepfun, k, n)
-  return sortedPValues
-end
-
-
-function general_stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
-    sortedPValues[1] = stepfun(sortedPValues[1], 1, n)
+function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
+    sortedPValues[1] = stepfun(sortedPValues[1], 1, k, n)
     for i in 2:k
-        sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, n))
+        sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, k, n))
     end
     return sortedPValues
 end
@@ -269,3 +261,6 @@ function check_number_tests(k::Integer, n::Integer)
         throw(ArgumentError(msg))
     end
 end
+
+
+harmonic_number(n::Integer) =  digamma(n+1) + γ
