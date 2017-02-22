@@ -24,7 +24,7 @@ function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
     if minimum(pValues) == 0.0
         return NaN
     end
-    x = -2 * sum(log(pValues))
+    x = -2 * sum(log.(pValues))
     p = ccdf(Chisq(2n), x)
     return p
 end
@@ -49,7 +49,7 @@ function logit_combination{T<:AbstractFloat}(pValues::PValues{T})
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log(pValues./(1-pValues))) / c
+    x = -sum(log.(pValues./(1-pValues))) / c
     p = ccdf(TDist(5n+4), x)
     return p
 end

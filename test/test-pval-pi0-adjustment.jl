@@ -102,7 +102,7 @@ using Base.Test
         @test m(pval, pi0) == pval .* pi0
 
         ## compare with reference values
-        @test isapprox( m(pval1, pi0, true), ref, atol = 1e-6 )
+        @test isapprox( m(pval1, pi0, true), ref, atol = 1e-5 )
 
     end
 

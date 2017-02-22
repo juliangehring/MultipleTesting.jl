@@ -11,9 +11,9 @@ function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::AbstractFloa
     else
         qvals = (pi0 .* n .* pValues) ./ v
     end
-    qvals[u[n]] = min(qvals[u[n]], 1)
+    qvals[u[n]] = min.(qvals[u[n]], 1)
     for i in (n - 1):-1:1
-        qvals[u[i]] = min(qvals[u[i]], qvals[u[i + 1]])
+        qvals[u[i]] = min.(qvals[u[i]], qvals[u[i + 1]])
     end
     return qvals
 end
