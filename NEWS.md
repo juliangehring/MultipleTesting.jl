@@ -1,10 +1,40 @@
 # MultipleTesting.jl News and Changes
 
-## Unreleased
+## Version 0.2.0
+
+### New Features
+
+- Combination of p-values through the `combine` interface:
+  * Fisher
+  * Stouffer
+  * Logit
+  * Wilkinson
+  * Simes
+  * Tippett
+  * Minimum of adjusted p-values
+- Analysis notebook for p-value combinations
+- `PValues` type: Representation of vectors with p-values
+- Adjustments of p-values support specifying the total number of tests
+
 
 ### Changes
 
-- Optimised Benjamini-Liu π0 estimator
+- Optimised Benjamini-Liu π0 estimator and test cases
+- Estimator types are now immutables
+- Harmonised type names
+- Restructed readme
+- Simplified method signatures
+- Various performance improvements
+
+
+### Removed
+
+- Export of lower-level functions for p-value adjustment
+
+
+### Support
+
+- Requires julia 0.5
 
 
 ## Version 0.1.0
