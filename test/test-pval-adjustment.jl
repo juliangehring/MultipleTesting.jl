@@ -65,7 +65,7 @@ using Base.Test
 
         if (method == BarberCandes)
             pval = rand(1)
-            @test adjust(pval, method()) == ones(eltype(pval), 1)
+            @test adjust(pval, method()) == ones(pval)
         end
 
         ## compare with reference values

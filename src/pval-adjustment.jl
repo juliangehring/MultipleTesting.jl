@@ -279,11 +279,11 @@ function adjust(pvals::PValues, method::BarberCandes)
 end
 
 # as test, inefficient implementation
-function barber_candes_brute_force(pvals)
+function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
     n = length(pvals)
     sorted_indexes, original_order = reorder(pvals)
     sorted_pvals = pvals[sorted_indexes]
-    estimated_fdrs = ones(Float64,n)
+    estimated_fdrs = ones(pvals)
     for (i,pv) in enumerate(sorted_pvals)
         if pv >= 0.5
             break
