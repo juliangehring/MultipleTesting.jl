@@ -15,11 +15,12 @@
 - Analysis notebook for p-value combinations
 - `PValues` type: Representation of vectors with p-values
 - Adjustments of p-values support specifying the total number of tests
+- Barber-Candès p-value adjustment
 
 
 ### Changes
 
-- Optimised Benjamini-Liu π0 estimator and test cases
+- Optimised Benjamini-Liu p-value adjustment and test cases
 - Estimator types are now immutables
 - Harmonised type names
 - Restructed readme
