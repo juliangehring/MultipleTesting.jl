@@ -63,6 +63,11 @@ using Base.Test
             @test adjust(pval, method()) == pval
         end
 
+        if (method == BarberCandes)
+            pval = rand(1)
+            @test adjust(pval, method()) == ones(eltype(pval), 1)
+        end
+
         ## compare with reference values
         @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
         @test isapprox( adjust(PValues(pval1), method()), ref1[method], atol = 1e-9 )
