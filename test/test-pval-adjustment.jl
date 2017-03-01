@@ -93,12 +93,14 @@ using Base.Test
 
     end
 
-    #@testset "BarberCandès #2:" begin #some additional tests
-    #    pv = rand(BetaUniformMixtureModel(0.9, 0.5, 7.0), 5000)
-    #    @test isapprox(adjust(pv, BarberCandes()), MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
-    #end
-
-
+    @testset "BarberCandès #2:" begin #some additional tests
+        for k=1:5
+          srand(k)
+          pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
+          @test isapprox(adjust(pv, BarberCandes()),
+                MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
+        end
+    end
 end
 
 

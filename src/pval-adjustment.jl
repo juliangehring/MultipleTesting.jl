@@ -245,7 +245,7 @@ function adjust(pvals::PValues, method::BarberCandes)
     n = length(pvals)
 
     if n <= 1
-        return one(pvals[1]) # unlike other p-adjust methods
+        return ones(pvals) # unlike other p-adjust methods
     end
 
     sorted_indexes, original_order = reorder(pvals)
@@ -268,7 +268,13 @@ function adjust(pvals::PValues, method::BarberCandes)
         left_pv = estimated_fdrs[Rt]
     end
 
-    stepup!(estimated_fdrs, identity_step, k, n) # just monotonize, no multiplier needed
+    while ((right_pv >= 0.5) & (Vt + Rt <= n+1))
+      estimated_fdrs[n-Vt+1] = 1.0;
+      right_pv = (Vt + Rt <= n)?estimated_fdrs[n-Vt]:0.0
+      Vt +=1
+    end
+
+    stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
     return min(estimated_fdrs[original_order], 1)
 end
 
@@ -285,7 +291,7 @@ function barber_candes_brute_force(pvals)
             estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
         end
     end
-    stepup!(estimated_fdrs, identity_step, k, n) # just monotonize, no multiplier needed
+    stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
     return min(estimated_fdrs[original_order], 1)
 end
 
