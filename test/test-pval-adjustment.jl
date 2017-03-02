@@ -19,7 +19,8 @@ using Base.Test
         BenjaminiYekutieli => [0.0, 0.001464484, 0.009763228, 0.073224206, 0.292896825, 0.488161376, 0.836848073, 1.0, 1.0, 1.0],
         BenjaminiLiu       => [0.0, 0.0008096761, 0.0063776447, 0.0475542565, 0.1589448656, 0.2047550000, 0.2361600000, 0.2361600000, 0.2361600000, 0.2361600000],
         Sidak              => [0.0, 0.0009995501, 0.0099551198, 0.0956179250, 0.4012630608, 0.6513215599, 0.8926258176, 0.9939533824, 0.9999990463, 1.0000000000],
-        ForwardStop        => [0.0, 0.0000500025, 0.0003668351, 0.0027877103, 0.0124888271, 0.0279674419, 0.0558497432, 0.1127217283, 0.2542297986, 1.0]
+        ForwardStop        => [0.0, 0.0000500025, 0.0003668351, 0.0027877103, 0.0124888271, 0.0279674419, 0.0558497432, 0.1127217283, 0.2542297986, 1.0],
+        BarberCandes       => [0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.375, 1.0, 1.0]
     )
 
     # p-values with ties
@@ -33,7 +34,8 @@ using Base.Test
         BenjaminiYekutieli => [0.001464484, 0.001464484, 0.009763228, 0.073224206, 0.292896825, 0.418424036, 0.418424036, 1.0, 1.0, 1.0],
         BenjaminiLiu       => [0.0009995501, 0.0009995501, 0.0063776447, 0.0475542565, 0.1589448656, 0.2047550000, 0.2047550000, 0.2352000000, 0.2352000000, 0.2352000000],
         Sidak              => [0.0009995501, 0.0009995501, 0.0099551198, 0.0956179250, 0.4012630608, 0.6513215599, 0.6513215599, 0.9939533824, 0.9999990463, 1.0000000000],
-        ForwardStop        => [0.0001000050, 0.0001000050, 0.0004001701, 0.0028127115, 0.0125088281, 0.0279841094, 0.0390378817, 0.0980113495, 0.2411539063, 1.0]
+        ForwardStop        => [0.0001000050, 0.0001000050, 0.0004001701, 0.0028127115, 0.0125088281, 0.0279841094, 0.0390378817, 0.0980113495, 0.2411539063, 1.0],
+        BarberCandes       => [0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.2857142857, 0.375, 1.0, 1.0]
     )
 
     # smallest p-values from larger set
@@ -56,9 +58,14 @@ using Base.Test
         @test_throws DomainError adjust([0.5, 1.5], method())
 
         ## any single p-value is returned unchanged
-        if method != ForwardStop  # this test is not valid for ForwardStop
+        if !(method in [ForwardStop, BarberCandes])  # this test is not valid for ForwardStop
             pval = rand(1)
             @test adjust(pval, method()) == pval
+        end
+
+        if (method == BarberCandes)
+            pval = rand(1)
+            @test adjust(pval, method()) == ones(pval)
         end
 
         ## compare with reference values
@@ -91,7 +98,16 @@ using Base.Test
 
     end
 
+    @testset "BarberCandès #2:" begin #some additional tests
+        for k=1:5
+          srand(k)
+          pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
+          @test isapprox(adjust(pv, BarberCandes()),
+                MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
+        end
+    end
 end
 
-end
 
+
+end
