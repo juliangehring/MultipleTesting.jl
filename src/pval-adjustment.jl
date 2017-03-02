@@ -4,7 +4,7 @@
 
 adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
 
-adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, n::Int, method::M) = adjust(PValues(pvals), n, method)
+adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, n::Integer, method::M) = adjust(PValues(pvals), n, method)
 
 
 # Bonferroni
@@ -44,7 +44,7 @@ function benjamini_hochberg(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-bejamini_hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * n/(k-i)
+bejamini_hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * n/(k-i)
 
 
 # Benjamini-Hochberg Adaptive
@@ -87,7 +87,7 @@ function benjamini_yekutieli(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-benjamini_yekutieli_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * harmonic_number(n) * n/(k-i)
+benjamini_yekutieli_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * harmonic_number(n) * n/(k-i)
 
 
 # Benjamini-Liu
@@ -111,7 +111,7 @@ function benjamini_liu(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-function benjamini_liu_step(p::AbstractFloat, i::Int, k::Int, n::Int)
+function benjamini_liu_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer)
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n-i+1
@@ -140,7 +140,7 @@ function hochberg(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-hochberg_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-k+i+1)
+hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-k+i+1)
 
 
 # Holm
@@ -164,7 +164,7 @@ function holm(pValues::PValues, n::Integer)
     return min(sortedPValues[originalOrder], 1)
 end
 
-holm_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * (n-i+1)
+holm_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-i+1)
 
 
 # Hommel
@@ -231,7 +231,7 @@ function forwardstop(pvalues::PValues, n::Integer)
     return max(min(logsums, 1), 0)
 end
 
-forwardstop_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * 1/(k-i)
+forwardstop_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * 1/(k-i)
 
 
 # Barber-Candès
@@ -292,7 +292,7 @@ function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
     return min(estimated_fdrs[original_order], 1)
 end
 
-identity_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p
+identity_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
 
 
 ## internal ##

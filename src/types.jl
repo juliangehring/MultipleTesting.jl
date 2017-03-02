@@ -32,7 +32,7 @@ Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(
 
 Base.size(pv::PValues) = (length(pv.values), )
 Base.linearindexing{T<:PValues}(::Type{T}) = Base.LinearFast()
-Base.getindex(pv::PValues, i::Int) = pv.values[i]
+Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 
 Base.values(pv::PValues) = pv.values
 Base.minimum(pv::PValues) = pv.min

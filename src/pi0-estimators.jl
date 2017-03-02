@@ -109,7 +109,7 @@ function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
     return pi0
 end
 
-function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::AbstractVector{T})
+function lsl_slope{T<:AbstractFloat}(i::Integer, n::Integer, pval::AbstractVector{T})
     s = (1 - pval[i]) / (n - i + 1)
     return s
 end
@@ -263,7 +263,7 @@ end
 
 function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
                                     γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                                    xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
+                                    xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
@@ -300,7 +300,7 @@ end
 
 function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
                                           γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                                          xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
+                                          xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000)
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ

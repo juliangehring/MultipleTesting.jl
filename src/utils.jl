@@ -55,7 +55,7 @@ function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T}, w
     y = copy(y)
     w = copy(w)
     m = length(y)
-    cnts = ones(Int64, m)
+    cnts = ones(Int, m)
     i = 2
     # ... not most efficient way but could be fun to (ab)use iterator protocol
     while !done(y, i)

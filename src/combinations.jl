@@ -145,7 +145,7 @@ end
 ## Wilkinson combination ##
 
 immutable WilkinsonCombination <: PValueCombination
-    rank::Int
+    rank::Integer
 
     function WilkinsonCombination(rank)
         if rank < 1
@@ -159,7 +159,7 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::WilkinsonCombina
     wilkinson_combination(pValues, method.rank)
 end
 
-function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Int)
+function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Integer)
     n = length(pValues)
     if rank < 1 || rank > n
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
