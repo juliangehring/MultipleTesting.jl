@@ -234,9 +234,6 @@ end
 forwardstop_step(p::AbstractFloat, i::Int, k::Int, n::Int) = p * 1/(k-i)
 
 
-
-
-
 # Barber-Candès
 immutable BarberCandes <: PValueAdjustment
 end

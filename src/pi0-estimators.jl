@@ -106,7 +106,7 @@ function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
         s0 = s1
     end
     pi0 = min( 1/sx + 1, n ) / n
-    return(pi0)
+    return pi0
 end
 
 function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::AbstractVector{T})
@@ -123,7 +123,7 @@ function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     d = diff(s) .< 0
     idx = findfirst(d) + 1
     pi0 = min( 1/s[idx] + 1, n ) / n
-    return(pi0)
+    return pi0
 end
 
 
@@ -173,7 +173,7 @@ end
 function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::AbstractFloat, method::PValueAdjustment)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
-    return(pi0)
+    return pi0
 end
 
 
@@ -210,7 +210,7 @@ function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq::
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
-    return(min(pi0,1))
+    return min(pi0, 1)
 end
 
 
@@ -257,8 +257,8 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Censo
 end
 
 function estimate_pi0(pi0fit::CensoredBUMFit)
-    π0 = pi0fit.is_converged ? π0 = pi0fit.π0 : NaN
-    return π0
+    pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
+    return pi0
 end
 
 function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
@@ -371,8 +371,8 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::BUM)
 end
 
 function estimate_pi0(pi0fit::BUMFit)
-    π0 = pi0fit.is_converged ? π0 = pi0fit.π0 : NaN
-    return π0
+    pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
+    return pi0
 end
 
 
