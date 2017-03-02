@@ -27,6 +27,7 @@ export
     Hommel,
     Sidak,
     ForwardStop,
+    BarberCandes,
     qValues,
     estimate_pi0,
     Pi0Estimator,
