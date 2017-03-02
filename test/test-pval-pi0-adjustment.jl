@@ -12,37 +12,34 @@ using Base.Test
     ## compared against:
     ## qvalue::qvalue(p, pi0, pfdr = TRUE, pi0.method = "bootstrap")
 
+    @test_throws MethodError adjust()
+    @test_throws MethodError adjust(pval1)
+
 
     @testset "benjamini_hochberg" begin
 
-        m = benjamini_hochberg
         t = BenjaminiHochbergAdaptive
 
         ref0 = [0.0, 0.0005, 0.003333333, 0.025, 0.1, 0.166666667, 0.285714286, 0.5, 0.833333333, 1.0]
         ref = ref0 .* pi0
 
-        @test_throws MethodError m()
-
         ## no integers as input
-        @test_throws MethodError m([0, 1])
+        @test_throws MethodError adjust([0, 1], t())
 
         ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
+        @test_throws DomainError adjust([-1.0, 0.5], t(pi0))
+        @test_throws DomainError adjust([0.5, 1.5], t(pi0))
+        @test_throws DomainError adjust([0.5, 0.7], t(-1.0))
+        @test_throws DomainError adjust([0.5, 0.7], t(1.5))
 
         ## single p-value is returned unchanged
         pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
         @test adjust(pval, t(pi0)) == pval .* pi0
 
         ## compare with reference values
-        @test isapprox( m(pval1, pi0), ref, atol = 1e-6 )
         @test isapprox( adjust(pval1, t(pi0)), ref, atol = 1e-6 )
 
         ## BH Adaptive same as BH for π0 missing or 1
-        @test isapprox( m(pval1, 1.0), ref0, atol = 1e-6 )
         @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-6 )
         @test isapprox( adjust(pval1, t()), ref0, atol = 1e-6 )
         @test isapprox( adjust(pval1, t(0.0)), zeros(ref0), atol = 1e-6 )

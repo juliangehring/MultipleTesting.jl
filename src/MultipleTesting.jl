@@ -14,14 +14,9 @@ import StatsBase: fit
 using Distributions
 
 export
-    storey_pi0,
-    bootstrap_pi0,
-    lsl_pi0,
-    twostep_pi0,
-    rightboundary_pi0,
-    flat_grenander_pi0,
+    PValues,
     adjust,
-    PValueAdjustmentMethod,
+    PValueAdjustment,
     Bonferroni,
     BenjaminiHochberg,
     BenjaminiHochbergAdaptive,
@@ -32,15 +27,7 @@ export
     Hommel,
     Sidak,
     ForwardStop,
-    bonferroni,
-    benjamini_hochberg,
-    benjamini_yekutieli,
-    benjamini_liu,
-    holm,
-    hommel,
-    hochberg,
-    sidak,
-    forwardstop,
+    BarberCandes,
     qValues,
     estimate_pi0,
     Pi0Estimator,
@@ -57,7 +44,17 @@ export
     FlatGrenander,
     isin,
     fit,
-    BetaUniformMixtureModel
+    BetaUniformMixtureModel,
+    PValueCombination,
+    combine,
+    FisherCombination,
+    LogitCombination,
+    StoufferCombination,
+    TippettCombination,
+    SimesCombination,
+    WilkinsonCombination,
+    MinimumCombination
+
 
 include("types.jl")
 include("utils.jl")
@@ -65,5 +62,6 @@ include("pval-adjustment.jl")
 include("pi0-estimators.jl")
 include("qvalue.jl")
 include("model.jl")
+include("combinations.jl")
 
 end
