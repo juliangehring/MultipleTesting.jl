@@ -51,11 +51,11 @@ end
 
 
 function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T}, w::AbstractVector{T})
-    #todo: ignore zero weights
+    # TODO ignore zero weights
     y = copy(y)
     w = copy(w)
     m = length(y)
-    cnts = ones(Int64, m)
+    cnts = ones(Int, m)
     i = 2
     # ... not most efficient way but could be fun to (ab)use iterator protocol
     while !done(y, i)
@@ -127,7 +127,7 @@ end
 
 function grenander{T<:AbstractFloat}(pv::AbstractVector{T})
     pv_sorted = sort(pv)
-    ## ecdf that handles duplicated values
+    # ecdf that handles duplicated values
     pv_sorted_unique, counts = rle(pv_sorted)
     ecdf_value = cumsum(counts)
     ecdf_value = ecdf_value ./ ecdf_value[end]
