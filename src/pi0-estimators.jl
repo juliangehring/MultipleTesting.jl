@@ -53,7 +53,6 @@ StoreyBootstrap(λseq, q)
 Reference: David Robinson, 2012
 """
 immutable StoreyBootstrap <: Pi0Estimator
-    ## check range of arguments
     λseq::AbstractVector{AbstractFloat}
     q   ::AbstractFloat
 
@@ -114,8 +113,8 @@ function lsl_slope{T<:AbstractFloat}(i::Integer, n::Integer, pval::AbstractVecto
     return s
 end
 
-## alternative, vectorized version
-## used for comparison and compactness
+# alternative, vectorized version
+# used for comparison and compactness
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
     pValues = sort_if_needed(pValues)
@@ -185,7 +184,6 @@ Right boundary π0 estimator
 RightBoundary(λseq)
 """
 immutable RightBoundary <: Pi0Estimator
-    ## check range of arguments
     λseq::AbstractVector{Float64}
 
     RightBoundary(λseq) =
@@ -271,7 +269,6 @@ function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
     sz = (1-γ0)*n
     szr = (1-γ0)*n2
     szl = sz - szr
-    ## compute constant values only once
     pr = pValues[idx_right]
     lpr = log(pr)
     ll = log(λ)
@@ -306,7 +303,7 @@ function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
     idx_left = pValues .< λ
     idx_right = !idx_left
     pi0_old = γ0 = α = γ = Inf
-    ## compute constant values only once
+    # compute constant values only once
     lpr = log(pValues[idx_right])
     ll = log(λ)
     for i in 1:maxiter
@@ -407,7 +404,7 @@ function longest_constant_interval{T<:AbstractFloat}(p::AbstractVector{T}, f::Ab
     Δp_max = Δp = 0.0
     pi0 = 1.0
     for i1 in (length(f)-1):-1:1
-        if f[i2] ≈ f[i1] ## within constant interval
+        if f[i2] ≈ f[i1] # within constant interval
             Δp = p[i2] - p[i1]
         else
             if Δp >= Δp_max

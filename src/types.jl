@@ -6,7 +6,6 @@ abstract Pi0Fit
 
 abstract PValueAdjustment
 
-# consistent naming
 abstract PValueCombination
 
 

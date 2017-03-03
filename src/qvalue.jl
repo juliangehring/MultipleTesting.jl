@@ -5,7 +5,7 @@ function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::AbstractFloa
     valid_pvalues([pi0])
     n = length(pValues)
     u = sortperm(pValues)
-    v = competerank(pValues) ## ties with 'min'
+    v = competerank(pValues) # ties with 'min'
     if pfdr
         qvals = (pi0 .* n .* pValues) ./ (v .* (1 - (1 - pValues) .^ n))
     else
