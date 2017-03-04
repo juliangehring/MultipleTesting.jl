@@ -178,7 +178,6 @@ using StatsBase
         @test isapprox( estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5 )
         @test isapprox( estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5 )
         @test isapprox( estimate_pi0(p1, CensoredBUM()), 0.11608, atol = 2e-5 )
-        @test isapprox( estimate_pi0(ones(50), CensoredBUM()), 1.0, atol = 1e-5 )
 
         # test against internal reference implementation
         # p0 case is not handled well by naive implementation
@@ -202,12 +201,15 @@ using StatsBase
         @test issubtype(typeof(f), CensoredBUMFit)
         @test isapprox( f.π0, 0.55797, atol = 1e-5 )
 
-        pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(50))
-        @test pi0_est ≈ 1.0
-        @test is_converged
+        # denominator becomes 0 if all p-values are 1
+        @test isnan( estimate_pi0(ones(20), CensoredBUM()) )
 
-        pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(50))
-        @test isnan(pi0_est)
+        pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(20))
+        @test isnan( pi0_est )
+        @test !is_converged
+
+        pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(20))
+        @test isnan( pi0_est )
         @test !is_converged
 
     end
