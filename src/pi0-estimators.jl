@@ -305,7 +305,7 @@ function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ
-    idx_right = !idx_left  # TODO .! / .~ in julia 0.6
+    idx_right = @__dot__ !idx_left
     pi0_old = γ0 = α = γ = Inf
     # compute constant values only once
     lpr = log.(pValues[idx_right])

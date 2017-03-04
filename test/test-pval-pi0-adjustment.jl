@@ -3,6 +3,7 @@ module Test_pval_pi0_adjustment
 
 using MultipleTesting
 using Base.Test
+using Compat
 
 @testset "p-Value π0 adjustment" begin
 
@@ -105,7 +106,7 @@ using Base.Test
         ## compare with reference values
         # `isapprox` cannot compare NaNs in julia 0.5
         # TODO use `isapprox(nans = true)` in julia 0.6
-        idx = !isnan.(ref)
+        idx = @__dot__ !isnan.(ref)
         @test isapprox( m(pval1, pi0, true)[idx], ref[idx], atol = 1e-8 )
 
     end
