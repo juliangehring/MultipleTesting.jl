@@ -24,7 +24,7 @@ function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
     if minimum(pValues) == 0.0
         return NaN
     end
-    x = -2 * sum(log(pValues))
+    x = -2 * sum(log.(pValues))
     p = ccdf(Chisq(2n), x)
     return p
 end
@@ -49,7 +49,7 @@ function logit_combination{T<:AbstractFloat}(pValues::PValues{T})
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log(pValues./(1-pValues))) / c
+    x = -sum(log.(pValues./(1-pValues))) / c
     p = ccdf(TDist(5n+4), x)
     return p
 end
@@ -145,7 +145,7 @@ end
 ## Wilkinson combination ##
 
 immutable WilkinsonCombination <: PValueCombination
-    rank::Int
+    rank::Integer
 
     function WilkinsonCombination(rank)
         if rank < 1
@@ -159,7 +159,7 @@ function combine{T<:AbstractFloat}(pValues::PValues{T}, method::WilkinsonCombina
     wilkinson_combination(pValues, method.rank)
 end
 
-function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Int)
+function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Integer)
     n = length(pValues)
     if rank < 1 || rank > n
         throw(ArgumentError("Rank must be in 1,..,$(n)"))

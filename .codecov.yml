@@ -1,7 +1,9 @@
 codecov:
   notify:
     require_ci_to_pass: true
+
 comment: off
+
 coverage:
   precision: 2
   range:
@@ -12,6 +14,11 @@ coverage:
     changes: false
     patch: true
     project: true
+
+flags:
+  julia_0_6:
+    joined: false
+
 parsers:
   gcov:
     branch_detection:

@@ -39,7 +39,7 @@ end
 
 function storey_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, lambda::AbstractFloat)
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
-    pi0 = min(pi0, 1.)
+    pi0 = min.(pi0, 1.)
     return pi0
 end
 
@@ -53,7 +53,6 @@ StoreyBootstrap(λseq, q)
 Reference: David Robinson, 2012
 """
 immutable StoreyBootstrap <: Pi0Estimator
-    ## check range of arguments
     λseq::AbstractVector{AbstractFloat}
     q   ::AbstractFloat
 
@@ -73,7 +72,7 @@ function bootstrap_pi0{T<:AbstractFloat,S<:AbstractFloat}(pValues::AbstractVecto
     pi0 = w ./ n ./ (1. - lambda)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
-    pi0 = min(pi0[indmin(mse)], 1.)
+    pi0 = min.(pi0[indmin(mse)], 1.)
     pi0
 end
 
@@ -105,25 +104,25 @@ function lsl_pi0{T<:AbstractFloat}(pValues::AbstractVector{T})
         end
         s0 = s1
     end
-    pi0 = min( 1/sx + 1, n ) / n
-    return(pi0)
+    pi0 = min.( 1/sx + 1, n ) / n
+    return pi0
 end
 
-function lsl_slope{T<:AbstractFloat}(i::Int, n::Int, pval::AbstractVector{T})
+function lsl_slope{T<:AbstractFloat}(i::Integer, n::Integer, pval::AbstractVector{T})
     s = (1 - pval[i]) / (n - i + 1)
     return s
 end
 
-## alternative, vectorized version
-## used for comparison and compactness
+# alternative, vectorized version
+# used for comparison and compactness
 function lsl_pi0_vec{T<:AbstractFloat}(pValues::AbstractVector{T})
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s = (1 - pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
-    pi0 = min( 1/s[idx] + 1, n ) / n
-    return(pi0)
+    pi0 = min.( 1/s[idx] + 1, n ) / n
+    return pi0
 end
 
 
@@ -173,7 +172,7 @@ end
 function twostep_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, alpha::AbstractFloat, method::PValueAdjustment)
     padj = adjust(pValues, method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
-    return(pi0)
+    return pi0
 end
 
 
@@ -185,7 +184,6 @@ Right boundary π0 estimator
 RightBoundary(λseq)
 """
 immutable RightBoundary <: Pi0Estimator
-    ## check range of arguments
     λseq::AbstractVector{Float64}
 
     RightBoundary(λseq) =
@@ -210,7 +208,7 @@ function rightboundary_pi0{T<:AbstractFloat}(pValues::AbstractVector{T}, λseq::
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
-    return(min(pi0,1))
+    return min.(pi0, 1)
 end
 
 
@@ -257,13 +255,13 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::Censo
 end
 
 function estimate_pi0(pi0fit::CensoredBUMFit)
-    π0 = pi0fit.is_converged ? π0 = pi0fit.π0 : NaN
-    return π0
+    pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
+    return pi0
 end
 
 function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
                                     γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                                    xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
+                                    xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000)
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
@@ -271,17 +269,20 @@ function cbum_pi0{T<:AbstractFloat}(pValues::AbstractVector{T},
     sz = (1-γ0)*n
     szr = (1-γ0)*n2
     szl = sz - szr
-    ## compute constant values only once
     pr = pValues[idx_right]
-    lpr = log(pr)
+    lpr = log.(pr)
     ll = log(λ)
     zr = fill(1-γ0, n2)
     pi0_old = γ0 = α = γ = Inf
     for i in 1:maxiter
         γ = 1 - sz/n
         α = -szr / ( ll * szl + sum(zr .* lpr) )
-        γ = max(min(γ, 1.), 0.)
-        α = max(min(α, 1.), 0.)
+        # explicitly handle denominator of 0 in julia 0.5: min(x, NaN) == x
+        if isnan(α)
+           break
+        end
+        γ = max.(min.(γ, 1.), 0.)
+        α = max.(min.(α, 1.), 0.)
         xl = (1-γ) * (λ^α)
         szl = (xl ./ (γ*λ + xl)) * n1
         xr = (1-γ) * α * pr.^(α-1)
@@ -300,14 +301,14 @@ end
 
 function cbum_pi0_naive{T<:AbstractFloat}(pValues::AbstractVector{T},
                                           γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                                          xtol::AbstractFloat = 1e-6, maxiter::Int = 10000)
+                                          xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000)
     n = length(pValues)
     z = fill(1-γ0, n)
     idx_left = pValues .< λ
-    idx_right = !idx_left
+    idx_right = @__dot__ !idx_left
     pi0_old = γ0 = α = γ = Inf
-    ## compute constant values only once
-    lpr = log(pValues[idx_right])
+    # compute constant values only once
+    lpr = log.(pValues[idx_right])
     ll = log(λ)
     for i in 1:maxiter
         γ = sum(1-z) / n
@@ -371,8 +372,8 @@ function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::BUM)
 end
 
 function estimate_pi0(pi0fit::BUMFit)
-    π0 = pi0fit.is_converged ? π0 = pi0fit.π0 : NaN
-    return π0
+    pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
+    return pi0
 end
 
 
@@ -407,7 +408,7 @@ function longest_constant_interval{T<:AbstractFloat}(p::AbstractVector{T}, f::Ab
     Δp_max = Δp = 0.0
     pi0 = 1.0
     for i1 in (length(f)-1):-1:1
-        if f[i2] ≈ f[i1] ## within constant interval
+        if f[i2] ≈ f[i1] # within constant interval
             Δp = p[i2] - p[i1]
         else
             if Δp >= Δp_max

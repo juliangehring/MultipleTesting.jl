@@ -1,5 +1,21 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.2.1
+
+### Changes
+
+- Adds compatibility with julia 0.6 development versions, including automated tests
+- Fixes Censored BUM π0 edge case when all p-values are equal to 1
+- Updates test cases and reference values for `qValues`
+- Introduces `Compat` as a new dependency
+- Separates test coverage reports for different julia versions
+
+
+### Support
+
+- Requires julia 0.5 or 0.6
+
+
 ## Version 0.2.0
 
 ### New Features
