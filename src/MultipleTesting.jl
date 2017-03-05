@@ -8,6 +8,8 @@ __precompile__()
 """
 module MultipleTesting
 
+using Compat
+
 using StatsBase
 import StatsBase: fit
 

@@ -19,7 +19,7 @@ adjust(pvals::PValues, n::Integer, method::Bonferroni) = bonferroni(pvals, n)
 function bonferroni(pValues::PValues, n::Integer)
     k = length(pValues)
     check_number_tests(k, n)
-    return min(pValues * n, 1)
+    return min.(pValues * n, 1)
 end
 
 
@@ -41,7 +41,7 @@ function benjamini_hochberg(pValues::PValues, n::Integer)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, bejamini_hochberg_step, k, n)
-    return min(sortedPValues[originalOrder], 1)
+    return min.(sortedPValues[originalOrder], 1)
 end
 
 bejamini_hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * n/(k-i)
@@ -84,7 +84,7 @@ function benjamini_yekutieli(pValues::PValues, n::Integer)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, benjamini_yekutieli_step, k, n)
-    return min(sortedPValues[originalOrder], 1)
+    return min.(sortedPValues[originalOrder], 1)
 end
 
 benjamini_yekutieli_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * harmonic_number(n) * n/(k-i)
@@ -108,7 +108,7 @@ function benjamini_liu(pValues::PValues, n::Integer)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepdown!(sortedPValues, benjamini_liu_step, k, n)
-    return min(sortedPValues[originalOrder], 1)
+    return min.(sortedPValues[originalOrder], 1)
 end
 
 function benjamini_liu_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer)
@@ -137,7 +137,7 @@ function hochberg(pValues::PValues, n::Integer)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepup!(sortedPValues, hochberg_step, k, n)
-    return min(sortedPValues[originalOrder], 1)
+    return min.(sortedPValues[originalOrder], 1)
 end
 
 hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-k+i+1)
@@ -161,7 +161,7 @@ function holm(pValues::PValues, n::Integer)
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     stepdown!(sortedPValues, holm_step, k, n)
-    return min(sortedPValues[originalOrder], 1)
+    return min.(sortedPValues[originalOrder], 1)
 end
 
 holm_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-i+1)
@@ -191,11 +191,11 @@ function hommel(pValues::PValues, n::Integer)
         ij = 1:(n-j+1)
         i2 = (n-j+2):n
         q1 = minimum(j .* sortedPValues[i2]./((2:j)))
-        q[ij] = min(j .* sortedPValues[ij], q1)
+        q[ij] = min.(j .* sortedPValues[ij], q1)
         q[i2] = q[n-j+1]
-        pa = max(pa, q)
+        pa = max.(pa, q)
     end
-    return max(pa, sortedPValues)[originalOrder[1:k]]
+    return max.(pa, sortedPValues)[originalOrder[1:k]]
 end
 
 
@@ -210,7 +210,7 @@ adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
 
 function sidak(pValues::PValues, n::Integer)
     check_number_tests(length(pValues), n)
-    return min(1-(1-pValues).^n, 1)
+    return min.(1-(1-pValues).^n, 1)
 end
 
 
@@ -226,9 +226,9 @@ adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
 function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
-    logsums = -cumsum(log(1-pvalues))
+    logsums = -cumsum(log.(1-pvalues))
     stepup!(logsums, forwardstop_step, k, n)
-    return max(min(logsums, 1), 0)
+    return max.(min.(logsums, 1), 0)
 end
 
 forwardstop_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * 1/(k-i)
@@ -272,7 +272,7 @@ function adjust(pvals::PValues, method::BarberCandes)
     end
 
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
-    return min(estimated_fdrs[original_order], 1)
+    return min.(estimated_fdrs[original_order], 1)
 end
 
 # as test, inefficient implementation
@@ -289,7 +289,7 @@ function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
         end
     end
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
-    return min(estimated_fdrs[original_order], 1)
+    return min.(estimated_fdrs[original_order], 1)
 end
 
 identity_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
@@ -302,7 +302,7 @@ identity_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
 function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
     sortedPValues[k] = stepfun(sortedPValues[k], 0, k, n)
     for i in 1:(k-1)
-        sortedPValues[k-i] = min(sortedPValues[k-i+1], stepfun(sortedPValues[k-i], i, k, n))
+        sortedPValues[k-i] = min.(sortedPValues[k-i+1], stepfun(sortedPValues[k-i], i, k, n))
     end
     return sortedPValues
 end
@@ -310,7 +310,7 @@ end
 function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
     sortedPValues[1] = stepfun(sortedPValues[1], 1, k, n)
     for i in 2:k
-        sortedPValues[i] = max(sortedPValues[i-1], stepfun(sortedPValues[i], i, k, n))
+        sortedPValues[i] = max.(sortedPValues[i-1], stepfun(sortedPValues[i], i, k, n))
     end
     return sortedPValues
 end

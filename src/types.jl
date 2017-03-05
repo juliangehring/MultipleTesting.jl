@@ -1,12 +1,12 @@
 ## abstract types ##
 
-abstract Pi0Estimator
+@compat abstract type Pi0Estimator end
 
-abstract Pi0Fit
+@compat abstract type Pi0Fit end
 
-abstract PValueAdjustment
+@compat abstract type PValueAdjustment end
 
-abstract PValueCombination
+@compat abstract type PValueCombination end
 
 
 ## concrete types ##
@@ -30,7 +30,7 @@ end
 Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x)
 
 Base.size(pv::PValues) = (length(pv.values), )
-Base.linearindexing{T<:PValues}(::Type{T}) = Base.LinearFast()
+@compat Base.IndexStyle{T<:PValues}(::Type{T}) = IndexLinear()
 Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 
 Base.values(pv::PValues) = pv.values
