@@ -13,7 +13,7 @@
 
 ## PValues
 
-type PValues{T<:AbstractFloat} <: AbstractVector{T}
+immutable PValues{T<:AbstractFloat} <: AbstractVector{T}
     values::AbstractVector{T}
     min::T
     max::T
@@ -23,7 +23,7 @@ type PValues{T<:AbstractFloat} <: AbstractVector{T}
         if min < 0.0 || max > 1.0
             throw(DomainError())
         end
-        new{T}(values, min, max)
+        new{T}(copy(values), min, max)
     end
 end
 
