@@ -29,8 +29,6 @@ using Base.Test
         pvt = PValues(vals)
         @test_throws ErrorException pvt.min = 0.0
         @test_throws ErrorException pvt.max = 1.0
-        #@test minimum(pvt) == 0.0
-        #@test maximum(pvt) == 1.0
 
         # parametric type that keeps input float type
         for T in (Float16, Float32, Float64)
