@@ -1,6 +1,6 @@
 # MultipleTesting
 
-The `MultipleTesting` package offers common algorithms for p-value adjustment and the estimation of the proportion π₀ of true null hypotheses.
+The `MultipleTesting` package offers common algorithms for p-value adjustment and combination as well as the estimation of the proportion π₀ of true null hypotheses.
 
 ![xkcd p-value guide](pvalues.png)
 
@@ -118,7 +118,9 @@ The package is actively developed and uses [semantic versioning](http://semver.o
 
 [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
 
+[![Package Status](http://pkg.julialang.org/badges/MultipleTesting_0.6.svg)](http://pkg.julialang.org/?pkg=MultipleTesting)
 [![Package Status](http://pkg.julialang.org/badges/MultipleTesting_0.5.svg)](http://pkg.julialang.org/?pkg=MultipleTesting)
+
 [![Linux/Mac Build Status](https://travis-ci.org/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/juliangehring/MultipleTesting.jl)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/juliangehring/multipletesting-jl/branch/master)
 [![Coverage Status](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
