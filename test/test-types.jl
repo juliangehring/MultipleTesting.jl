@@ -14,7 +14,7 @@ using Base.Test
         pv = PValues(vals)
 
         # basic vector functionality
-        @test values(pv) ≡ vals
+        @test values(pv) == vals
         @test sum(pv) == sum(vals)
         @test length(pv) == n
         @test ones(pv) == ones(eltype(vals), n)
@@ -27,10 +27,8 @@ using Base.Test
         # min/max are taken from the type fields,
         # not recomputed from the values
         pvt = PValues(vals)
-        pvt.min = 0.0
-        pvt.max = 1.0
-        @test minimum(pvt) == 0.0
-        @test maximum(pvt) == 1.0
+        @test_throws ErrorException pvt.min = 0.0
+        @test_throws ErrorException pvt.max = 1.0
 
         # parametric type that keeps input float type
         for T in (Float16, Float32, Float64)
@@ -51,6 +49,29 @@ using Base.Test
         @test_throws MethodError PValues(0.5)
         @test_throws ArgumentError PValues([])
         @test_throws TypeError PValues([0, 1])
+
+    end
+
+
+    @testset "PValues immutability" begin
+
+        n = 10
+        vals = rand(n)
+        ref = deepcopy(vals)
+
+        pv = PValues(vals)
+
+        @test pv.values == ref
+        @test extrema(pv) == extrema(pv.values)
+
+        vals[1] = 0.0
+        vals[2] = 1.0
+
+        @test pv.values == ref
+        @test pv.values != vals
+        @test extrema(pv) == extrema(pv.values)
+
+        @test_throws ErrorException pv[1] = 0.0
 
     end
 

@@ -1,5 +1,18 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.2.2
+
+### Changes
+
+- Makes the `PValues` type immutable and persistent
+- Finalises support of julia 0.6 with testing
+
+
+### Support
+
+- Requires julia 0.5 or 0.6
+
+
 ## Version 0.2.1
 
 ### Changes
