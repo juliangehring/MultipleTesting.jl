@@ -1,5 +1,12 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.2.3
+
+### Changes
+
+- Switch to new `Weights` type in 'StatsBase' (>= v0.15.0)
+
+
 ## Version 0.2.2
 
 ### Changes
