@@ -1,4 +1,4 @@
 julia 0.5
-StatsBase
+StatsBase 0.15.0
 Distributions
 Compat 0.19.0
