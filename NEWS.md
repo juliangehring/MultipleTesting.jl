@@ -1,5 +1,12 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.3.0
+
+### Support
+
+- Requires julia 0.6 or newer
+
+
 ## Version 0.2.3
 
 ### Changes
