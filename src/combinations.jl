@@ -81,7 +81,7 @@ function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
     if pmin == 0.0 || pmax == 1.0
         return NaN
     end
-    z = cquantile(Normal(), pValues)
+    z = cquantile.(Normal(), pValues)
     z = sum(z) ./ sqrt(n)
     p = ccdf(Normal(), z)
     return p
@@ -96,7 +96,7 @@ function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T}, weights::Ve
     if pmin == 0.0 || pmax == 1.0
         return NaN
     end
-    z = cquantile(Normal(), pValues) .* weights
+    z = cquantile.(Normal(), pValues) .* weights
     z = sum(z) ./ sqrt(sum(weights.^2))
     p = ccdf(Normal(), z)
     return p
