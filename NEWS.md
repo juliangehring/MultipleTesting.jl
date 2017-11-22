@@ -5,12 +5,13 @@
 ### Changes
 
 - Drop support for julia 0.5, require julia 0.6 as minimum version
-- Support new Distributions.jl interface
+- Drop `Compat` dependency
+- Support new `Distributions` interface
 
 
 ### Support
 
-- Requires julia 0.6 or newer
+- Requires julia 0.6
 
 
 ## Version 0.2.3
