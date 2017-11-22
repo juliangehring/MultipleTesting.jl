@@ -8,7 +8,7 @@ abstract type PValueAdjustment end
 
 abstract type PValueCombination end
 
-abstract Alternative
+abstract type Alternative end
 
 
 ## concrete types ##
@@ -57,7 +57,7 @@ end
 Base.convert{T<:AbstractFloat}(::Type{ZScores}, x::AbstractVector{T}) = ZScores(x)
 
 Base.size(zs::ZScores) = (length(zs.values), )
-Base.linearindexing{T<:ZScores}(::Type{T}) = Base.LinearFast()
+Base.IndexStyle{T<:ZScores}(::Type{T}) = IndexLinear()
 Base.getindex(zs::ZScores, i::Int) = zs.values[i]
 
 Base.values(zs::ZScores) = zs.values
@@ -75,17 +75,17 @@ immutable Both  <: Alternative end
 # PValues to ZScores
 
 function PValues(zs::ZScores, alternative::Type{Lower})
-    p = cdf(Normal(), zs)
+    p = cdf.(Normal(), zs)
     return PValues(p)
 end
 
 function PValues(zs::ZScores, alternative::Type{Upper})
-    p = ccdf(Normal(), zs)
+    p = ccdf.(Normal(), zs)
     return PValues(p)
 end
 
 function PValues(zs::ZScores, alternative::Type{Both})
-    p = 2 * min( ccdf(Normal(), zs), cdf(Normal(), zs) )
+    p = 2 * min.( ccdf.(Normal(), zs), cdf.(Normal(), zs) )
     return PValues(p)
 end
 
@@ -97,12 +97,12 @@ PValues(zs::ZScores, alt::Alternative) = PValues(zs, typeof(alt))
 # ZScores to PValues
 
 function ZScores(pv::PValues, alternative::Type{Upper})
-    z = cquantile(Normal(), pv)
+    z = cquantile.(Normal(), pv)
     return ZScores(z)
 end
 
 function ZScores(pv::PValues, alternative::Type{Lower})
-    z = quantile(Normal(), pv)
+    z = quantile.(Normal(), pv)
     return ZScores(z)
 end
 

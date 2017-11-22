@@ -137,7 +137,7 @@ using Base.Test
 
         p1 = PValues(zs, Both)
         @test typeof(p1) <: PValues
-        @test isapprox( p1, 2*min(pu, 1-pu), atol = 1e-4 )
+        @test isapprox( p1, 2*min.(pu, 1-pu), atol = 1e-4 )
         # no transformation since sign of z-scores is unknown
         @test_throws MethodError ZScores(p1, Both)
 
