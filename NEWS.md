@@ -1,5 +1,18 @@
 # MultipleTesting.jl News and Changes
 
+## Unreleased
+
+### Changes
+
+- Drop support for julia 0.5, require julia 0.6 as minimum version
+- Support new Distributions.jl interface
+
+
+### Support
+
+- Requires julia 0.6 or newer
+
+
 ## Version 0.2.3
 
 ### Changes

@@ -3,7 +3,7 @@ module Test_pval_pi0_adjustment
 
 using MultipleTesting
 using Base.Test
-using Compat
+
 
 @testset "p-Value π0 adjustment" begin
 

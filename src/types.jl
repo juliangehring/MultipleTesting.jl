@@ -1,12 +1,12 @@
 ## abstract types ##
 
-@compat abstract type Pi0Estimator end
+abstract type Pi0Estimator end
 
-@compat abstract type Pi0Fit end
+abstract type Pi0Fit end
 
-@compat abstract type PValueAdjustment end
+abstract type PValueAdjustment end
 
-@compat abstract type PValueCombination end
+abstract type PValueCombination end
 
 
 ## concrete types ##
@@ -30,7 +30,7 @@ end
 Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x)
 
 Base.size(pv::PValues) = (length(pv.values), )
-@compat Base.IndexStyle{T<:PValues}(::Type{T}) = IndexLinear()
+Base.IndexStyle{T<:PValues}(::Type{T}) = IndexLinear()
 Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 Base.setindex!(pv::PValues, x::AbstractFloat, i::Integer) =
     throw(ErrorException("Modification of values is not permitted"))
