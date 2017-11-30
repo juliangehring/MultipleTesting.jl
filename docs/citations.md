@@ -22,6 +22,10 @@ in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
 Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle
 probabilita (Libreria internazionale Seeber).
 
+G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential
+selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
+423–444.
+
 Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of
 significance. Biometrika 75, 800–802.
 
