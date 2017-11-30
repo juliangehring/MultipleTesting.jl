@@ -58,8 +58,14 @@ Bioinformatics 26, 640–646.
 
 ## Combination of p-values
 
+Fisher, R.A. (1925). Statistical methods for research workers (Genesis
+Publishing Pvt Ltd).
+
 Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
 Kutato Int Kozl 3, 171–197.
+
+Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
+significance. Biometrika 73, 751–754.
 
 Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
 (Princeton University Press).
