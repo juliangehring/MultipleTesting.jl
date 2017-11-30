@@ -28,3 +28,19 @@ modified Bonferroni test. Biometrika 75, 383–386.
 Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate
 Normal Distributions. Journal of the American Statistical Association 62,
 626–633.
+
+
+## Combination of p-values
+
+Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
+Kutato Int Kozl 3, 171–197.
+
+Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
+(Princeton University Press).
+
+Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
+workers in the biological sciences. The Methods of Statistics. An Introduction
+Mainly for Workers in the Biological Sciences.
+
+Wilkinson, B. (1951). A statistical consideration in psychological research.
+Psychological Bulletin 48, 156.
