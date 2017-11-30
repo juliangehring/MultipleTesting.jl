@@ -40,6 +40,22 @@ Normal Distributions. Journal of the American Statistical Association 62,
 626–633.
 
 
+## Estimation of π₀
+
+Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
+proportion of true null hypotheses, with application to DNA microarray data.
+Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
+555–572.
+
+Liang, K., and Nettleton, D. (2012). Adaptive and dynamic adaptive procedures
+for false discovery rate control and estimation. Journal of the Royal
+Statistical Society: Series B (Statistical Methodology) 74, 163–182.
+
+Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
+estimation of the proportion of non-differentially expressed genes.
+Bioinformatics 26, 640–646.
+
+
 ## Combination of p-values
 
 Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
