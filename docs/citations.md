@@ -2,6 +2,12 @@
 
 ## Adjustment of p-values
 
+Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
+Electron. J. Statist. 11, 1983–2001.
+
+Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via
+knockoffs. Ann. Statist. 43, 2055–2085.
+
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
