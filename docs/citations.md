@@ -42,6 +42,9 @@ Normal Distributions. Journal of the American Statistical Association 62,
 
 ## Estimation of π₀
 
+Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
+procedures that control the false discovery rate. Biometrika 93, 491–507.
+
 Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
 proportion of true null hypotheses, with application to DNA microarray data.
 Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
@@ -54,6 +57,14 @@ Statistical Society: Series B (Statistical Methodology) 74, 163–182.
 Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
 estimation of the proportion of non-differentially expressed genes.
 Bioinformatics 26, 640–646.
+
+Robinson, D. (2016). Original Procedure for Choosing λ.
+http://varianceexplained.org/files/pi0boot.pdf
+
+Storey, J.D., Taylor, J.E., and Siegmund, D. (2004). Strong control,
+conservative point estimation and simultaneous conservative consistency of false
+discovery rates: a unified approach. Journal of the Royal Statistical Society:
+Series B (Statistical Methodology) 66, 187–205.
 
 
 ## Combination of p-values
