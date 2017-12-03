@@ -84,6 +84,9 @@ Publishing Pvt Ltd).
 Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
 Kutato Int Kozl 3, 171–197.
 
+Mudholkar, G.S., and George, E.O. (1977). The Logit Statistic for Combining
+Probabilities - An Overview (Rochester University NY, Dept of Statistics).
+
 Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
 significance. Biometrika 73, 751–754.
 
