@@ -93,7 +93,7 @@
 ### New Features
 
 - New π0 estimators: BUM, Censored BUM, Flat Grenander
-- New p-value adjustment methods: Forward Step, Benjamini-Liu
+- New p-value adjustment methods: Forward Stop, Benjamini-Liu
 - BUM model for simulating p-value distributions
 - Fast isotonic regression
 - Reference list of related software packages in documentation
