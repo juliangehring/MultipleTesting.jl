@@ -42,6 +42,10 @@ Normal Distributions. Journal of the American Statistical Association 62,
 
 ## Estimation of π₀
 
+Benjamini, Y., and Hochberg, Y. (2000). On the Adaptive Control of the False
+Discovery Rate in Multiple Testing With Independent Statistics. Journal of
+Educational and Behavioral Statistics 25, 60–83.
+
 Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
 procedures that control the false discovery rate. Biometrika 93, 491–507.
 
@@ -57,6 +61,11 @@ Statistical Society: Series B (Statistical Methodology) 74, 163–182.
 Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
 estimation of the proportion of non-differentially expressed genes.
 Bioinformatics 26, 640–646.
+
+Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
+positives and false negatives in microarray studies by approximating and
+partitioning the empirical distribution of p-values. Bioinformatics 19,
+1236–1242.
 
 Robinson, D. (2016). Original Procedure for Choosing λ.
 http://varianceexplained.org/files/pi0boot.pdf
