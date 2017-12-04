@@ -6,8 +6,8 @@ function higher_criticism_scores(pValues::PValues)
     denom = F .* (1.0 - F) ./ n
     # avoid denominator of 0 for last value
     idx0 = denom .== 0
-    denom[idx0] = minimum(denom[!idx0]) + eps()  # conservative
-    hcs = abs(F - pValues) ./ sqrt(denom)
+    denom[idx0] = minimum(denom[.!idx0]) + eps()  # conservative
+    hcs = abs.(F - pValues) ./ sqrt.(denom)
     return hcs
 end
 
