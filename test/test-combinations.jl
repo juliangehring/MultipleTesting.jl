@@ -46,8 +46,8 @@ using Base.Test
 
     @testset "$(method)" for method in keys(ref2)
 
-        @test issubtype(method, PValueCombinationMethod)
-        @test issubtype(typeof(method()), PValueCombinationMethod)
+        @test issubtype(method, PValueCombination)
+        @test issubtype(typeof(method()), PValueCombination)
 
         ref = ref1[method]
         @test isapprox( combine(PValues(p1), method()), ref, atol = 1e-8)
@@ -75,7 +75,7 @@ using Base.Test
         @test_throws MethodError WilkinsonCombination()  # TODO default value
         @test_throws ArgumentError WilkinsonCombination(0)
 
-        @test issubtype(typeof(method), PValueCombinationMethod)
+        @test issubtype(typeof(method), PValueCombination)
 
         # Wilkinson with rank = 1 is Tippett's method
         ref = ref1[TippettCombination]
@@ -117,7 +117,7 @@ using Base.Test
 
         padj_comb = MinimumCombination( p_adjustment() )
 
-        @test issubtype(typeof(padj_comb), PValueCombinationMethod)
+        @test issubtype(typeof(padj_comb), PValueCombination)
 
         @test isapprox( combine(PValues(p1), padj_comb), ref1[p_combination], atol = 1e-8)
         @test isapprox( combine(p1, padj_comb), ref1[p_combination], atol = 1e-8)
@@ -139,35 +139,32 @@ using Base.Test
 
         method = StoufferCombination
 
-        # `WeightVec` and `weights` are the same
-        @test WeightVec(w3) ≡ weights(w3)
-
         ref = ref1[method]
         @test isapprox( combine(p1, ones(p1), method()), ref, atol = 1e-8)
-        @test isapprox( combine(p1, weights(ones(p1)), method()), ref, atol = 1e-8)
-        @test isapprox( combine(PValues(p1), weights(ones(p1)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p1, Weights(ones(p1)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p1), Weights(ones(p1)), method()), ref, atol = 1e-8)
 
         ref = ref2[method]
         @test isapprox( combine(p2, ones(p2), method()), ref, atol = 1e-8)
-        @test isapprox( combine(p2, weights(ones(p2)), method()), ref, atol = 1e-8)
-        @test isapprox( combine(PValues(p2), weights(ones(p2)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p2, Weights(ones(p2)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p2), Weights(ones(p2)), method()), ref, atol = 1e-8)
 
         ref = ref3[method]
         w3norm = w3 ./ sum(w3)
         # unnormalised weights
         @test isapprox( combine(p3, w3, method()), ref, atol = 1e-8 )
-        @test isapprox( combine(p3, weights(w3), method()), ref, atol = 1e-8 )
+        @test isapprox( combine(p3, Weights(w3), method()), ref, atol = 1e-8 )
         # normalised weights
         @test isapprox( combine(p3, w3norm, method()), ref, atol = 1e-8 )
-        @test isapprox( combine(p3, weights(w3norm), method()), ref, atol = 1e-8 )
+        @test isapprox( combine(p3, Weights(w3norm), method()), ref, atol = 1e-8 )
 
         @test_throws DomainError combine(p1_invalid, ones(p1_invalid), method())
-        @test_throws DomainError combine(p1_invalid, weights(ones(p1_invalid)), method())
+        @test_throws DomainError combine(p1_invalid, Weights(ones(p1_invalid)), method())
         @test_throws DomainError combine(p2_invalid, ones(p2_invalid), method())
-        @test_throws DomainError combine(p2_invalid, weights(ones(p2_invalid)), method())
+        @test_throws DomainError combine(p2_invalid, Weights(ones(p2_invalid)), method())
 
         @test combine(p_single, ones(p_single), method()) == p_single[1]
-        @test combine(p_single, weights(ones(p_single)), method()) == p_single[1]
+        @test combine(p_single, Weights(ones(p_single)), method()) == p_single[1]
 
     end
 

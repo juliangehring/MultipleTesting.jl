@@ -4,7 +4,88 @@
 
 ### Changes
 
-- Optimised Benjamini-Liu π0 estimator
+- Drop support for julia 0.5, require julia 0.6 as minimum version
+- Drop `Compat` dependency
+- Support new `Distributions` interface
+
+
+### Support
+
+- Requires julia 0.6
+
+
+## Version 0.2.3
+
+### Changes
+
+- Switch to new `Weights` type in 'StatsBase' (>= v0.15.0)
+
+
+## Version 0.2.2
+
+### Changes
+
+- Makes the `PValues` type immutable and persistent
+- Finalises support of julia 0.6 with testing
+
+
+### Support
+
+- Requires julia 0.5 or 0.6
+
+
+## Version 0.2.1
+
+### Changes
+
+- Adds compatibility with julia 0.6 development versions, including automated tests
+- Fixes Censored BUM π0 edge case when all p-values are equal to 1
+- Updates test cases and reference values for `qValues`
+- Introduces `Compat` as a new dependency
+- Separates test coverage reports for different julia versions
+
+
+### Support
+
+- Requires julia 0.5 or 0.6
+
+
+## Version 0.2.0
+
+### New Features
+
+- Combination of p-values through the `combine` interface:
+  * Fisher
+  * Stouffer
+  * Logit
+  * Wilkinson
+  * Simes
+  * Tippett
+  * Minimum of adjusted p-values
+- Analysis notebook for p-value combinations
+- `PValues` type: Representation of vectors with p-values
+- Adjustments of p-values support specifying the total number of tests
+- Barber-Candès p-value adjustment
+
+
+### Changes
+
+- Optimised Benjamini-Liu p-value adjustment and test cases
+- Estimator types are now immutables
+- Harmonised type names
+- Restructed readme
+- Simplified method signatures
+- Various performance improvements
+
+
+### Removed
+
+- Export of lower-level functions for p-value adjustment
+
+
+### Support
+
+- Requires julia 0.5
 
 
 ## Version 0.1.0
