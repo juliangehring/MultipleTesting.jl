@@ -63,8 +63,6 @@ Base.getindex(zs::ZScores, i::Int) = zs.values[i]
 Base.values(zs::ZScores) = zs.values
 
 
-# transformation between PValues and ZScores
-
 immutable Upper <: Alternative end
 
 immutable Lower <: Alternative end
@@ -72,7 +70,7 @@ immutable Lower <: Alternative end
 immutable Both  <: Alternative end
 
 
-# PValues to ZScores
+# ZScores to PValues
 
 function PValues(zs::ZScores, alternative::Type{Lower})
     p = cdf.(Normal(), zs)
@@ -94,7 +92,7 @@ PValues(zs::ZScores) = PValues(zs, Both)
 PValues(zs::ZScores, alt::Alternative) = PValues(zs, typeof(alt))
 
 
-# ZScores to PValues
+# PValues to ZScores
 
 function ZScores(pv::PValues, alternative::Type{Upper})
     z = cquantile.(Normal(), pv)
