@@ -484,8 +484,8 @@ function convex_decreasing{T<:AbstractFloat}(pValues::AbstractVector{T},
     f = ones(T, gridsize+1)
     f_p = ones(T, n)
     theta = dx * find_theta(t, p)
-    f_theta = find_f_theta(x, theta)
-    f_theta_p = find_f_theta(p, theta)
+    f_theta = triangular_weighting(x, theta)
+    f_theta_p = triangular_weighting(p, theta)
     idx_lower = round.(Int, round.(gridsize.*p, RoundDown).+1)
     p_upper = round.(gridsize*p, RoundUp)/gridsize
     idx_upper = round.(Int, gridsize*p_upper) + 1
@@ -508,15 +508,15 @@ function convex_decreasing{T<:AbstractFloat}(pValues::AbstractVector{T},
             end
         end
         @. f = (1-ε)*f + ε*f_theta
-        @. f_p = @views gridsize*(f[idx_lower]-f[idx_upper])*px + f[idx_upper]
+        @. f_p = (1-ε)*f_p + ε*f_theta_p
         theta = dx * find_theta(t, p, f_p)
-        f_theta .= find_f_theta(x, theta)
+        f_theta .= triangular_weighting(x, theta)
         pi0_new = f[end]
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, thetas, true
         end
         pi0_old = pi0_new
-        f_theta_p .= find_f_theta(p, theta)
+        f_theta_p .= triangular_weighting(p, theta)
         if sum(f_theta_p./f_p) < sum(1./f_p)
             theta = 0.0
             f_theta .= ones(f_theta)
@@ -543,6 +543,6 @@ function decide(f_p::Vector{Float64}, f_theta_p::Vector{Float64}, ε::Float64)
     return sum( @. ( f_p[idx] - f_theta_p[idx] ) / ( (1-ε)*f_p[idx] + ε*f_theta_p[idx] ) )
 end
 
-function find_f_theta(x::Vector{Float64}, theta::Float64)
-    return @. 2 / theta^2 * (theta-x) * (x.<theta)
+function triangular_weighting{T<:AbstractFloat}(x::Vector{T}, mid::T)
+    return @. 2 / mid^2 * (mid-x) * (x<mid)
 end
