@@ -61,7 +61,7 @@ BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 adjust(pvals::PValues, method::BenjaminiHochbergAdaptive) = adjust(pvals, length(pvals), method)
 
 function adjust(pvals::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
-    π0 = estimate_pi0(pvals, method.pi0estimator)
+    π0 = estimate(pvals, method.pi0estimator)
     return benjamini_hochberg(pvals, n) * π0
 end
 

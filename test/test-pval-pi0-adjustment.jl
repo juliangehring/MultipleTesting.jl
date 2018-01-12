@@ -43,9 +43,9 @@ using Base.Test
         @test isapprox( adjust(pval1, t(0.0)), zeros(ref0), atol = 1e-8 )
 
         # adaptive with pi0 estimator == oracle with estimated pi0
-        @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate_pi0(pval1, Storey())))
-        @test adjust(pval1, t(Storey(0.3))) == adjust(pval1, t(estimate_pi0(pval1, Storey(0.3))))
-        @test adjust(pval1, t(LeastSlope())) == adjust(pval1, t(estimate_pi0(pval1, LeastSlope())))
+        @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate(pval1, Storey())))
+        @test adjust(pval1, t(Storey(0.3))) == adjust(pval1, t(estimate(pval1, Storey(0.3))))
+        @test adjust(pval1, t(LeastSlope())) == adjust(pval1, t(estimate(pval1, LeastSlope())))
 
     end
 

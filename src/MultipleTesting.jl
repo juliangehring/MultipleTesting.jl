@@ -12,6 +12,7 @@ using StatsBase
 import StatsBase: fit
 
 using Distributions
+import Distributions: estimate
 
 export
     PValues,
@@ -29,7 +30,7 @@ export
     ForwardStop,
     BarberCandes,
     qValues,
-    estimate_pi0,
+    estimate,
     Pi0Estimator,
     Storey,
     StoreyBootstrap,
