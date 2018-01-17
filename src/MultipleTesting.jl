@@ -53,7 +53,14 @@ export
     TippettCombination,
     SimesCombination,
     WilkinsonCombination,
-    MinimumCombination
+    MinimumCombination,
+    PValues,
+    ZScores,
+    Alternative,
+    Lower,
+    Upper,
+    Both,
+    transform
 
 
 include("types.jl")

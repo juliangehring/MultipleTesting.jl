@@ -8,6 +8,8 @@ abstract type PValueAdjustment end
 
 abstract type PValueCombination end
 
+abstract type Alternative end
+
 
 ## concrete types ##
 
@@ -40,3 +42,66 @@ Base.minimum(pv::PValues) = pv.min
 Base.maximum(pv::PValues) = pv.max
 Base.extrema(pv::PValues) = (minimum(pv), maximum(pv))
 Base.length(pv::PValues) = length(pv.values)
+
+
+## ZScores
+
+type ZScores{T<:AbstractFloat} <: AbstractVector{T}
+    values::AbstractVector{T}
+
+    function(::Type{ZScores}){T}(values::AbstractVector{T})
+        new{T}(values)
+    end
+end
+
+Base.convert{T<:AbstractFloat}(::Type{ZScores}, x::AbstractVector{T}) = ZScores(x)
+
+Base.size(zs::ZScores) = (length(zs.values), )
+Base.IndexStyle{T<:ZScores}(::Type{T}) = IndexLinear()
+Base.getindex(zs::ZScores, i::Int) = zs.values[i]
+
+Base.values(zs::ZScores) = zs.values
+
+
+immutable Upper <: Alternative end
+
+immutable Lower <: Alternative end
+
+immutable Both  <: Alternative end
+
+
+# ZScores to PValues
+
+function PValues(zs::ZScores, alternative::Type{Lower})
+    p = cdf.(Normal(), zs)
+    return PValues(p)
+end
+
+function PValues(zs::ZScores, alternative::Type{Upper})
+    p = ccdf.(Normal(), zs)
+    return PValues(p)
+end
+
+function PValues(zs::ZScores, alternative::Type{Both})
+    p = 2 * min.( ccdf.(Normal(), zs), cdf.(Normal(), zs) )
+    return PValues(p)
+end
+
+PValues(zs::ZScores) = PValues(zs, Both)
+
+PValues(zs::ZScores, alt::Alternative) = PValues(zs, typeof(alt))
+
+
+# PValues to ZScores
+
+function ZScores(pv::PValues, alternative::Type{Upper})
+    z = cquantile.(Normal(), pv)
+    return ZScores(z)
+end
+
+function ZScores(pv::PValues, alternative::Type{Lower})
+    z = quantile.(Normal(), pv)
+    return ZScores(z)
+end
+
+ZScores(pv::PValues, alt::Alternative) = ZScores(pv, typeof(alt))
