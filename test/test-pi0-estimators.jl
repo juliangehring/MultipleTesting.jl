@@ -185,7 +185,6 @@ using StatsBase
         @test estimate_pi0(p1, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p1)[1]
 
         ## test case that does not converge
-        stderr_dump = redirect_stderr()
         @test isnan(estimate_pi0(p, CensoredBUM(0.5, 0.05, 1e-6, 2)))
 
         @test_throws DomainError CensoredBUM(-0.5, 0.05)
@@ -249,26 +248,52 @@ using StatsBase
         ## longest constant interval: low level
         lci = MultipleTesting.longest_constant_interval
 
-        p = [0:0.1:1;];
+        px = [0:0.1:1;];
         f = [1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.1];
-        @test lci(p, f) ≈ 0.5
+        @test lci(px, f) ≈ 0.5
 
         f = [1.5, 1.5, 1.5, 1.5, 1.5, 1.2, 1.2, 1.2, 0.2, 0.2, 0.1];
-        @test lci(p, f) ≈ 0.2
+        @test lci(px, f) ≈ 0.2
 
         f = [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
-        @test lci(p, f) ≈ 0.2
+        @test lci(px, f) ≈ 0.2
 
         f = [0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.1];
-        @test lci(p, f) ≈ 0.5
+        @test lci(px, f) ≈ 0.5
 
-        p = [0.1, 0.3, 0.5, 0.9];
+        px = [0.1, 0.3, 0.5, 0.9];
         f = [0.5, 0.5, 0.2, 0.2];
-        @test lci(p, f) ≈ 0.2
+        @test lci(px, f) ≈ 0.2
 
-        p = [0.1, 0.5, 0.7, 0.9];
+        px = [0.1, 0.5, 0.7, 0.9];
         f = [0.5, 0.5, 0.2, 0.2];
-        @test lci(p, f) ≈ 0.5
+        @test lci(px, f) ≈ 0.5
+
+    end
+
+
+    @testset "ConvexDecreasing π0" begin
+
+        @test issubtype(typeof(ConvexDecreasing()), Pi0Estimator)
+        @test issubtype(typeof(ConvexDecreasing(100, 1e-6, 1000)), Pi0Estimator)
+
+        @test isapprox( estimate_pi0(p, ConvexDecreasing()), 0.5739054, atol = 1e-4)
+        @test isapprox( estimate_pi0(p0, ConvexDecreasing()), 1.0, atol = 1e-6 )
+        @test isapprox( estimate_pi0(p1, ConvexDecreasing()), 0.1323284, atol = 1e-3)
+
+        @test isapprox( estimate_pi0(ones(20), ConvexDecreasing()), 1.0, atol = 1e-6 )
+
+        ## test case that does not converge
+        @test isnan(estimate_pi0(p, ConvexDecreasing(100, 1e-6, 2)))
+
+        @test_throws DomainError ConvexDecreasing(100, 2.0, 1000)
+        @test_throws DomainError ConvexDecreasing(100, -1.0, 1000)
+        @test_throws DomainError ConvexDecreasing(-100, 0.01, 1000)
+        @test_throws DomainError ConvexDecreasing(100, 0.01, -1000)
+
+        f = fit(ConvexDecreasing(), p)
+        @test issubtype(typeof(f), ConvexDecreasingFit)
+        @test isapprox( f.π0, 0.5739054, atol = 1e-4 )
 
     end
 
