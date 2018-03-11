@@ -43,6 +43,8 @@ export
     BUM,
     BUMFit,
     FlatGrenander,
+    ConvexDecreasing,
+    ConvexDecreasingFit,
     isin,
     fit,
     BetaUniformMixtureModel,

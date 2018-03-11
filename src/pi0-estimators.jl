@@ -424,3 +424,125 @@ function longest_constant_interval{T<:AbstractFloat}(p::AbstractVector{T}, f::Ab
     end
     return pi0
 end
+
+
+## Convex Decreasing π0 estimator
+"""
+Convex Decreasing π0 estimator
+
+ConvexDecreasing(gridsize, xtol, maxiter)
+"""
+immutable ConvexDecreasing <: Pi0Estimator
+    gridsize::Int64
+    xtol::Float64
+    maxiter::Int64
+
+    function ConvexDecreasing(gridsize, xtol, maxiter)
+        if gridsize > 0 && isin(xtol, 0., 1.) && maxiter > 0
+            new(gridsize, xtol, maxiter)
+        else
+            throw(DomainError())
+        end
+    end
+end
+
+ConvexDecreasing() = ConvexDecreasing(100, 1e-5, 10000)
+
+immutable ConvexDecreasingFit <: Pi0Fit
+    π0::Float64
+    param::AbstractVector{Float64}
+    is_converged::Bool
+end
+
+function fit{T<:AbstractFloat}(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T})
+    π0, param, is_converged = convex_decreasing(pValues,
+                                                pi0estimator.gridsize,
+                                                pi0estimator.xtol,
+                                                pi0estimator.maxiter)
+    return ConvexDecreasingFit(π0, param, is_converged)
+end
+
+function estimate_pi0{T<:AbstractFloat}(pValues::PValues{T}, pi0estimator::ConvexDecreasing)
+    estimate_pi0(fit(pi0estimator, pValues))
+end
+
+function estimate_pi0(pi0fit::ConvexDecreasingFit)
+    pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
+    return pi0
+end
+
+function convex_decreasing{T<:AbstractFloat}(pValues::AbstractVector{T},
+                                             gridsize::Integer = 100,
+                                             xtol::AbstractFloat = 1e-5,
+                                             maxiter::Integer = 10000)
+
+    n = length(pValues)
+    p = sort(pValues)
+    dx = 1./gridsize
+    t = collect(dx:dx:1.0)
+    x = collect(0:dx:1.0)
+    f = ones(T, gridsize+1)
+    f_p = ones(T, n)
+    theta = dx * find_theta(t, p)
+    f_theta = triangular_weighting(x, theta)
+    f_theta_p = triangular_weighting(p, theta)
+    idx_lower = round.(Int, round.(gridsize.*p, RoundDown).+1)
+    p_upper = round.(gridsize*p, RoundUp)/gridsize
+    idx_upper = round.(Int, gridsize*p_upper) + 1
+    px = p_upper .- p
+    thetas = T[]
+    pi0_new = pi0_old = Inf
+    for j in 1:maxiter
+        if sum((f_p.-f_theta_p)./f_p) > 0.0
+            ε = 0.0
+        else
+            l = 0.0
+            u = 1.0
+            while abs(u-l) > xtol
+                ε = (l+u)/2.0
+                if decide(f_p, f_theta_p, ε) < 0.0
+                    l = ε
+                else
+                    u = ε
+                end
+            end
+        end
+        @. f = (1-ε)*f + ε*f_theta
+        @. f_p = (1-ε)*f_p + ε*f_theta_p
+        theta = dx * find_theta(t, p, f_p)
+        f_theta .= triangular_weighting(x, theta)
+        pi0_new = f[end]
+        if abs(pi0_new - pi0_old) <= xtol
+            return pi0_new, thetas, true
+        end
+        pi0_old = pi0_new
+        f_theta_p .= triangular_weighting(p, theta)
+        if sum(f_theta_p./f_p) < sum(1./f_p)
+            theta = 0.0
+            f_theta .= ones(f_theta)
+            f_theta_p .= ones(f_theta_p)
+        end
+        if !(theta in thetas)
+            append!(thetas, theta)
+            sort!(thetas)
+        end
+    end
+    return NaN, thetas, false
+end
+
+function find_theta(t::Vector{Float64}, p::Vector{Float64})
+    return indmax( [theta^-2 * sum(theta.-p[p.<theta]) for theta in t] )
+end
+
+function find_theta(t::Vector{Float64}, p::Vector{Float64}, f_p::Vector{Float64})
+    return indmax( [theta^-2 * sum( (theta.-p) .* (p.<theta) ./ f_p ) for theta in t] )
+end
+
+function decide(f_p::Vector{Float64}, f_theta_p::Vector{Float64}, ε::Float64)
+    idx = f_p .> 0.
+    return sum( @. ( f_p[idx] - f_theta_p[idx] ) / ( (1-ε)*f_p[idx] + ε*f_theta_p[idx] ) )
+end
+
+function triangular_weighting{T<:AbstractFloat}(x::Vector{T}, mid::T)
+    return @. 2 / mid^2 * (mid-x) * (x<mid)
+end
