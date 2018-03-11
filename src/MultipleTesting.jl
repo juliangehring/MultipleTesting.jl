@@ -12,6 +12,7 @@ using StatsBase
 import StatsBase: fit
 
 using Distributions
+import Distributions: estimate
 
 export
     PValues,
@@ -53,7 +54,10 @@ export
     TippettCombination,
     SimesCombination,
     WilkinsonCombination,
-    MinimumCombination
+    MinimumCombination,
+    estimate,
+    HigherCriticismScores,
+    HigherCriticalValue
 
 
 include("types.jl")

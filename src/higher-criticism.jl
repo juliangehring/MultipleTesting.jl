@@ -1,6 +1,12 @@
 ## Higher criticism
 
-function higher_criticism_scores(pValues::PValues)
+immutable HigherCriticismScores end
+
+function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticismScores)
+    higher_criticism_scores(pValues)
+end
+
+function higher_criticism_scores{T<:AbstractFloat}(pValues::PValues{T})
     n = length(pValues)
     F = (n+1 - competerank(-pValues)) ./ n  # ECDF
     denom = F .* (1.0 - F) ./ n
@@ -12,7 +18,13 @@ function higher_criticism_scores(pValues::PValues)
 end
 
 
-function higher_critical_value(pValues::PValues)
+immutable HigherCriticalValue end
+
+function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticalValue)
+    higher_critical_value(pValues)
+end
+
+function higher_critical_value{T<:AbstractFloat}(pValues::PValues{T})
     idx_hcv = indmax(higher_criticism_scores(pValues))
     return pValues[idx_hcv]
 end
