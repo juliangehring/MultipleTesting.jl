@@ -18,13 +18,13 @@ using Base.Test
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ pv
         @test f ≈ ones(p)
-        @test F ≈ pv+0.1
+        @test F ≈ pv .+ 0.1
 
         pv = [0.1, 0.1, 0.3, 0.3, 0.5, 0.5, 0.7, 0.7, 0.9, 0.9]
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ unique(pv)
         @test f ≈ ones(p)
-        @test F ≈ p+0.1
+        @test F ≈ p .+ 0.1
 
         pv = [0.1, 0.2, 0.5, 0.6, 0.9]
         p, f, F = MultipleTesting.grenander(pv)

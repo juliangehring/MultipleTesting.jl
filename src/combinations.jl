@@ -55,7 +55,7 @@ function logit_combination(pValues::PValues{T}) where T<:AbstractFloat
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log.(pValues./(1-pValues))) / c
+    x = -sum(log.(pValues./(1 .- pValues))) / c
     p = ccdf(TDist(5n+4), x)
     return p
 end

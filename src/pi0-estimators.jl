@@ -40,7 +40,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:Abstra
 end
 
 function storey_pi0(pValues::AbstractVector{T}, lambda::AbstractFloat) where T<:AbstractFloat
-    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
+    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.0-lambda)
     pi0 = min.(pi0, 1.)
     return pi0
 end
@@ -71,10 +71,10 @@ end
 function bootstrap_pi0(pValues::AbstractVector{T}, lambda::AbstractVector{S} = 0.05:0.05:0.95, q::S = 0.1) where {T<:AbstractFloat,S<:AbstractFloat}
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
-    pi0 = w ./ n ./ (1. - lambda)
+    pi0 = w ./ n ./ (1 .- lambda)
     min_pi0 = quantile(pi0, q)
-    mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
-    pi0 = min.(pi0[indmin(mse)], 1.)
+    mse = (w ./ (n.^2 .* (1 .- lambda).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
+    pi0 = min.(pi0[indmin(mse)], 1)
     pi0
 end
 
@@ -120,7 +120,7 @@ end
 function lsl_pi0_vec(pValues::AbstractVector{T}) where T<:AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
-    s = (1 - pValues) ./ (n:-1:1)
+    s = (1 .- pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
     pi0 = min.( 1/s[idx] + 1, n ) / n
@@ -206,7 +206,7 @@ function rightboundary_pi0(pValues::AbstractVector{T}, λseq::AbstractVector{T})
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
     h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
-    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.-λseq)./n
+    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.0.-λseq)./n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
@@ -287,7 +287,7 @@ function cbum_pi0(pValues::AbstractVector{T},
         xl = (1-γ) * (λ^α)
         szl = (xl ./ (γ*λ + xl)) * n1
         xr = (1-γ) * α * pr.^(α-1)
-        zr = xr ./ (γ + xr)
+        zr = xr ./ (γ .+ xr)
         szr = sum(zr)
         sz = szl + szr
         pi0_new = γ + (1-γ)*α
@@ -312,13 +312,13 @@ function cbum_pi0_naive(pValues::AbstractVector{T},
     lpr = log.(pValues[idx_right])
     ll = log(λ)
     for i in 1:maxiter
-        γ = sum(1-z) / n
+        γ = sum(1 .- z) / n
         α = -sum(z[idx_right])
         α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
         xl = (1-γ) * (λ^α)
         z[idx_left] = xl ./ (γ*λ + xl)
         xr = (1-γ) * α * pValues[idx_right].^(α-1)
-        z[idx_right] = xr ./ (γ + xr)
+        z[idx_right] = xr ./ (γ .+ xr)
         pi0_new = γ + (1-γ)*α
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, [γ, α], true
@@ -478,7 +478,7 @@ function convex_decreasing(pValues::AbstractVector{T},
 
     n = length(pValues)
     p = sort(pValues)
-    dx = 1./gridsize
+    dx = 1/gridsize
     t = collect(dx:dx:1.0)
     x = collect(0:dx:1.0)
     f = ones(T, gridsize+1)
@@ -488,7 +488,7 @@ function convex_decreasing(pValues::AbstractVector{T},
     f_theta_p = triangular_weighting(p, theta)
     idx_lower = round.(Int, round.(gridsize.*p, RoundDown).+1)
     p_upper = round.(gridsize*p, RoundUp)/gridsize
-    idx_upper = round.(Int, gridsize*p_upper) + 1
+    idx_upper = round.(Int, gridsize*p_upper) .+ 1
     px = p_upper .- p
     thetas = T[]
     pi0_new = pi0_old = Inf
@@ -517,7 +517,7 @@ function convex_decreasing(pValues::AbstractVector{T},
         end
         pi0_old = pi0_new
         f_theta_p .= triangular_weighting(p, theta)
-        if sum(f_theta_p./f_p) < sum(1./f_p)
+        if sum(f_theta_p./f_p) < sum(1.0./f_p)
             theta = 0.0
             f_theta .= ones(f_theta)
             f_theta_p .= ones(f_theta_p)
