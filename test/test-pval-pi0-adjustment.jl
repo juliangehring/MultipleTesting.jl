@@ -104,10 +104,7 @@ using Base.Test
         @test m(pval, pi0) == pval .* pi0
 
         ## compare with reference values
-        # `isapprox` cannot compare NaNs in julia 0.5
-        # TODO use `isapprox(nans = true)` in julia 0.6
-        idx = @__dot__ !isnan.(ref)
-        @test isapprox( m(pval1, pi0, true)[idx], ref[idx], atol = 1e-8 )
+        @test isapprox( m(pval1, pi0, true), ref, atol = 1e-8, nans = true )
 
     end
 
