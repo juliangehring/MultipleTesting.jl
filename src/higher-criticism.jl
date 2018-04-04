@@ -18,13 +18,13 @@ function higher_criticism_scores{T<:AbstractFloat}(pValues::PValues{T})
 end
 
 
-immutable HigherCriticalValue end
+immutable HigherCriticismThreshold end
 
-function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticalValue)
-    higher_critical_value(pValues)
+function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticismThreshold)
+    higher_criticism_threshold(pValues)
 end
 
-function higher_critical_value{T<:AbstractFloat}(pValues::PValues{T})
+function higher_criticism_threshold{T<:AbstractFloat}(pValues::PValues{T})
     idx_hcv = indmax(higher_criticism_scores(pValues))
     return pValues[idx_hcv]
 end

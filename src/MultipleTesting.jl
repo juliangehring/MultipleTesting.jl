@@ -59,7 +59,7 @@ export
     MinimumCombination,
     estimate,
     HigherCriticismScores,
-    HigherCriticalValue
+    HigherCriticismThreshold
 
 
 include("types.jl")

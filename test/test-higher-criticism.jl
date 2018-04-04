@@ -35,20 +35,20 @@ using Base.Test
     end
 
 
-    @testset "Higher critical value" begin
+    @testset "Higher criticism threshold" begin
 
-        hcv1 = estimate(PValues(pval1), HigherCriticalValue())
+        hcv1 = estimate(PValues(pval1), HigherCriticismThreshold())
         @test hcv1 == hcv1_ref
 
-        hcv2 = estimate(PValues(pval2), HigherCriticalValue())
+        hcv2 = estimate(PValues(pval2), HigherCriticismThreshold())
         @test hcv2 == hcv2_ref
 
         @test_throws MethodError estimate(PValues(pval1))
-        @test_throws MethodError estimate(HigherCriticalValue())
+        @test_throws MethodError estimate(HigherCriticismThreshold())
 
         # currently not supported
-        @test_throws MethodError estimate(pval1, HigherCriticalValue())
-        @test_throws MethodError estimate(PValues(pval1), HigherCriticalValue)
+        @test_throws MethodError estimate(pval1, HigherCriticismThreshold())
+        @test_throws MethodError estimate(PValues(pval1), HigherCriticismThreshold)
 
     end
 
