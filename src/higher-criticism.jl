@@ -1,30 +1,22 @@
 ## Higher criticism
 
-immutable HigherCriticismScores end
+struct HigherCriticismScores end
 
-function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticismScores)
-    higher_criticism_scores(pValues)
-end
-
-function higher_criticism_scores{T<:AbstractFloat}(pValues::PValues{T})
+function estimate(pValues::PValues{T}, method::HigherCriticismScores) where T<:AbstractFloat
     n = length(pValues)
-    F = (n+1 - competerank(-pValues)) ./ n  # ECDF
-    denom = F .* (1.0 - F) ./ n
+    F = (n+1 .- competerank(-pValues)) ./ n  # ECDF
+    denom = F .* (one(T) .- F) ./ n
     # avoid denominator of 0 for last value
     idx0 = denom .== 0
-    denom[idx0] = minimum(denom[.!idx0]) + eps()  # conservative
-    hcs = abs.(F - pValues) ./ sqrt.(denom)
+    denom[idx0] = minimum(denom[.!idx0]) .+ eps()  # conservative
+    hcs = abs.(F .- pValues) ./ sqrt.(denom)
     return hcs
 end
 
 
-immutable HigherCriticismThreshold end
+struct HigherCriticismThreshold end
 
-function estimate{T<:AbstractFloat}(pValues::PValues{T}, method::HigherCriticismThreshold)
-    higher_criticism_threshold(pValues)
-end
-
-function higher_criticism_threshold{T<:AbstractFloat}(pValues::PValues{T})
-    idx_hcv = indmax(higher_criticism_scores(pValues))
+function estimate(pValues::PValues{T}, method::HigherCriticismThreshold) where T<:AbstractFloat
+    idx_hcv = indmax(estimate(pValues, HigherCriticismScores()))
     return pValues[idx_hcv]
 end
