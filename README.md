@@ -94,6 +94,17 @@ combine(pvals, MinimumCombination(PValueAdjustment()))
 ```
 
 
+### Higher criticism
+
+* Higher criticism scores
+* Higher criticism threshold
+
+```julia
+estimate(pvals, HigherCriticismScores())
+estimate(pvals, HigherCriticismThreshold())
+```
+
+
 ## Installation
 
 The `MultipleTesting` package is part of the Julia ecosphere and the latest
