@@ -6,8 +6,6 @@ function reorder{T<:Real}(values::AbstractVector{T})
     return newOrder, oldOrder
 end
 
-reorder(pv::PValues) = reorder(values(pv))
-
 
 function sort_if_needed(x; kws...)
     if issorted(x; kws...)
