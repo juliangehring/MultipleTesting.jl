@@ -13,8 +13,7 @@ using Base.Test
     @test_throws MethodError adjust()
     @test_throws MethodError adjust(pval1)
 
-
-    @testset "benjamini_hochberg" begin
+    @testset "Benjamini-Hochberg" begin
 
         t = BenjaminiHochbergAdaptive
 
@@ -52,62 +51,69 @@ using Base.Test
 
     @testset "q-value" begin
 
-        m = qValues
+        # default constructor
+        @test QValues() == QValues(Oracle(1.0), false)
 
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = FALSE, pi0.method = "bootstrap")$qvalues```
+        # reference values computed with the `qvalue` package, v2.10.0
+        # ```qvalue::qvalue(pval1, pi0=pi0, pfdr = FALSE, lfdr.out=FALSE)$qvalues```
         ref = [0.0, 0.0002, 0.001333333, 0.01, 0.04, 0.066666667, 0.114285714, 0.2, 0.333333333, 0.4]
 
-        @test_throws MethodError m()
+        qvt = QValues(Oracle(pi0), false)
 
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
-
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
+        @test typeof(qvt.pi0estimator) <: Pi0Estimator
+        @test qvt.pfdr == false
 
         ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
+        for i in 1:10
+            pval = PValues(rand(1))
+            @test estimate(pval, qvt) == pval .* pi0
+        end
 
         ## compare with reference values
-        @test isapprox( m(pval1, pi0), ref, atol = 1e-8 )
-        @test isapprox( m(pval1, pi0, false), ref, atol = 1e-8 )
+        @test isapprox( estimate(PValues(pval1), qvt), ref, atol = 1e-8 )
+
+        ## test with all π0 estimators, with different p-values
+        for pi0est in subtypes(Pi0Estimator)
+            for pv in (PValues(pval1), PValues(rand(100)))
+                if isin( estimate_pi0(pv, pi0est()) )
+                    qvals = estimate(pv, QValues(pi0est(), false))
+                    @test isin(qvals, 0.0, 1.0)
+                end
+            end
+        end
 
     end
 
 
-    @testset "q-value pFDR" begin
+    @testset "q-value with pFDR" begin
 
-        m = qValues
-
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = TRUE, pi0.method = "bootstrap")$qvalues```
+        # reference values computed with the `qvalue` package, v2.10.0
+        # ```qvalue::qvalue(pval1, pi0=pi0, pfdr = TRUE, lfdr.out=FALSE)$qvalues```
         ref = [NaN, 0.09968523, 0.09968523, 0.09968523, 0.09968523, 0.10235600, 0.12803317, 0.20121668, 0.33333365, 0.4]
 
-        @test_throws MethodError m()
+        qvt = QValues(Oracle(pi0), true)
 
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
+        @test typeof(qvt.pi0estimator) <: Pi0Estimator
+        @test qvt.pfdr == true
 
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
-
-        ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
+        ## single p-value yields a q-value of π0
+        for i in 1:10
+            pval = PValues(rand(1))
+            @test estimate(pval, qvt) ==  [pi0]
+        end
 
         ## compare with reference values
-        # `isapprox` cannot compare NaNs in julia 0.5
-        # TODO use `isapprox(nans = true)` in julia 0.6
-        idx = @__dot__ !isnan.(ref)
-        @test isapprox( m(pval1, pi0, true)[idx], ref[idx], atol = 1e-8 )
+        @test isapprox( estimate(PValues(pval1), qvt), ref, atol = 1e-8, nans = true )
+
+        ## test with all π0 estimators, with different p-values
+        for pi0est in subtypes(Pi0Estimator)
+            for pv in (PValues(rand(10)), PValues(rand(100)))
+                if isin( estimate_pi0(pv, pi0est()) )
+                    qvals = estimate(pv, QValues(pi0est(), true))
+                    @test isin(qvals, 0.0, 1.0)
+                end
+            end
+        end
 
     end
 

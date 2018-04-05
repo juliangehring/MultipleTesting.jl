@@ -1,19 +1,32 @@
 ## qValues ##
 
-function qValues{T<:AbstractFloat}(pValues::AbstractVector{T}, pi0::AbstractFloat, pfdr::Bool = false)
-    valid_pvalues(pValues)
+struct QValues
+    pi0estimator::Pi0Estimator
+    pfdr::Bool
+end
+
+QValues() = QValues(Oracle(1.0), false)
+
+
+function estimate(pValues::PValues{T}, method::QValues) where T<:AbstractFloat
+    pi0 = estimate_pi0(pValues, method.pi0estimator)
+    qValues(pValues, pi0, method.pfdr)
+end
+
+function qValues(pValues::PValues{T}, pi0::AbstractFloat, pfdr::Bool) where T<:AbstractFloat
     valid_pvalues([pi0])
     n = length(pValues)
-    u = sortperm(pValues)
-    v = competerank(pValues) # ties with 'min'
-    if pfdr
-        qvals = (pi0 .* n .* pValues) ./ (v .* (1 - (1 - pValues) .^ n))
-    else
-        qvals = (pi0 .* n .* pValues) ./ v
+    sortedIndex = sortperm(pValues)
+    qValues = zeros(pValues)
+    q = T(Inf)
+    for i in n:-1:1
+        idx = sortedIndex[i]
+        if pfdr
+            q = min(pValues[idx] * n / (i * (1 - (1 - pValues[idx]) ^ n)), q)
+        else
+            q = min(pValues[idx] * n / i, q)
+        end
+        qValues[idx] = pi0 * q
     end
-    qvals[u[n]] = min.(qvals[u[n]], 1)
-    for i in (n - 1):-1:1
-        qvals[u[i]] = min.(qvals[u[i]], qvals[u[i + 1]])
-    end
-    return qvals
+    return qValues
 end
