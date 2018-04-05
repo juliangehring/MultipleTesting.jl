@@ -29,7 +29,7 @@ export
     Sidak,
     ForwardStop,
     BarberCandes,
-    qValues,
+    QValues,
     estimate_pi0,
     Pi0Estimator,
     Storey,
