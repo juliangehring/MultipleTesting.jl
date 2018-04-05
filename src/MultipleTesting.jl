@@ -12,6 +12,7 @@ using StatsBase
 import StatsBase: fit
 
 using Distributions
+import Distributions: estimate
 
 export
     PValues,
@@ -55,7 +56,10 @@ export
     TippettCombination,
     SimesCombination,
     WilkinsonCombination,
-    MinimumCombination
+    MinimumCombination,
+    estimate,
+    HigherCriticismScores,
+    HigherCriticismThreshold
 
 
 include("types.jl")
@@ -65,5 +69,6 @@ include("pi0-estimators.jl")
 include("qvalue.jl")
 include("model.jl")
 include("combinations.jl")
+include("higher-criticism.jl")
 
 end
