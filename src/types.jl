@@ -35,7 +35,6 @@ Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 Base.setindex!(pv::PValues, x::AbstractFloat, i::Integer) =
     throw(ErrorException("Modification of values is not permitted"))
 
-Base.values(pv::PValues) = pv.values
 Base.minimum(pv::PValues) = pv.min
 Base.maximum(pv::PValues) = pv.max
 Base.extrema(pv::PValues) = (minimum(pv), maximum(pv))
