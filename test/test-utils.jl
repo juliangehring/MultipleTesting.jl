@@ -81,7 +81,7 @@ using Base.Test
     @testset "unsort" begin
 
         n = 20
-        xs = sort(rand(n))
+        xs = sort(rand(n)) # sorted
         xr = reverse(xs) # reverse sorted
         xu = xs[[1:2:n-1; 2:2:n]] # unsorted
         @test !issorted(xu)
@@ -99,6 +99,35 @@ using Base.Test
         @test issorted(xr, rev = true)
         @test issorted(unsort(xr), rev = true)
         @test !issorted(unsort(xr, rev = true), rev = true)
+
+    end
+
+
+    @testset "unorder" begin
+
+        n = 20
+        xs = sort(rand(n)) # sorted
+        xr = reverse(xs) # reverse sorted
+        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        @test !issorted(xu)
+
+        unorder = MultipleTesting.unorder
+
+        @test issorted(xs)
+        ord = unorder(xs)
+        @test !issorted(ord)
+        @test !issorted(xs[ord])
+        @test sort(ord) == collect(1:n)
+        @test issorted(xs) # input isn't changed
+
+        # unordered input gets returned unchanged
+        @test xu[unorder(xu)] == xu
+
+        # `sort` keywords work
+        @test !issorted(xr)
+        @test issorted(xr, rev = true)
+        @test issorted(xr[unorder(xr)], rev = true)
+        @test !issorted(xr[unorder(xr, rev = true)], rev = true)
 
     end
 
