@@ -226,9 +226,10 @@ adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
 function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1-pvalues))
+    sortedIndexes, originalOrder = reorder(pvalues)
+    logsums = -cumsum(log.(1-pvalues[sortedIndexes]))
     stepup!(logsums, forwardstop_step, k, n)
-    return max.(min.(logsums, 1), 0)
+    return max.(min.(logsums[originalOrder], 1), 0)
 end
 
 forwardstop_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * 1/(k-i)

@@ -72,17 +72,39 @@ using Base.Test
         @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
         @test isapprox( adjust(PValues(pval1), method()), ref1[method], atol = 1e-9 )
 
+        # unsorted inputs
+        for i in 1:10
+            ord = MultipleTesting.unorder(pval1)
+            @test isapprox( adjust(pval1[ord], method()), ref1[method][ord], atol = 1e-9 )
+        end
+
+
         ## compare with reference values having ties
         @test isapprox( adjust(pval2, method()), ref2[method], atol = 1e-9 )
         @test isapprox( adjust(PValues(pval2), method()), ref2[method], atol = 1e-9 )
 
+        # unsorted inputs
+        for i in 1:10
+            ord = MultipleTesting.unorder(pval2)
+            @test isapprox( adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9 ) # FIXME
+        end
+
+
         ## total number of tests explicitly specified
         if method in methods3
-            # all p-values present
+            # all p-values present: same reference values as for pval1
             @test adjust(pval3, length(pval3), method()) == adjust(pval3, method())
             @test adjust(PValues(pval3), length(pval3), method()) == adjust(pval3, method())
+
             # k smallest p-values present, total number n known
             @test adjust(pval3, n3, method()) == adjust(pval3pad, n3, method())[1:k3]
+
+            # unsorted inputs
+            for i in 1:10
+                ord = MultipleTesting.unorder(pval3)
+                @test adjust(pval3[ord], n3, method()) == (adjust(pval3pad, n3, method())[1:k3])[ord]
+            end
+
             # k > n not allowed: test for any n in [1,k-1]
             @test_throws ArgumentError adjust(pval3, rand(1:k3-1), method())
         end
