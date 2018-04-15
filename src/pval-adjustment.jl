@@ -185,7 +185,7 @@ function hommel(pValues::PValues, n::Integer)
     pValues = vcat(pValues, ones(n-k))  # TODO avoid sorting of ones
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
-    q = fill(minimum(n .* pValues./(1:n)), n)
+    q = fill(minimum(n .* sortedPValues./(1:n)), n)
     pa = fill(q[1], n)
     for j in (n-1):-1:2
         ij = 1:(n-j+1)

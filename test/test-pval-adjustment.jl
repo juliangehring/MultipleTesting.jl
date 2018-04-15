@@ -89,6 +89,13 @@ using Base.Test
             @test isapprox( adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9 ) # FIXME
         end
 
+        ## sorting order does not play a role
+        for i in 1:10
+            pval4 = sort(rand(10)) # all under H0
+            ord = MultipleTesting.unorder(pval4)
+            @test adjust(pval4[ord], method()) == adjust(pval4, method())[ord]
+        end
+
 
         ## total number of tests explicitly specified
         if method in methods3
