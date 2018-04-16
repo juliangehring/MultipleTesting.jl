@@ -14,13 +14,13 @@ abstract type PValueCombination end
 ## PValues
 
 immutable PValues{T<:AbstractFloat} <: AbstractVector{T}
-    values::AbstractVector{T}
+    values::Vector{T}
     min::T
     max::T
 
     function(::Type{PValues}){T}(values::AbstractVector{T})
         min, max = extrema(values)
-        if min < 0.0 || max > 1.0
+        if min < zero(T) || max > one(T)
             throw(DomainError())
         end
         new{T}(copy(values), min, max)
@@ -29,7 +29,7 @@ end
 
 Base.convert{T<:AbstractFloat}(::Type{PValues}, x::AbstractVector{T}) = PValues(x)
 
-Base.size(pv::PValues) = (length(pv.values), )
+Base.size(pv::PValues) = size(pv.values)
 Base.IndexStyle{T<:PValues}(::Type{T}) = IndexLinear()
 Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 Base.setindex!(pv::PValues, x::AbstractFloat, i::Integer) =
