@@ -2,14 +2,17 @@
 
 # promotion from float vectors to PValues type
 
-adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
+function adjust(pvals::Vector{T}, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+    adjust(PValues(pvals), method)
+end
 
-adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, n::Integer, method::M) = adjust(PValues(pvals), n, method)
-
+function adjust(pvals::Vector{T}, n::Integer, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+    adjust(PValues(pvals), n, method)
+end
 
 # Bonferroni
 
-immutable Bonferroni <: PValueAdjustment
+struct Bonferroni <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Bonferroni) = adjust(pvals, length(pvals), method)
@@ -25,7 +28,7 @@ end
 
 # Benjamini-Hochberg
 
-immutable BenjaminiHochberg <: PValueAdjustment
+struct BenjaminiHochberg <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiHochberg) = adjust(pvals, length(pvals), method)
@@ -49,7 +52,7 @@ bejamini_hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
 
 # Benjamini-Hochberg Adaptive
 
-immutable BenjaminiHochbergAdaptive <: PValueAdjustment
+struct BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
 end
 
@@ -68,7 +71,7 @@ end
 
 # Benjamini-Yekutieli
 
-immutable BenjaminiYekutieli <: PValueAdjustment
+struct BenjaminiYekutieli <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiYekutieli) = adjust(pvals, length(pvals), method)
@@ -92,7 +95,7 @@ benjamini_yekutieli_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) =
 
 # Benjamini-Liu
 
-immutable BenjaminiLiu <: PValueAdjustment
+struct BenjaminiLiu <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::BenjaminiLiu) = adjust(pvals, length(pvals), method)
@@ -121,7 +124,7 @@ end
 
 # Hochberg
 
-immutable Hochberg <: PValueAdjustment
+struct Hochberg <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Hochberg) = adjust(pvals, length(pvals), method)
@@ -145,7 +148,7 @@ hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-k+i
 
 # Holm
 
-immutable Holm <: PValueAdjustment
+struct Holm <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Holm) = adjust(pvals, length(pvals), method)
@@ -169,7 +172,7 @@ holm_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-i+1)
 
 # Hommel
 
-immutable Hommel <: PValueAdjustment
+struct Hommel <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Hommel) = adjust(pvals, length(pvals), method)
@@ -201,7 +204,7 @@ end
 
 # Sidak
 
-immutable Sidak <: PValueAdjustment
+struct Sidak <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::Sidak) = adjust(pvals, length(pvals), method)
@@ -210,13 +213,13 @@ adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
 
 function sidak(pValues::PValues, n::Integer)
     check_number_tests(length(pValues), n)
-    return min.(1-(1-pValues).^n, 1)
+    return min.(1 .- (1 .- pValues).^n, 1)
 end
 
 
 # Forward Stop
 
-immutable ForwardStop <: PValueAdjustment
+struct ForwardStop <: PValueAdjustment
 end
 
 adjust(pvals::PValues, method::ForwardStop) = adjust(pvals, length(pvals), method)
@@ -226,7 +229,7 @@ adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
 function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1-pvalues))
+    logsums = -cumsum(log.(1 .- pvalues))
     stepup!(logsums, forwardstop_step, k, n)
     return max.(min.(logsums, 1), 0)
 end
@@ -235,7 +238,7 @@ forwardstop_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * 1/(
 
 
 # Barber-Candès
-immutable BarberCandes <: PValueAdjustment
+struct BarberCandes <: PValueAdjustment
 end
 
 function adjust(pvals::PValues, method::BarberCandes)
@@ -254,9 +257,9 @@ function adjust(pvals::PValues, method::BarberCandes)
     left_pv = estimated_fdrs[1]
     right_pv = estimated_fdrs[n]
 
-    while (left_pv < 0.5)
-        while ((1-right_pv <= left_pv) & (right_pv >= 0.5) & (Vt+Rt <= n))
-            estimated_fdrs[n-Vt+1] = 1.0;
+    while left_pv < 0.5
+        while (1-right_pv <= left_pv) && (right_pv >= 0.5) && (Vt+Rt <= n)
+            estimated_fdrs[n-Vt+1] = 1.0
             right_pv = estimated_fdrs[n-Vt]
             Vt +=1
         end
@@ -265,9 +268,9 @@ function adjust(pvals::PValues, method::BarberCandes)
         left_pv = estimated_fdrs[Rt]
     end
 
-    while ((right_pv >= 0.5) & (Vt + Rt <= n+1))
-      estimated_fdrs[n-Vt+1] = 1.0;
-      right_pv = (Vt + Rt <= n)?estimated_fdrs[n-Vt]:0.0
+    while (right_pv >= 0.5) && (Vt + Rt <= (n+1))
+      estimated_fdrs[n-Vt+1] = 1.0
+      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n-Vt] : 0.0
       Vt +=1
     end
 
@@ -276,7 +279,7 @@ function adjust(pvals::PValues, method::BarberCandes)
 end
 
 # as test, inefficient implementation
-function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
+function barber_candes_brute_force(pvals::AbstractVector{T}) where T<:AbstractFloat
     n = length(pvals)
     sorted_indexes, original_order = reorder(pvals)
     sorted_pvals = pvals[sorted_indexes]
@@ -285,7 +288,7 @@ function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
         if pv >= 0.5
             break
         else
-            estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
+            estimated_fdrs[i] = (sum((1 .- pvals) .<= pv) + 1) / i
         end
     end
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
@@ -299,7 +302,7 @@ identity_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
 
 # step-up / step-down
 
-function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
+function stepup!(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer) where T<:AbstractFloat
     sortedPValues[k] = stepfun(sortedPValues[k], 0, k, n)
     for i in 1:(k-1)
         sortedPValues[k-i] = min.(sortedPValues[k-i+1], stepfun(sortedPValues[k-i], i, k, n))
@@ -307,7 +310,7 @@ function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Fu
     return sortedPValues
 end
 
-function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
+function stepdown!(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer) where T<:AbstractFloat
     sortedPValues[1] = stepfun(sortedPValues[1], 1, k, n)
     for i in 2:k
         sortedPValues[i] = max.(sortedPValues[i-1], stepfun(sortedPValues[i], i, k, n))

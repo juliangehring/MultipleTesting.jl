@@ -20,8 +20,8 @@ using StatsBase
 
     @testset "Storey π0" begin
 
-        @test issubtype(typeof(Storey()), Pi0Estimator)
-        @test issubtype(typeof(Storey(0.5)), Pi0Estimator)
+        @test typeof(Storey()) <: Pi0Estimator
+        @test typeof(Storey(0.5)) <: Pi0Estimator
         @test estimate_pi0(p, Storey(0.2)) ≈ 0.6
         @test estimate_pi0(p, Storey(0.0)) ≈ 1.0
         @test estimate_pi0(p, Storey(1.0)) ≈ 1.0
@@ -42,7 +42,7 @@ using StatsBase
 
         q = 0.1
 
-        @test issubtype(typeof(StoreyBootstrap()), Pi0Estimator)
+        @test typeof(StoreyBootstrap()) <: Pi0Estimator
 
         @test estimate_pi0(p, StoreyBootstrap()) ≈ 0.6
         @test estimate_pi0(p0, StoreyBootstrap()) ≈ 1.0
@@ -69,7 +69,7 @@ using StatsBase
 
     @testset "LeastSlope π0" begin
 
-        @test issubtype(typeof(LeastSlope()), Pi0Estimator)
+        @test typeof(LeastSlope()) <: Pi0Estimator
 
         ## checked against structSSI::pi0.lsl
         @test isapprox( estimate_pi0(p, LeastSlope()), 0.62, atol = 1e-2 )
@@ -110,7 +110,7 @@ using StatsBase
 
         alpha = 0.05
 
-        @test issubtype(typeof(TwoStep(alpha)), Pi0Estimator)
+        @test typeof(TwoStep(alpha)) <: Pi0Estimator
 
         ## checked against mutoss::TSBKY_pi0_est
         @test estimate_pi0(p, TwoStep()) ≈ 0.665
@@ -149,8 +149,8 @@ using StatsBase
         # [1] 0.5714286
         # ```
 
-        @test issubtype(typeof(RightBoundary()), Pi0Estimator)
-        @test issubtype(typeof(RightBoundary(lambdas)), Pi0Estimator)
+        @test typeof(RightBoundary()) <: Pi0Estimator
+        @test typeof(RightBoundary(lambdas)) <: Pi0Estimator
 
         # only eps because pi0 package uses right closed histograms
         @test isapprox( estimate_pi0(p, RightBoundary(lambdas)), 0.5714286, atol = 0.02 )
@@ -172,8 +172,8 @@ using StatsBase
 
     @testset "CensoredBUM π0" begin
 
-        @test issubtype(typeof(CensoredBUM()), Pi0Estimator)
-        @test issubtype(typeof(CensoredBUM(0.2, 0.1)), Pi0Estimator)
+        @test typeof(CensoredBUM()) <: Pi0Estimator
+        @test typeof(CensoredBUM(0.2, 0.1)) <: Pi0Estimator
 
         @test isapprox( estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5 )
         @test isapprox( estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5 )
@@ -197,7 +197,7 @@ using StatsBase
         @test_throws DomainError CensoredBUM(0.5, 0.05, 1e-6, -10)
 
         f = fit(CensoredBUM(), p)
-        @test issubtype(typeof(f), CensoredBUMFit)
+        @test typeof(f) <: CensoredBUMFit
         @test isapprox( f.π0, 0.55797, atol = 1e-5 )
 
         # denominator becomes 0 if all p-values are 1
@@ -224,7 +224,7 @@ using StatsBase
         ## test case that does not converge
         @test isnan(estimate_pi0(p, BUM(0.5, 1e-6, 2)))
 
-        @test issubtype(typeof(BUM()), Pi0Estimator)
+        @test typeof(BUM()) <: Pi0Estimator
 
         @test_throws DomainError BUM(-0.5)
         @test_throws DomainError BUM(1.5)
@@ -234,7 +234,7 @@ using StatsBase
 
     @testset "FlatGrenander π0" begin
 
-        @test issubtype(typeof(FlatGrenander()), Pi0Estimator)
+        @test typeof(FlatGrenander()) <: Pi0Estimator
 
         pu = collect(0.1:0.05:0.9)
         @test estimate_pi0(pu, FlatGrenander()) ≈ 1.0
@@ -274,8 +274,8 @@ using StatsBase
 
     @testset "ConvexDecreasing π0" begin
 
-        @test issubtype(typeof(ConvexDecreasing()), Pi0Estimator)
-        @test issubtype(typeof(ConvexDecreasing(100, 1e-6, 1000)), Pi0Estimator)
+        @test typeof(ConvexDecreasing()) <: Pi0Estimator
+        @test typeof(ConvexDecreasing(100, 1e-6, 1000)) <: Pi0Estimator
 
         @test isapprox( estimate_pi0(p, ConvexDecreasing()), 0.5739054, atol = 1e-4)
         @test isapprox( estimate_pi0(p0, ConvexDecreasing()), 1.0, atol = 1e-6 )
@@ -292,7 +292,7 @@ using StatsBase
         @test_throws DomainError ConvexDecreasing(100, 0.01, -1000)
 
         f = fit(ConvexDecreasing(), p)
-        @test issubtype(typeof(f), ConvexDecreasingFit)
+        @test typeof(f) <: ConvexDecreasingFit
         @test isapprox( f.π0, 0.5739054, atol = 1e-4 )
 
     end

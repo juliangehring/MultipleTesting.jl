@@ -14,6 +14,8 @@ import StatsBase: fit
 using Distributions
 import Distributions: estimate
 
+import SpecialFunctions: digamma
+
 export
     PValues,
     adjust,

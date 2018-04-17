@@ -1,6 +1,6 @@
 ## utility functions ##
 
-function reorder{T<:Real}(values::AbstractVector{T})
+function reorder(values::AbstractVector{T}) where T<:Real
     newOrder = sortperm(values)
     oldOrder = sortperm(newOrder)
     return newOrder, oldOrder
@@ -31,7 +31,7 @@ function unsort(x; kws...)
 end
 
 
-function valid_pvalues{T<:AbstractFloat}(x::AbstractVector{T})
+function valid_pvalues(x::AbstractVector{T}) where T<:AbstractFloat
     if !isin(x)
         throw(DomainError())
     end
@@ -42,13 +42,13 @@ function isin(x::Real, lower::Real = 0., upper::Real = 1.)
     x >= lower && x <= upper
 end
 
-function isin{T<:Real}(x::AbstractVector{T}, lower::Real = 0., upper::Real = 1.)
+function isin(x::AbstractVector{T}, lower::Real = 0., upper::Real = 1.) where T<:Real
     ex = extrema(x)
     ex[1] >= lower && ex[2] <= upper
 end
 
 
-function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T}, w::AbstractVector{T})
+function isotonic_regression_reference(y::AbstractVector{T}, w::AbstractVector{T}) where T<:AbstractFloat
     # TODO ignore zero weights
     y = copy(y)
     w = copy(w)
@@ -72,12 +72,12 @@ function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T}, w
     return yisotonic
 end
 
-function isotonic_regression_reference{T<:AbstractFloat}(y::AbstractVector{T})
+function isotonic_regression_reference(y::AbstractVector{T}) where T<:AbstractFloat
     isotonic_regression_reference(y, ones(y))
 end
 
 
-function isotonic_regression{T<:AbstractFloat}(y::AbstractVector{T}, weights::AbstractVector{T})
+function isotonic_regression(y::AbstractVector{T}, weights::AbstractVector{T}) where T<:AbstractFloat
     n = length(y)
     if n <= 1
         return y
@@ -118,12 +118,12 @@ function isotonic_regression{T<:AbstractFloat}(y::AbstractVector{T}, weights::Ab
     return y
 end
 
-function isotonic_regression{T<:AbstractFloat}(y::AbstractVector{T})
+function isotonic_regression(y::AbstractVector{T}) where T<:AbstractFloat
     isotonic_regression(y, ones(y))
 end
 
 
-function grenander{T<:AbstractFloat}(pv::AbstractVector{T})
+function grenander(pv::AbstractVector{T}) where T<:AbstractFloat
     pv_sorted = sort(pv)
     # ecdf that handles duplicated values
     pv_sorted_unique, counts = rle(pv_sorted)
@@ -135,7 +135,7 @@ function grenander{T<:AbstractFloat}(pv::AbstractVector{T})
 
     f = Δy ./ Δx
     f = -isotonic_regression(-f, Δx)
-    F  = ecdf_value[1] + vcat(0, cumsum(f .* Δx))
+    F  = ecdf_value[1] .+ vcat(0, cumsum(f .* Δx))
     f = push!(f, f[end])
 
     return pv_sorted_unique, f, F

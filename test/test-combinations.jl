@@ -46,8 +46,8 @@ using Base.Test
 
     @testset "$(method)" for method in keys(ref2)
 
-        @test issubtype(method, PValueCombination)
-        @test issubtype(typeof(method()), PValueCombination)
+        @test method <: PValueCombination
+        @test typeof(method()) <: PValueCombination
 
         ref = ref1[method]
         @test isapprox( combine(PValues(p1), method()), ref, atol = 1e-8)
@@ -75,7 +75,7 @@ using Base.Test
         @test_throws MethodError WilkinsonCombination()
         @test_throws ArgumentError WilkinsonCombination(0)
 
-        @test issubtype(typeof(method), PValueCombination)
+        @test typeof(method) <: PValueCombination
 
         # Wilkinson with rank = 1 is Tippett's method
         ref = ref1[TippettCombination]
@@ -117,7 +117,7 @@ using Base.Test
 
         padj_comb = MinimumCombination( p_adjustment() )
 
-        @test issubtype(typeof(padj_comb), PValueCombination)
+        @test typeof(padj_comb) <: PValueCombination
 
         @test isapprox( combine(PValues(p1), padj_comb), ref1[p_combination], atol = 1e-8)
         @test isapprox( combine(p1, padj_comb), ref1[p_combination], atol = 1e-8)
