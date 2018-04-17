@@ -40,7 +40,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:Abstra
 end
 
 function storey_pi0(pValues::AbstractVector{T}, lambda::AbstractFloat) where T<:AbstractFloat
-    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
+    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
     pi0 = min.(pi0, 1.)
     return pi0
 end
@@ -206,7 +206,7 @@ function rightboundary_pi0(pValues::AbstractVector{T}, λseq::AbstractVector{T})
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
     h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
-    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.-λseq)./n
+    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1 - λseq)./n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
@@ -478,7 +478,7 @@ function convex_decreasing(pValues::AbstractVector{T},
 
     n = length(pValues)
     p = sort(pValues)
-    dx = 1./gridsize
+    dx = 1 / gridsize
     t = collect(dx:dx:1.0)
     x = collect(0:dx:1.0)
     f = ones(T, gridsize+1)
@@ -517,7 +517,7 @@ function convex_decreasing(pValues::AbstractVector{T},
         end
         pi0_old = pi0_new
         f_theta_p .= triangular_weighting(p, theta)
-        if sum(f_theta_p./f_p) < sum(1./f_p)
+        if sum(f_theta_p ./ f_p) < sum(1 ./ f_p)
             theta = 0.0
             f_theta .= ones(f_theta)
             f_theta_p .= ones(f_theta_p)

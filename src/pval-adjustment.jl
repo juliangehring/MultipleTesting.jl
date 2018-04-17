@@ -257,21 +257,21 @@ function adjust(pvals::PValues, method::BarberCandes)
     left_pv = estimated_fdrs[1]
     right_pv = estimated_fdrs[n]
 
-    while (left_pv < 0.5)
-        while ((1-right_pv <= left_pv) & (right_pv >= 0.5) & (Vt+Rt <= n))
-            estimated_fdrs[n-Vt+1] = 1.0;
+    while left_pv < 0.5
+        while (1 - right_pv <= left_pv) && (right_pv >= 0.5) && (Vt + Rt <= n)
+            estimated_fdrs[n-Vt+1] = 1.0
             right_pv = estimated_fdrs[n-Vt]
-            Vt +=1
+            Vt += 1
         end
         estimated_fdrs[Rt] = Vt/Rt
         Rt += 1
         left_pv = estimated_fdrs[Rt]
     end
 
-    while ((right_pv >= 0.5) & (Vt + Rt <= n+1))
-      estimated_fdrs[n-Vt+1] = 1.0;
-      right_pv = (Vt + Rt <= n)?estimated_fdrs[n-Vt]:0.0
-      Vt +=1
+    while (right_pv >= 0.5) && (Vt + Rt <= n+1)
+      estimated_fdrs[n-Vt+1] = 1.0
+      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n-Vt] : 0.0
+      Vt += 1
     end
 
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
