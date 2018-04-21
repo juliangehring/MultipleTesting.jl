@@ -28,7 +28,7 @@ Royal Statistical Society, doi:10.1111/1467-9868.00346
 
 """
 struct Storey <: Pi0Estimator
-    λ::AbstractFloat
+    λ::Float64
 
     Storey(λ) = isin(λ, 0, 1) ? new(λ) : throw(DomainError())
 end
@@ -55,8 +55,8 @@ StoreyBootstrap(λseq, q)
 Reference: David Robinson, 2012
 """
 struct StoreyBootstrap <: Pi0Estimator
-    λseq::AbstractVector{AbstractFloat}
-    q   ::AbstractFloat
+    λseq::Vector{Float64}
+    q   ::Float64
 
     StoreyBootstrap(λseq, q) =
         isin(λseq, 0, 1) && isin(q, 0, 1) ? new(λseq, q) : throw(DomainError())
@@ -135,7 +135,7 @@ Oracle π0
 Oracle(π0)
 """
 struct Oracle <: Pi0Estimator
-    π0::AbstractFloat
+    π0::Float64
 
     Oracle(π0) = isin(π0, 0, 1) ? new(π0) : throw(DomainError())
 end
@@ -157,7 +157,7 @@ TwoStep(α)
 Reference: Benjamini, Krieger and Yekutieli, 2006
 """
 struct TwoStep <: Pi0Estimator
-    α::AbstractFloat
+    α::Float64
     method::PValueAdjustment
 
     TwoStep(α, method) = isin(α, 0, 1) ? new(α, method) : throw(DomainError())
@@ -186,7 +186,7 @@ Right boundary π0 estimator
 RightBoundary(λseq)
 """
 struct RightBoundary <: Pi0Estimator
-    λseq::AbstractVector{Float64}
+    λseq::Vector{Float64}
 
     RightBoundary(λseq) =
         isin(λseq, 0, 1) ? new(λseq) : throw(DomainError())
@@ -240,7 +240,7 @@ CensoredBUM(γ0, λ) = CensoredBUM(γ0, λ, 1e-6, 10000)
 
 struct CensoredBUMFit <: Pi0Fit
     π0::Float64
-    param::AbstractVector{Float64}
+    param::Vector{Float64}
     is_converged::Bool
 end
 
@@ -356,7 +356,7 @@ BUM(y0::Float64) = BUM(y0, 1e-6, 10000)
 
 struct BUMFit <: Pi0Fit
     π0::Float64
-    param::AbstractVector{Float64}
+    param::Vector{Float64}
     is_converged::Bool
 end
 
@@ -450,7 +450,7 @@ ConvexDecreasing() = ConvexDecreasing(100, 1e-5, 10000)
 
 struct ConvexDecreasingFit <: Pi0Fit
     π0::Float64
-    param::AbstractVector{Float64}
+    param::Vector{Float64}
     is_converged::Bool
 end
 
