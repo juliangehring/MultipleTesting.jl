@@ -213,7 +213,7 @@ adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
 
 function sidak(pValues::PValues, n::Integer)
     check_number_tests(length(pValues), n)
-    return min.(1-(1-pValues).^n, 1)
+    return min.(1 .- (1 .- pValues).^n, 1)
 end
 
 
@@ -229,7 +229,7 @@ adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
 function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1-pvalues))
+    logsums = -cumsum(log.(1 .- pvalues))
     stepup!(logsums, forwardstop_step, k, n)
     return max.(min.(logsums, 1), 0)
 end
@@ -288,7 +288,7 @@ function barber_candes_brute_force(pvals::AbstractVector{T}) where T<:AbstractFl
         if pv >= 0.5
             break
         else
-            estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
+            estimated_fdrs[i] = (sum((1 .- pvals) .<= pv) + 1)/i
         end
     end
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed

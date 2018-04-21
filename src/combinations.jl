@@ -27,7 +27,7 @@ function fisher_combination(pValues::PValues{T}) where T<:AbstractFloat
     if n == 1
         return pValues[1]
     end
-    if minimum(pValues) == 0.0
+    if minimum(pValues) == 0
         return NaN
     end
     x = -2 * sum(log.(pValues))
@@ -51,11 +51,11 @@ function logit_combination(pValues::PValues{T}) where T<:AbstractFloat
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if pmin == 0 || pmax == 1
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log.(pValues./(1-pValues))) / c
+    x = -sum(log.(pValues./(1 .- pValues))) / c
     p = ccdf(TDist(5n+4), x)
     return p
 end
@@ -84,7 +84,7 @@ function stouffer_combination(pValues::PValues{T}) where T<:AbstractFloat
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if pmin == 0 || pmax == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues)
@@ -99,7 +99,7 @@ function stouffer_combination(pValues::PValues{T}, weights::Vector{T}) where T<:
         return pValues[1]
     end
     pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if pmin == 0 || pmax == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues) .* weights
@@ -123,7 +123,7 @@ function tippett_combination(pValues::PValues{T}) where T<:AbstractFloat
     if n == 1
         return pValues[1]
     end
-    p = 1.0 - (1.0 - minimum(pValues))^n
+    p = 1 - (1 - minimum(pValues))^n
     return p
 end
 

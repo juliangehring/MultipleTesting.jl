@@ -135,7 +135,7 @@ function grenander(pv::AbstractVector{T}) where T<:AbstractFloat
 
     f = Δy ./ Δx
     f = -isotonic_regression(-f, Δx)
-    F  = ecdf_value[1] + vcat(0, cumsum(f .* Δx))
+    F  = ecdf_value[1] .+ vcat(0, cumsum(f .* Δx))
     f = push!(f, f[end])
 
     return pv_sorted_unique, f, F
