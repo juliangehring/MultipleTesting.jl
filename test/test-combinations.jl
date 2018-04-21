@@ -10,20 +10,20 @@ using Base.Test
 
     p1 = [0.01, 0.05, 0.2, 0.8]
     ref1 = Dict(
-        FisherCombination   => 0.01558752, # metap::sumlog(p)
-        LogitCombination    => 0.020031,   # metap::logitp(p)
-        StoufferCombination => 0.02353884, # metap::sumz(p)
-        TippettCombination  => 0.03940399, # gmeta::Cpvaluecombine(p, "tippett")
-        SimesCombination    => 0.04        # TODO: justify reference value
+        FisherCombination   => 0.01558752, # `metap::sumlog(p)`
+        LogitCombination    => 0.020031,   # `metap::logitp(p)`
+        StoufferCombination => 0.02353884, # `metap::sumz(p)`
+        TippettCombination  => 0.03940399, # `gmeta::Cpvaluecombine(p, "tippett")`
+        SimesCombination    => 0.04        # `mppa::simes.test(p)`
     )
 
     p2 = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.75]
     ref2 = Dict(
-        FisherCombination   => 1.285885e-06, # metap::sumlog(p)
-        LogitCombination    => 1.801132e-06, # metap::logitp(p)
-        StoufferCombination => 5.092143e-06, # metap::sumz(p)
-        TippettCombination  => 0.0007997201, # gmeta::Cpvaluecombine(p, "tippett")
-        SimesCombination    => 0.0008        # TODO: justify reference value
+        FisherCombination   => 1.285885e-06, # `metap::sumlog(p)`
+        LogitCombination    => 1.801132e-06, # `metap::logitp(p)`
+        StoufferCombination => 5.092143e-06, # `metap::sumz(p)`
+        TippettCombination  => 0.0007997201, # `gmeta::Cpvaluecombine(p, "tippett")`
+        SimesCombination    => 0.0008        # `mppa::simes.test(p)`
     )
 
     p3 = copy(p1)
@@ -46,8 +46,8 @@ using Base.Test
 
     @testset "$(method)" for method in keys(ref2)
 
-        @test issubtype(method, PValueCombination)
-        @test issubtype(typeof(method()), PValueCombination)
+        @test method <: PValueCombination
+        @test typeof(method()) <: PValueCombination
 
         ref = ref1[method]
         @test isapprox( combine(PValues(p1), method()), ref, atol = 1e-8)
@@ -72,10 +72,10 @@ using Base.Test
 
         method = WilkinsonCombination(1)
 
-        @test_throws MethodError WilkinsonCombination()  # TODO default value
+        @test_throws MethodError WilkinsonCombination()
         @test_throws ArgumentError WilkinsonCombination(0)
 
-        @test issubtype(typeof(method), PValueCombination)
+        @test typeof(method) <: PValueCombination
 
         # Wilkinson with rank = 1 is Tippett's method
         ref = ref1[TippettCombination]
@@ -97,7 +97,7 @@ using Base.Test
         @test combine(PValues(p_single), method) == p_single[1]
         @test combine(p_single, method) == p_single[1]
 
-        # tested against metap::wilkinsonp(p, r, alpha = 1e-16)$p
+        # reference values computed with `metap::wilkinsonp(p, r, alpha = 1e-16)$p`
         ref = [0.03940399, 0.01401875, 0.0272, 0.4096]
         p = [combine(PValues(p1), WilkinsonCombination(r)) for r in 1:length(p1)]
         @test isapprox( p, ref, atol = 1e-7 )
@@ -113,11 +113,11 @@ using Base.Test
     @testset "Minimum combination with $(p_adjustment)" for
         (p_adjustment, p_combination) in p_adjust_combinations
 
-        @test_throws MethodError MinimumCombination()  # TODO
+        @test_throws MethodError MinimumCombination()
 
         padj_comb = MinimumCombination( p_adjustment() )
 
-        @test issubtype(typeof(padj_comb), PValueCombination)
+        @test typeof(padj_comb) <: PValueCombination
 
         @test isapprox( combine(PValues(p1), padj_comb), ref1[p_combination], atol = 1e-8)
         @test isapprox( combine(p1, padj_comb), ref1[p_combination], atol = 1e-8)
