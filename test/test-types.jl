@@ -17,7 +17,7 @@ using Base.Test
         @test values(pv) == vals
         @test sum(pv) == sum(vals)
         @test length(pv) == n
-        @test ones(pv) == ones(eltype(vals), n)
+        @test zero(pv) == zeros(eltype(vals), n)
         @test minimum(pv) == minimum(vals)
         @test maximum(pv) == maximum(vals)
         @test extrema(pv) == extrema(vals)

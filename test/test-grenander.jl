@@ -11,19 +11,19 @@ using Base.Test
         pv = [0.2, 0.4, 0.6, 0.8, 1.0]
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ pv
-        @test f ≈ ones(p)
+        @test f ≈ fill(1.0, size(p))
         @test F ≈ pv
 
         pv = [0.1, 0.3, 0.5, 0.7, 0.9]
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ pv
-        @test f ≈ ones(p)
+        @test f ≈ fill(1.0, size(p))
         @test F ≈ pv .+ 0.1
 
         pv = [0.1, 0.1, 0.3, 0.3, 0.5, 0.5, 0.7, 0.7, 0.9, 0.9]
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ unique(pv)
-        @test f ≈ ones(p)
+        @test f ≈ fill(1.0, size(p))
         @test F ≈ p .+ 0.1
 
         pv = [0.1, 0.2, 0.5, 0.6, 0.9]
@@ -52,7 +52,7 @@ using Base.Test
         @test MultipleTesting.isotonic_regression(r) == r
 
         r = rand(10)
-        @test MultipleTesting.isotonic_regression(r, ones(r)) == MultipleTesting.isotonic_regression(r)
+        @test MultipleTesting.isotonic_regression(r, fill(1.0, size(r))) == MultipleTesting.isotonic_regression(r)
         @test_throws DimensionMismatch MultipleTesting.isotonic_regression(rand(10), ones(5))
 
     end

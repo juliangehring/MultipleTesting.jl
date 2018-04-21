@@ -185,7 +185,7 @@ function hommel(pValues::PValues, n::Integer)
     if k <= 1
         return pValues
     end
-    pValues = vcat(pValues, ones(n-k))  # TODO avoid sorting of ones
+    pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     q = fill(minimum(n .* pValues./(1:n)), n)
@@ -245,7 +245,7 @@ function adjust(pvals::PValues, method::BarberCandes)
     n = length(pvals)
 
     if n <= 1
-        return ones(pvals) # unlike other p-adjust methods
+        return fill(1.0, size(pvals)) # unlike other p-adjust methods
     end
 
     sorted_indexes, original_order = reorder(pvals)
@@ -283,7 +283,7 @@ function barber_candes_brute_force(pvals::AbstractVector{T}) where T<:AbstractFl
     n = length(pvals)
     sorted_indexes, original_order = reorder(pvals)
     sorted_pvals = pvals[sorted_indexes]
-    estimated_fdrs = ones(pvals)
+    estimated_fdrs = fill(1.0, size(pvals))
     for (i,pv) in enumerate(sorted_pvals)
         if pv >= 0.5
             break

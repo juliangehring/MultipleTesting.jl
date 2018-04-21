@@ -481,8 +481,8 @@ function convex_decreasing(pValues::AbstractVector{T},
     dx = 1 / gridsize
     t = collect(dx:dx:1)
     x = collect(0:dx:1)
-    f = ones(T, gridsize+1)
-    f_p = ones(T, n)
+    f = fill(one(T), gridsize+1)
+    f_p = fill(one(T), n)
     theta = dx * find_theta(t, p)
     f_theta = triangular_weighting(x, theta)
     f_theta_p = triangular_weighting(p, theta)
@@ -519,8 +519,8 @@ function convex_decreasing(pValues::AbstractVector{T},
         f_theta_p .= triangular_weighting(p, theta)
         if sum(f_theta_p ./ f_p) < sum(1 ./ f_p)
             theta = 0.0
-            f_theta .= ones(f_theta)
-            f_theta_p .= ones(f_theta_p)
+            f_theta .= fill(1, size(f_theta))
+            f_theta_p .= fill(1, size(f_theta_p))
         end
         if !(theta in thetas)
             append!(thetas, theta)
