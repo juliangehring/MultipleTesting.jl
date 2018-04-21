@@ -53,7 +53,7 @@ function isotonic_regression_reference(y::AbstractVector{T}, w::AbstractVector{T
     y = copy(y)
     w = copy(w)
     m = length(y)
-    cnts = ones(Int, m)
+    cnts = fill(1, m)
     i = 2
     # ... not most efficient way but could be fun to (ab)use iterator protocol
     while !done(y, i)
@@ -68,12 +68,12 @@ function isotonic_regression_reference(y::AbstractVector{T}, w::AbstractVector{T
         end
         i += 1
     end
-    yisotonic = vcat([y[idx]*ones(Float64, cnt) for (idx, cnt) in enumerate(cnts)]...)
+    yisotonic = vcat([y[idx] .* fill(1.0, cnt) for (idx, cnt) in enumerate(cnts)]...)
     return yisotonic
 end
 
 function isotonic_regression_reference(y::AbstractVector{T}) where T<:AbstractFloat
-    isotonic_regression_reference(y, ones(y))
+    isotonic_regression_reference(y, fill(1.0, size(y)))
 end
 
 
@@ -119,7 +119,7 @@ function isotonic_regression(y::AbstractVector{T}, weights::AbstractVector{T}) w
 end
 
 function isotonic_regression(y::AbstractVector{T}) where T<:AbstractFloat
-    isotonic_regression(y, ones(y))
+    isotonic_regression(y, fill(1.0, size(y)))
 end
 
 
@@ -135,7 +135,7 @@ function grenander(pv::AbstractVector{T}) where T<:AbstractFloat
 
     f = Δy ./ Δx
     f = -isotonic_regression(-f, Δx)
-    F  = ecdf_value[1] + vcat(0, cumsum(f .* Δx))
+    F  = ecdf_value[1] .+ vcat(0, cumsum(f .* Δx))
     f = push!(f, f[end])
 
     return pv_sorted_unique, f, F

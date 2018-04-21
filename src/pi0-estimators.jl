@@ -30,7 +30,7 @@ Royal Statistical Society, doi:10.1111/1467-9868.00346
 struct Storey <: Pi0Estimator
     λ::Float64
 
-    Storey(λ) = isin(λ, 0., 1.) ? new(λ) : throw(DomainError())
+    Storey(λ) = isin(λ, 0, 1) ? new(λ) : throw(DomainError())
 end
 
 Storey() = Storey(0.1)
@@ -40,8 +40,8 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:Abstra
 end
 
 function storey_pi0(pValues::AbstractVector{T}, lambda::AbstractFloat) where T<:AbstractFloat
-    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1.-lambda)
-    pi0 = min.(pi0, 1.)
+    pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
+    pi0 = min.(pi0, 1)
     return pi0
 end
 
@@ -59,7 +59,7 @@ struct StoreyBootstrap <: Pi0Estimator
     q   ::Float64
 
     StoreyBootstrap(λseq, q) =
-        isin(λseq, 0., 1.) && isin(q, 0., 1.) ? new(λseq, q) : throw(DomainError())
+        isin(λseq, 0, 1) && isin(q, 0, 1) ? new(λseq, q) : throw(DomainError())
 end
 
 StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
@@ -71,10 +71,10 @@ end
 function bootstrap_pi0(pValues::AbstractVector{T}, lambda::AbstractVector{S} = 0.05:0.05:0.95, q::S = 0.1) where {T<:AbstractFloat,S<:AbstractFloat}
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
-    pi0 = w ./ n ./ (1. - lambda)
+    pi0 = w ./ n ./ (1 .- lambda)
     min_pi0 = quantile(pi0, q)
-    mse = (w ./ (n.^2 .* (1. - lambda).^2 )) .* (1. - w/n) + (pi0 - min_pi0).^2
-    pi0 = min.(pi0[indmin(mse)], 1.)
+    mse = (w ./ (n.^2 .* (1 .- lambda).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
+    pi0 = min.(pi0[indmin(mse)], 1)
     pi0
 end
 
@@ -97,10 +97,10 @@ function lsl_pi0(pValues::AbstractVector{T}) where T<:AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
-    sx = 0.
+    sx = 0
     for i in 2:n
         s1 = lsl_slope(i, n, pValues)
-        if (s1 - s0) < 0.
+        if (s1 - s0) < 0
             sx = s1
             break
         end
@@ -120,7 +120,7 @@ end
 function lsl_pi0_vec(pValues::AbstractVector{T}) where T<:AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
-    s = (1 - pValues) ./ (n:-1:1)
+    s = (1 .- pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
     pi0 = min.( 1/s[idx] + 1, n ) / n
@@ -137,7 +137,7 @@ Oracle(π0)
 struct Oracle <: Pi0Estimator
     π0::Float64
 
-    Oracle(π0) = isin(π0, 0., 1.) ? new(π0) : throw(DomainError())
+    Oracle(π0) = isin(π0, 0, 1) ? new(π0) : throw(DomainError())
 end
 
 Oracle() = Oracle(1.0)
@@ -160,7 +160,7 @@ struct TwoStep <: Pi0Estimator
     α::Float64
     method::PValueAdjustment
 
-    TwoStep(α, method) = isin(α, 0., 1.) ? new(α, method) : throw(DomainError())
+    TwoStep(α, method) = isin(α, 0, 1) ? new(α, method) : throw(DomainError())
 end
 
 TwoStep() = TwoStep(0.05)
@@ -189,7 +189,7 @@ struct RightBoundary <: Pi0Estimator
     λseq::Vector{Float64}
 
     RightBoundary(λseq) =
-        isin(λseq, 0., 1.) ? new(λseq) : throw(DomainError())
+        isin(λseq, 0, 1) ? new(λseq) : throw(DomainError())
 end
 
 # λseq used in Liang, Nettleton 2012
@@ -206,7 +206,7 @@ function rightboundary_pi0(pValues::AbstractVector{T}, λseq::AbstractVector{T})
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
     h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
-    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1.-λseq)./n
+    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1 .- λseq)./n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
@@ -227,7 +227,7 @@ struct CensoredBUM <: Pi0Estimator
     maxiter::Int64
 
     function CensoredBUM(γ0, λ, xtol, maxiter)
-        if isin(γ0, 0., 1.) && isin(λ, 0., 1.) && isin(xtol, 0., 1.) && maxiter > 0
+        if isin(γ0, 0, 1) && isin(λ, 0, 1) && isin(xtol, 0, 1) && maxiter > 0
             new(γ0, λ, xtol, maxiter)
         else
             throw(DomainError())
@@ -282,12 +282,12 @@ function cbum_pi0(pValues::AbstractVector{T},
         if isnan(α)
            break
         end
-        γ = max.(min.(γ, 1.), 0.)
-        α = max.(min.(α, 1.), 0.)
+        γ = max.(min.(γ, 1), 0)
+        α = max.(min.(α, 1), 0)
         xl = (1-γ) * (λ^α)
         szl = (xl ./ (γ*λ + xl)) * n1
         xr = (1-γ) * α * pr.^(α-1)
-        zr = xr ./ (γ + xr)
+        zr = xr ./ (γ .+ xr)
         szr = sum(zr)
         sz = szl + szr
         pi0_new = γ + (1-γ)*α
@@ -312,13 +312,13 @@ function cbum_pi0_naive(pValues::AbstractVector{T},
     lpr = log.(pValues[idx_right])
     ll = log(λ)
     for i in 1:maxiter
-        γ = sum(1-z) / n
+        γ = sum(1 .- z) / n  # TODO simplify
         α = -sum(z[idx_right])
         α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
         xl = (1-γ) * (λ^α)
         z[idx_left] = xl ./ (γ*λ + xl)
         xr = (1-γ) * α * pValues[idx_right].^(α-1)
-        z[idx_right] = xr ./ (γ + xr)
+        z[idx_right] = xr ./ (γ .+ xr)
         pi0_new = γ + (1-γ)*α
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, [γ, α], true
@@ -342,7 +342,7 @@ struct BUM <: Pi0Estimator
     maxiter::Int64
 
     function BUM(γ0, xtol, maxiter)
-        if isin(γ0, 0., 1.) && isin(xtol, 0., 1.)
+        if isin(γ0, 0, 1) && isin(xtol, 0, 1)
             new(γ0, xtol, maxiter)
         else
             throw(DomainError())
@@ -406,7 +406,7 @@ function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) w
     f = [Inf; f]
     i2 = length(f)
     Δp_max = Δp = 0.0
-    pi0 = 1.0
+    pi0 = 1
     for i1 in (length(f)-1):-1:1
         if f[i2] ≈ f[i1] # within constant interval
             Δp = p[i2] - p[i1]
@@ -418,7 +418,7 @@ function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) w
             i2 = i1
             Δp = 0.0
         end
-        if f[i1] > 1.0
+        if f[i1] > 1
             break
         end
     end
@@ -438,7 +438,7 @@ struct ConvexDecreasing <: Pi0Estimator
     maxiter::Int64
 
     function ConvexDecreasing(gridsize, xtol, maxiter)
-        if gridsize > 0 && isin(xtol, 0., 1.) && maxiter > 0
+        if gridsize > 0 && isin(xtol, 0, 1) && maxiter > 0
             new(gridsize, xtol, maxiter)
         else
             throw(DomainError())
@@ -478,29 +478,29 @@ function convex_decreasing(pValues::AbstractVector{T},
 
     n = length(pValues)
     p = sort(pValues)
-    dx = 1./gridsize
-    t = collect(dx:dx:1.0)
-    x = collect(0:dx:1.0)
-    f = ones(T, gridsize+1)
-    f_p = ones(T, n)
+    dx = 1 / gridsize
+    t = collect(dx:dx:1)
+    x = collect(0:dx:1)
+    f = fill(one(T), gridsize+1)
+    f_p = fill(one(T), n)
     theta = dx * find_theta(t, p)
     f_theta = triangular_weighting(x, theta)
     f_theta_p = triangular_weighting(p, theta)
-    idx_lower = round.(Int, round.(gridsize.*p, RoundDown).+1)
-    p_upper = round.(gridsize*p, RoundUp)/gridsize
-    idx_upper = round.(Int, gridsize*p_upper) + 1
+    idx_lower = round.(Int, round.(gridsize .* p, RoundDown) .+ 1)
+    p_upper = round.(gridsize .* p, RoundUp)/gridsize
+    idx_upper = round.(Int, gridsize .* p_upper) .+ 1
     px = p_upper .- p
     thetas = T[]
     pi0_new = pi0_old = Inf
     for j in 1:maxiter
-        if sum((f_p.-f_theta_p)./f_p) > 0.0
+        if sum((f_p.-f_theta_p)./f_p) > 0
             ε = 0.0
         else
             l = 0.0
-            u = 1.0
+            u = 1
             while abs(u-l) > xtol
                 ε = (l+u)/2.0
-                if decide(f_p, f_theta_p, ε) < 0.0
+                if decide(f_p, f_theta_p, ε) < 0
                     l = ε
                 else
                     u = ε
@@ -517,10 +517,10 @@ function convex_decreasing(pValues::AbstractVector{T},
         end
         pi0_old = pi0_new
         f_theta_p .= triangular_weighting(p, theta)
-        if sum(f_theta_p./f_p) < sum(1./f_p)
+        if sum(f_theta_p ./ f_p) < sum(1 ./ f_p)
             theta = 0.0
-            f_theta .= ones(f_theta)
-            f_theta_p .= ones(f_theta_p)
+            f_theta .= fill(1, size(f_theta))
+            f_theta_p .= fill(1, size(f_theta_p))
         end
         if !(theta in thetas)
             append!(thetas, theta)
@@ -531,16 +531,16 @@ function convex_decreasing(pValues::AbstractVector{T},
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64})
-    return indmax( [theta^-2 * sum(theta.-p[p.<theta]) for theta in t] )
+    return indmax( [theta.^-2 * sum(theta .- p[p .< theta]) for theta in t] )
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64}, f_p::Vector{Float64})
-    return indmax( [theta^-2 * sum( (theta.-p) .* (p.<theta) ./ f_p ) for theta in t] )
+    return indmax( [theta.^-2 * sum( (theta .- p) .* (p .< theta) ./ f_p ) for theta in t] )
 end
 
 function decide(f_p::Vector{Float64}, f_theta_p::Vector{Float64}, ε::Float64)
-    idx = f_p .> 0.
-    return sum( @. ( f_p[idx] - f_theta_p[idx] ) / ( (1-ε)*f_p[idx] + ε*f_theta_p[idx] ) )
+    idx = f_p .> 0
+    return sum( @. ( f_p[idx] - f_theta_p[idx] ) / ( (1-ε) * f_p[idx] + ε * f_theta_p[idx] ) )
 end
 
 function triangular_weighting(x::Vector{T}, mid::T) where T<:AbstractFloat
