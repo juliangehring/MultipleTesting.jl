@@ -1,11 +1,11 @@
-### estimators for π0 (pi0) ###
+### estimators for π0 (pi0)
 
 function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T<:AbstractFloat, M<:Pi0Estimator}
     estimate_pi0(PValues(pValues), method)
 end
 
 
-## Storey estimator ##
+## Storey estimator
 
 """
 Storey π0 estimator
@@ -36,17 +36,14 @@ end
 Storey() = Storey(0.1)
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:AbstractFloat
-    storey_pi0(pValues, pi0estimator.λ)
-end
-
-function storey_pi0(pValues::AbstractVector{T}, lambda::AbstractFloat) where T<:AbstractFloat
+    lambda = pi0estimator.λ
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
     pi0 = min.(pi0, 1)
     return pi0
 end
 
 
-## Storey bootstrap estimator ##
+## Storey bootstrap estimator
 """
 Storey closed-form bootstrap π0 estimator
 
@@ -65,21 +62,19 @@ end
 StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T<:AbstractFloat
-    bootstrap_pi0(pValues, pi0estimator.λseq, pi0estimator.q)
-end
-
-function bootstrap_pi0(pValues::AbstractVector{T}, lambda::AbstractVector{S} = 0.05:0.05:0.95, q::S = 0.1) where {T<:AbstractFloat,S<:AbstractFloat}
+    lambdas = pi0estimator.λseq
+    q = pi0estimator.q
     n = length(pValues)
-    w = [sum(pValues .>= l) for l in lambda]  # TODO: check if >= or >
-    pi0 = w ./ n ./ (1 .- lambda)
+    w = [sum(pValues .>= l) for l in lambdas]  # TODO: check if >= or >
+    pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
-    mse = (w ./ (n.^2 .* (1 .- lambda).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
+    mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
     pi0 = min.(pi0[indmin(mse)], 1)
     pi0
 end
 
 
-## Least SLope (LSL) estimator ##
+## Least SLope (LSL) estimator
 
 """
 Least SLope (LSL) π0 estimator
@@ -90,10 +85,6 @@ struct LeastSlope <: Pi0Estimator
 end
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T<:AbstractFloat
-    lsl_pi0(pValues)
-end
-
-function lsl_pi0(pValues::AbstractVector{T}) where T<:AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
@@ -110,8 +101,8 @@ function lsl_pi0(pValues::AbstractVector{T}) where T<:AbstractFloat
     return pi0
 end
 
-function lsl_slope(i::Integer, n::Integer, pval::AbstractVector{T}) where T<:AbstractFloat
-    s = (1 - pval[i]) / (n - i + 1)
+function lsl_slope(i::Integer, n::Integer, pValue::AbstractVector{T}) where T<:AbstractFloat
+    s = (1 - pValue[i]) / (n - i + 1)
     return s
 end
 
@@ -147,7 +138,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::Oracle) where T<:Abstra
 end
 
 
-## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006) ##
+## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006)
 
 """
 Two step π0 estimator
@@ -168,11 +159,8 @@ TwoStep() = TwoStep(0.05)
 TwoStep(α) = TwoStep(α, BenjaminiHochberg())
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T<:AbstractFloat
-    twostep_pi0(pValues, pi0estimator.α, pi0estimator.method)
-end
-
-function twostep_pi0(pValues::AbstractVector{T}, alpha::AbstractFloat, method::PValueAdjustment) where T<:AbstractFloat
-    padj = adjust(pValues, method)
+    alpha = pi0estimator.α
+    padj = adjust(pValues, pi0estimator.method)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return pi0
 end
@@ -196,12 +184,8 @@ end
 RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T<:AbstractFloat
-    rightboundary_pi0(pValues, pi0estimator.λseq)
-end
-
-function rightboundary_pi0(pValues::AbstractVector{T}, λseq::AbstractVector{T}) where T<:AbstractFloat
     n = length(pValues)
-    λseq = sort_if_needed(λseq)
+    λseq = sort_if_needed(pi0estimator.λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
@@ -392,11 +376,7 @@ struct FlatGrenander <: Pi0Estimator
 end
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::FlatGrenander) where T<:AbstractFloat
-    flat_grenander_pi0(pValues)
-end
-
-function flat_grenander_pi0(pv::AbstractVector{T}) where T<:AbstractFloat
-    p, f, F = grenander(pv)
+    p, f, F = grenander(pValues)
     pi0 = longest_constant_interval(p, f)
     return pi0
 end

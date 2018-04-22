@@ -19,10 +19,6 @@ struct FisherCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::FisherCombination) where T<:AbstractFloat
-    fisher_combination(pValues)
-end
-
-function fisher_combination(pValues::PValues{T}) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -42,10 +38,6 @@ struct LogitCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::LogitCombination) where T<:AbstractFloat
-    logit_combination(pValues)
-end
-
-function logit_combination(pValues::PValues{T}) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -67,18 +59,6 @@ struct StoufferCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::StoufferCombination) where T<:AbstractFloat
-    stouffer_combination(pValues)
-end
-
-function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombination) where T<:AbstractFloat
-    stouffer_combination(pValues, weights)
-end
-
-function combine(pValues::PValues{T}, weights::Weights, method::StoufferCombination) where T<:AbstractFloat
-    stouffer_combination(pValues, values(weights))
-end
-
-function stouffer_combination(pValues::PValues{T}) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -93,7 +73,7 @@ function stouffer_combination(pValues::PValues{T}) where T<:AbstractFloat
     return p
 end
 
-function stouffer_combination(pValues::PValues{T}, weights::Vector{T}) where T<:AbstractFloat
+function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombination) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -108,6 +88,10 @@ function stouffer_combination(pValues::PValues{T}, weights::Vector{T}) where T<:
     return p
 end
 
+function combine(pValues::PValues{T}, weights::Weights, method::StoufferCombination) where T<:AbstractFloat
+    combine(pValues, values(weights), method)
+end
+
 
 ## Tippett combination ##
 
@@ -115,10 +99,6 @@ struct TippettCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::TippettCombination) where T<:AbstractFloat
-    tippett_combination(pValues)
-end
-
-function tippett_combination(pValues::PValues{T}) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -134,10 +114,6 @@ struct SimesCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::SimesCombination) where T<:AbstractFloat
-    simes_combination(pValues)
-end
-
-function simes_combination(pValues::PValues{T}) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -162,16 +138,13 @@ struct WilkinsonCombination <: PValueCombination
 end
 
 function combine(pValues::PValues{T}, method::WilkinsonCombination) where T<:AbstractFloat
-    wilkinson_combination(pValues, method.rank)
-end
-
-function wilkinson_combination(pValues::PValues{T}, rank::Integer) where T<:AbstractFloat
     n = length(pValues)
-    if rank < 1 || rank > n
-        throw(ArgumentError("Rank must be in 1,..,$(n)"))
-    end
     if n == 1
         return pValues[1]
+    end
+    rank = method.rank
+    if rank < 1 || rank > n
+        throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
     p_rank = sort(pValues)[rank]
     p = cdf(Beta(rank, n-rank+1), p_rank)
@@ -182,19 +155,15 @@ end
 ## Generalised minimum combination ##
 
 struct MinimumCombination <: PValueCombination
-    method::PValueAdjustment
+    adjustment::PValueAdjustment
 end
 
 function combine(pValues::PValues{T}, method::MinimumCombination) where T<:AbstractFloat
-    minimum_combination(pValues, method.method)
-end
-
-function minimum_combination(pValues::PValues{T}, pAdjustMethod::PValueAdjustment) where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    padj = adjust(pValues, pAdjustMethod)
+    padj = adjust(pValues, method.adjustment)
     p = minimum(padj)
     return p
 end
