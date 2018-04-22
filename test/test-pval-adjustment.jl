@@ -42,7 +42,7 @@ using Base.Test
     k3 = 6
     n3 = length(pval1)
     pval3 = pval1[1:k3]
-    pval3pad = [pval3; ones(n3-k3)]  # non-observed p-values equal to 1
+    pval3pad = [pval3; fill(1.0, n3-k3)]  # non-observed p-values equal to 1
     methods3 = [Bonferroni, Holm, Hochberg, Hommel, BenjaminiHochberg,
                 BenjaminiYekutieli, BenjaminiLiu, Sidak, ForwardStop]
 
@@ -65,7 +65,7 @@ using Base.Test
 
         if (method == BarberCandes)
             pval = rand(1)
-            @test adjust(pval, method()) == ones(pval)
+            @test adjust(pval, method()) == fill(1.0, size(pval))
         end
 
         ## compare with reference values
@@ -98,8 +98,9 @@ using Base.Test
 
     end
 
-    @testset "BarberCandès #2:" begin #some additional tests
-        for k=1:5
+
+    @testset "BarberCandès #2:" begin
+        for k = 1:5
           srand(k)
           pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
           @test isapprox(adjust(pv, BarberCandes()),
@@ -107,7 +108,6 @@ using Base.Test
         end
     end
 end
-
 
 
 end

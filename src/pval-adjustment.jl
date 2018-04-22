@@ -185,7 +185,7 @@ function hommel(pValues::PValues, n::Integer)
     if k <= 1
         return pValues
     end
-    pValues = vcat(pValues, ones(n-k))  # TODO avoid sorting of ones
+    pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
     sortedIndexes, originalOrder = reorder(pValues)
     sortedPValues = pValues[sortedIndexes]
     q = fill(minimum(n .* pValues./(1:n)), n)
@@ -213,7 +213,7 @@ adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
 
 function sidak(pValues::PValues, n::Integer)
     check_number_tests(length(pValues), n)
-    return min.(1-(1-pValues).^n, 1)
+    return min.(1 .- (1 .- pValues).^n, 1)
 end
 
 
@@ -229,7 +229,7 @@ adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
 function forwardstop(pvalues::PValues, n::Integer)
     k = length(pvalues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1-pvalues))
+    logsums = -cumsum(log.(1 .- pvalues))
     stepup!(logsums, forwardstop_step, k, n)
     return max.(min.(logsums, 1), 0)
 end
@@ -245,7 +245,7 @@ function adjust(pvals::PValues, method::BarberCandes)
     n = length(pvals)
 
     if n <= 1
-        return ones(pvals) # unlike other p-adjust methods
+        return fill(1.0, size(pvals)) # unlike other p-adjust methods
     end
 
     sorted_indexes, original_order = reorder(pvals)
@@ -257,21 +257,21 @@ function adjust(pvals::PValues, method::BarberCandes)
     left_pv = estimated_fdrs[1]
     right_pv = estimated_fdrs[n]
 
-    while (left_pv < 0.5)
-        while ((1-right_pv <= left_pv) & (right_pv >= 0.5) & (Vt+Rt <= n))
-            estimated_fdrs[n-Vt+1] = 1.0;
+    while left_pv < 0.5
+        while (1 - right_pv <= left_pv) && (right_pv >= 0.5) && (Vt + Rt <= n)
+            estimated_fdrs[n-Vt+1] = 1.0
             right_pv = estimated_fdrs[n-Vt]
-            Vt +=1
+            Vt += 1
         end
         estimated_fdrs[Rt] = Vt/Rt
         Rt += 1
         left_pv = estimated_fdrs[Rt]
     end
 
-    while ((right_pv >= 0.5) & (Vt + Rt <= n+1))
-      estimated_fdrs[n-Vt+1] = 1.0;
-      right_pv = (Vt + Rt <= n)?estimated_fdrs[n-Vt]:0.0
-      Vt +=1
+    while (right_pv >= 0.5) && (Vt + Rt <= n+1)
+      estimated_fdrs[n-Vt+1] = 1.0
+      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n-Vt] : 0.0
+      Vt += 1
     end
 
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
@@ -283,12 +283,12 @@ function barber_candes_brute_force(pvals::AbstractVector{T}) where T<:AbstractFl
     n = length(pvals)
     sorted_indexes, original_order = reorder(pvals)
     sorted_pvals = pvals[sorted_indexes]
-    estimated_fdrs = ones(pvals)
+    estimated_fdrs = fill(1.0, size(pvals))
     for (i,pv) in enumerate(sorted_pvals)
         if pv >= 0.5
             break
         else
-            estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
+            estimated_fdrs[i] = (sum((1 .- pvals) .<= pv) + 1)/i
         end
     end
     stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed

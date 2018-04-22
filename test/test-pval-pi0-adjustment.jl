@@ -40,7 +40,7 @@ using Base.Test
         ## BH Adaptive same as BH for π0 missing or 1
         @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-8 )
         @test isapprox( adjust(pval1, t()), ref0, atol = 1e-8 )
-        @test isapprox( adjust(pval1, t(0.0)), zeros(ref0), atol = 1e-8 )
+        @test isapprox( adjust(pval1, t(0.0)), zero(ref0), atol = 1e-8 )
 
         # adaptive with pi0 estimator == oracle with estimated pi0
         @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate_pi0(pval1, Storey())))

@@ -140,14 +140,14 @@ using Base.Test
         method = StoufferCombination
 
         ref = ref1[method]
-        @test isapprox( combine(p1, ones(p1), method()), ref, atol = 1e-8)
-        @test isapprox( combine(p1, Weights(ones(p1)), method()), ref, atol = 1e-8)
-        @test isapprox( combine(PValues(p1), Weights(ones(p1)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p1, fill(1.0, size(p1)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p1, Weights(fill(1.0, size((p1)))), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p1), Weights(fill(1.0, size(p1))), method()), ref, atol = 1e-8)
 
         ref = ref2[method]
-        @test isapprox( combine(p2, ones(p2), method()), ref, atol = 1e-8)
-        @test isapprox( combine(p2, Weights(ones(p2)), method()), ref, atol = 1e-8)
-        @test isapprox( combine(PValues(p2), Weights(ones(p2)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p2, fill(1.0, size(p2)), method()), ref, atol = 1e-8)
+        @test isapprox( combine(p2, Weights(fill(1.0, size(p2))), method()), ref, atol = 1e-8)
+        @test isapprox( combine(PValues(p2), Weights(fill(1.0, size(p2))), method()), ref, atol = 1e-8)
 
         ref = ref3[method]
         w3norm = w3 ./ sum(w3)
@@ -158,13 +158,13 @@ using Base.Test
         @test isapprox( combine(p3, w3norm, method()), ref, atol = 1e-8 )
         @test isapprox( combine(p3, Weights(w3norm), method()), ref, atol = 1e-8 )
 
-        @test_throws DomainError combine(p1_invalid, ones(p1_invalid), method())
-        @test_throws DomainError combine(p1_invalid, Weights(ones(p1_invalid)), method())
-        @test_throws DomainError combine(p2_invalid, ones(p2_invalid), method())
-        @test_throws DomainError combine(p2_invalid, Weights(ones(p2_invalid)), method())
+        @test_throws DomainError combine(p1_invalid, fill(1.0, size(p1_invalid)), method())
+        @test_throws DomainError combine(p1_invalid, Weights(fill(1.0, size(p1_invalid))), method())
+        @test_throws DomainError combine(p2_invalid, fill(1.0, size(p2_invalid)), method())
+        @test_throws DomainError combine(p2_invalid, Weights(fill(1.0, size(p2_invalid))), method())
 
-        @test combine(p_single, ones(p_single), method()) == p_single[1]
-        @test combine(p_single, Weights(ones(p_single)), method()) == p_single[1]
+        @test combine(p_single, fill(1.0, size(p_single)), method()) == p_single[1]
+        @test combine(p_single, Weights(fill(1.0, size(p_single))), method()) == p_single[1]
 
     end
 
@@ -183,8 +183,8 @@ using Base.Test
         @test isnan( combine(p0, StoufferCombination()) )
         @test isnan( combine(p1, StoufferCombination()) )
 
-        @test isnan( combine(p0, ones(p0), StoufferCombination()) )
-        @test isnan( combine(p1, ones(p1), StoufferCombination()) )
+        @test isnan( combine(p0, fill(1.0, size(p0)), StoufferCombination()) )
+        @test isnan( combine(p1, fill(1.0, size(p1)), StoufferCombination()) )
 
         @test isapprox( combine(p0, TippettCombination()), 0.0 )
         @test isapprox( combine(p1, TippettCombination()), 0.04900995, atol = 1e-8 )
