@@ -31,7 +31,6 @@ export
     Sidak,
     ForwardStop,
     BarberCandes,
-    qValues,
     estimate_pi0,
     Pi0Estimator,
     Storey,
@@ -68,7 +67,6 @@ include("types.jl")
 include("utils.jl")
 include("pval-adjustment.jl")
 include("pi0-estimators.jl")
-include("qvalue.jl")
 include("model.jl")
 include("combinations.jl")
 include("higher-criticism.jl")

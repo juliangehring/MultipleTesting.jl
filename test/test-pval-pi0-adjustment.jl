@@ -49,65 +49,6 @@ using Base.Test
 
     end
 
-
-    @testset "q-value" begin
-
-        m = qValues
-
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = FALSE, pi0.method = "bootstrap")$qvalues```
-        ref = [0.0, 0.0002, 0.001333333, 0.01, 0.04, 0.066666667, 0.114285714, 0.2, 0.333333333, 0.4]
-
-        @test_throws MethodError m()
-
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
-
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
-
-        ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
-
-        ## compare with reference values
-        @test isapprox( m(pval1, pi0), ref, atol = 1e-8 )
-        @test isapprox( m(pval1, pi0, false), ref, atol = 1e-8 )
-
-    end
-
-
-    @testset "q-value pFDR" begin
-
-        m = qValues
-
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = TRUE, pi0.method = "bootstrap")$qvalues```
-        ref = [NaN, 0.09968523, 0.09968523, 0.09968523, 0.09968523, 0.10235600, 0.12803317, 0.20121668, 0.33333365, 0.4]
-
-        @test_throws MethodError m()
-
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
-
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
-
-        ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
-
-        ## compare with reference values
-        @test isapprox( m(pval1, pi0, true), ref, atol = 1e-8, nans = true )
-
-    end
-
 end
 
 end
