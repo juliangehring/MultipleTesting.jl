@@ -83,7 +83,7 @@ function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombin
         return NaN
     end
     z = cquantile.(Normal(), pValues) .* weights
-    z = sum(z) ./ sqrt(sum(weights.^2))
+    z = sum(z) ./ sqrt(sum(abs2, weights))
     p = ccdf(Normal(), z)
     return p
 end
