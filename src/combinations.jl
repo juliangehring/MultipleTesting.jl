@@ -146,7 +146,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination) where T<:Abs
     if rank < 1 || rank > n
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
-    p_rank = sort(pValues)[rank]
+    p_rank = select(pValues, rank) # faster than `sort(pValues)[rank]`
     p = cdf(Beta(rank, n-rank+1), p_rank)
     return p
 end
