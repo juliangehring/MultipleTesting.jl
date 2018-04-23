@@ -42,8 +42,7 @@ function combine(pValues::PValues{T}, method::LogitCombination) where T<:Abstrac
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
@@ -63,8 +62,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination) where T<:Abst
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues)
@@ -78,8 +76,7 @@ function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombin
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues) .* weights
@@ -118,7 +115,7 @@ function combine(pValues::PValues{T}, method::SimesCombination) where T<:Abstrac
     if n == 1
         return pValues[1]
     end
-    pValues = sort(pValues)  # faster than `sortperm`
+    pValues = sort(pValues)
     p = n * minimum(pValues./(1:n))
     return p
 end
