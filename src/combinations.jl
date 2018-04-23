@@ -42,8 +42,7 @@ function combine(pValues::PValues{T}, method::LogitCombination) where T<:Abstrac
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
@@ -63,8 +62,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination) where T<:Abst
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues)
@@ -78,12 +76,11 @@ function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombin
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0 || pmax == 1
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     z = cquantile.(Normal(), pValues) .* weights
-    z = sum(z) ./ sqrt(sum(weights.^2))
+    z = sum(z) ./ sqrt(sum(abs2, weights))
     p = ccdf(Normal(), z)
     return p
 end
@@ -118,7 +115,7 @@ function combine(pValues::PValues{T}, method::SimesCombination) where T<:Abstrac
     if n == 1
         return pValues[1]
     end
-    pValues = sort(pValues)  # faster than `sortperm`
+    pValues = sort(pValues)
     p = n * minimum(pValues./(1:n))
     return p
 end
@@ -146,7 +143,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination) where T<:Abs
     if rank < 1 || rank > n
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
-    p_rank = sort(pValues)[rank]
+    p_rank = select(pValues, rank) # faster than `sort(pValues)[rank]`
     p = cdf(Beta(rank, n-rank+1), p_rank)
     return p
 end
