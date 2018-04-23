@@ -47,7 +47,6 @@ using Base.Test
     @testset "$(method)" for method in keys(ref2)
 
         @test method <: PValueCombination
-        @test typeof(method()) <: PValueCombination
 
         ref = ref1[method]
         @test isapprox( combine(PValues(p1), method()), ref, atol = 1e-8)
@@ -64,6 +63,14 @@ using Base.Test
 
         @test combine(PValues(p_single), method()) == p_single[1]
         @test combine(p_single, method()) == p_single[1]
+
+        for T in (Float32, Float64)
+            pv = rand(T, 1)
+            @test isa( combine(PValues(pv), method()), T)
+
+            pv = Vector{T}(p1)
+            @test isa( combine(PValues(pv), method()), T)
+        end
 
     end
 
@@ -96,6 +103,14 @@ using Base.Test
 
         @test combine(PValues(p_single), method) == p_single[1]
         @test combine(p_single, method) == p_single[1]
+
+        for T in (Float32, Float64)
+            pv = rand(T, 1)
+            @test isa( combine(PValues(pv), method), T)
+
+            pv = Vector{T}(p1)
+            @test isa( combine(PValues(pv), method), T)
+        end
 
         # reference values computed with `metap::wilkinsonp(p, r, alpha = 1e-16)$p`
         ref = [0.03940399, 0.01401875, 0.0272, 0.4096]
@@ -131,6 +146,14 @@ using Base.Test
 
         @test combine(PValues(p_single), padj_comb) == p_single[1]
         @test combine(p_single, padj_comb) == p_single[1]
+
+        for T in (Float32, Float64)
+            pv = rand(T, 1)
+            @test isa( combine(PValues(pv), padj_comb), T)
+
+            pv = Vector{T}(p1)
+            @test isa( combine(PValues(pv), padj_comb), T)
+        end
 
     end
 
