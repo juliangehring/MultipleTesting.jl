@@ -37,11 +37,11 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    sortedPValues .*= n ./ (1:k)
-    stepup!(sortedPValues)
-    pAdjusted = min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= n ./ (1:k)
+    stepup!(pAdjusted)
+    pAdjusted = min.(pAdjusted[originalOrder], 1)
     return pAdjusted
 end
 
@@ -79,11 +79,11 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    sortedPValues .*= harmonic_number(n) .* n ./ (1:k)
-    stepup!(sortedPValues)
-    pAdjusted = min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= harmonic_number(n) .* n ./ (1:k)
+    stepup!(pAdjusted)
+    pAdjusted = min.(pAdjusted[originalOrder], 1)
     return pAdjusted
 end
 
@@ -101,14 +101,14 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
     if n <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n .- (1:k) .+ 1
-    sortedPValues = (1 .- (1 .- sortedPValues) .^ s) .* s ./ n
-    stepdown!(sortedPValues)
-    pAdjusted = min.(sortedPValues[originalOrder], 1)
+    pAdjusted = (1 .- (1 .- pAdjusted) .^ s) .* s ./ n
+    stepdown!(pAdjusted)
+    pAdjusted = min.(pAdjusted[originalOrder], 1)
     return pAdjusted
 end
 
@@ -126,11 +126,11 @@ function adjust(pValues::PValues, n::Integer, method::Hochberg)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    sortedPValues .*= (n .- (1:k) .+ 1)
-    stepup!(sortedPValues)
-    pAdjusted = min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= (n .- (1:k) .+ 1)
+    stepup!(pAdjusted)
+    pAdjusted = min.(pAdjusted[originalOrder], 1)
     return pAdjusted
 end
 
@@ -148,11 +148,11 @@ function adjust(pValues::PValues, n::Integer, method::Holm)
     if n <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    sortedPValues .*= (n .- (1:k) .+ 1)
-    stepdown!(sortedPValues)
-    pAdjusted = min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= (n .- (1:k) .+ 1)
+    stepdown!(pAdjusted)
+    pAdjusted = min.(pAdjusted[originalOrder], 1)
     return pAdjusted
 end
 
@@ -171,19 +171,19 @@ function adjust(pValues::PValues, n::Integer, method::Hommel)
         return pValues
     end
     pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
     q = fill(minimum(n .* pValues./(1:n)), n)
     pa = fill(q[1], n)
     for j in (n-1):-1:2
         ij = 1:(n-j+1)
         i2 = (n-j+2):n
-        q1 = minimum(j .* sortedPValues[i2]./((2:j)))
-        q[ij] = min.(j .* sortedPValues[ij], q1)
+        q1 = minimum(j .* pAdjusted[i2]./((2:j)))
+        q[ij] = min.(j .* pAdjusted[ij], q1)
         q[i2] = q[n-j+1]
         pa = max.(pa, q)
     end
-    pAdjusted = max.(pa, sortedPValues)[originalOrder[1:k]]
+    pAdjusted = max.(pa, pAdjusted)[originalOrder[1:k]]
     return pAdjusted
 end
 
