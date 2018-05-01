@@ -58,7 +58,8 @@ using Base.Test
         @test_throws DomainError adjust([0.5, 1.5], method())
 
         ## any single p-value is returned unchanged
-        if !(method in [ForwardStop, BarberCandes])  # this test is not valid for ForwardStop
+        # this test is not valid for ForwardStop or Barber-Candès
+        if !(method in [ForwardStop, BarberCandes])
             pval = rand(1)
             @test adjust(pval, method()) == pval
         end
@@ -72,17 +73,49 @@ using Base.Test
         @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
         @test isapprox( adjust(PValues(pval1), method()), ref1[method], atol = 1e-9 )
 
+        # unsorted inputs
+        for i in 1:10
+            ord = MultipleTesting.unorder(pval1)
+            @test isapprox( adjust(pval1[ord], method()), ref1[method][ord], atol = 1e-9 )
+        end
+
+
         ## compare with reference values having ties
         @test isapprox( adjust(pval2, method()), ref2[method], atol = 1e-9 )
         @test isapprox( adjust(PValues(pval2), method()), ref2[method], atol = 1e-9 )
 
+        # unsorted inputs
+        # this test is not valid for ForwardStop
+        if method != ForwardStop
+            for i in 1:10
+                ord = MultipleTesting.unorder(ref2[method])
+                @test isapprox( adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9 ) # FIXME
+            end
+        end
+
+        ## sorting order does not play a role
+        for i in 1:10
+            pval4 = sort(rand(10)) # all under H0
+            ord = MultipleTesting.unorder(pval4)
+            @test adjust(pval4[ord], method()) == adjust(pval4, method())[ord]
+        end
+
+
         ## total number of tests explicitly specified
         if method in methods3
-            # all p-values present
+            # all p-values present: same reference values as for pval1
             @test adjust(pval3, length(pval3), method()) == adjust(pval3, method())
             @test adjust(PValues(pval3), length(pval3), method()) == adjust(pval3, method())
+
             # k smallest p-values present, total number n known
             @test adjust(pval3, n3, method()) == adjust(pval3pad, n3, method())[1:k3]
+
+            # unsorted inputs
+            for i in 1:10
+                ord = MultipleTesting.unorder(pval3)
+                @test adjust(pval3[ord], n3, method()) == (adjust(pval3pad, n3, method())[1:k3])[ord]
+            end
+
             # k > n not allowed: test for any n in [1,k-1]
             @test_throws ArgumentError adjust(pval3, rand(1:k3-1), method())
         end

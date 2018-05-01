@@ -173,7 +173,7 @@ function adjust(pValues::PValues, n::Integer, method::Hommel)
     pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
     sortedOrder, originalOrder = reorder(pValues)
     pAdjusted = pValues[sortedOrder]
-    q = fill(minimum(n .* pValues./(1:n)), n)
+    q = fill(minimum(n .* pAdjusted./(1:n)), n)
     pa = fill(q[1], n)
     for j in (n-1):-1:2
         ij = 1:(n-j+1)
@@ -212,10 +212,11 @@ adjust(pValues::PValues, method::ForwardStop) = adjust(pValues, length(pValues),
 function adjust(pValues::PValues, n::Integer, method::ForwardStop)
     k = length(pValues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1 .- pValues))
+    sortedOrder, originalOrder = reorder(pValues)
+    logsums = -cumsum(log.(1 .- pValues[sortedOrder]))
     logsums ./= (1:k)
     stepup!(logsums)
-    pAdjusted = max.(min.(logsums, 1), 0)
+    pAdjusted = max.(min.(logsums[originalOrder], 1), 0)
     return pAdjusted
 end
 
