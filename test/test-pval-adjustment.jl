@@ -42,14 +42,14 @@ using Base.Test
     k3 = 6
     n3 = length(pval1)
     pval3 = pval1[1:k3]
-    pval3pad = [pval3; ones(n3-k3)]  # non-observed p-values equal to 1
+    pval3pad = [pval3; fill(1.0, n3-k3)]  # non-observed p-values equal to 1
     methods3 = [Bonferroni, Holm, Hochberg, Hommel, BenjaminiHochberg,
                 BenjaminiYekutieli, BenjaminiLiu, Sidak, ForwardStop]
 
     @testset "pvalue adjustment $method" for method in keys(ref1)
 
-        @test issubtype(method, PValueAdjustment)
-        @test issubtype(typeof(method()), PValueAdjustment)
+        @test method <: PValueAdjustment
+        @test typeof(method()) <: PValueAdjustment
 
         @test_throws MethodError method(0.1)
 
@@ -65,7 +65,7 @@ using Base.Test
 
         if (method == BarberCandes)
             pval = rand(1)
-            @test adjust(pval, method()) == ones(pval)
+            @test adjust(pval, method()) == fill(1.0, size(pval))
         end
 
         ## compare with reference values
@@ -127,16 +127,35 @@ using Base.Test
 
     end
 
-    @testset "BarberCandès #2:" begin #some additional tests
-        for k=1:5
-          srand(k)
-          pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
-          @test isapprox(adjust(pv, BarberCandes()),
-                MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
+
+    @testset "BarberCandès #2:" begin
+        for k = 1:5
+            srand(k)
+            pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
+            @test isapprox(adjust(pv, BarberCandes()),
+                           MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
         end
     end
+
+
+    @testset "Step-up/down" begin
+
+        x        = [1.0, 2.0, 2.0, 5.0, 4.0, 5.0, 7.0]
+        ref_up   = [1.0, 2.0, 2.0, 4.0, 4.0, 5.0, 7.0]
+        ref_down = [1.0, 2.0, 2.0, 5.0, 5.0, 5.0, 7.0]
+
+        # step-up
+        y = copy(x)
+        MultipleTesting.stepup!(y)
+        @test y == ref_up
+
+        # step-down
+        y = copy(x)
+        MultipleTesting.stepdown!(y)
+        @test y == ref_down
+
+    end
+
 end
-
-
 
 end
