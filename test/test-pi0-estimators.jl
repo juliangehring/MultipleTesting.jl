@@ -1,11 +1,11 @@
-## Test π0 estimator methods ##
+## Test π₀ estimator methods ##
 module Test_pi0
 
 using MultipleTesting
 using Base.Test
 using StatsBase
 
-@testset "π0 estimators" begin
+@testset "π₀ estimators" begin
 
     ## test case: deterministic
     p0 = collect(0.01:0.01:1)
@@ -18,7 +18,7 @@ using StatsBase
     unsort = MultipleTesting.unsort
 
 
-    @testset "Storey π0" begin
+    @testset "Storey π₀" begin
 
         @test typeof(Storey()) <: Pi0Estimator
         @test typeof(Storey(0.5)) <: Pi0Estimator
@@ -38,7 +38,7 @@ using StatsBase
     end
 
 
-    @testset "StoreyBootstrap π0" begin
+    @testset "StoreyBootstrap π₀" begin
 
         q = 0.1
 
@@ -67,7 +67,7 @@ using StatsBase
     end
 
 
-    @testset "LeastSlope π0" begin
+    @testset "LeastSlope π₀" begin
 
         @test typeof(LeastSlope()) <: Pi0Estimator
 
@@ -97,7 +97,7 @@ using StatsBase
     end
 
 
-    @testset "Oracle π0" begin
+    @testset "Oracle π₀" begin
 
         @test estimate_pi0(p, Oracle(0.5)) == 0.5
         @test estimate_pi0(p0, Oracle(0.6)) == 0.6
@@ -106,7 +106,7 @@ using StatsBase
     end
 
 
-    @testset "TwoStep π0" begin
+    @testset "TwoStep π₀" begin
 
         alpha = 0.05
 
@@ -133,7 +133,7 @@ using StatsBase
     end
 
 
-    @testset "RightBoundary π0" begin
+    @testset "RightBoundary π₀" begin
 
         # R code tested against (note this uses equidistant grid so we have to use
         # λseq as in Storey for comparison
@@ -170,7 +170,7 @@ using StatsBase
     end
 
 
-    @testset "CensoredBUM π0" begin
+    @testset "CensoredBUM π₀" begin
 
         @test typeof(CensoredBUM()) <: Pi0Estimator
         @test typeof(CensoredBUM(0.2, 0.1)) <: Pi0Estimator
@@ -214,7 +214,7 @@ using StatsBase
     end
 
 
-    @testset "BUM π0" begin
+    @testset "BUM π₀" begin
 
         @test isapprox( estimate_pi0(p, BUM(0.5)), 0.55528, atol = 1e-5 )
         @test isapprox( estimate_pi0(p, BUM()), 0.55528, atol = 1e-5 )
@@ -232,7 +232,7 @@ using StatsBase
     end
 
 
-    @testset "FlatGrenander π0" begin
+    @testset "FlatGrenander π₀" begin
 
         @test typeof(FlatGrenander()) <: Pi0Estimator
 
@@ -272,7 +272,7 @@ using StatsBase
     end
 
 
-    @testset "ConvexDecreasing π0" begin
+    @testset "ConvexDecreasing π₀" begin
 
         @test typeof(ConvexDecreasing()) <: Pi0Estimator
         @test typeof(ConvexDecreasing(100, 1e-6, 1000)) <: Pi0Estimator

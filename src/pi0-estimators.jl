@@ -1,4 +1,4 @@
-### estimators for π0 (pi0)
+### estimators for π₀ (pi0)
 
 function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T<:AbstractFloat, M<:Pi0Estimator}
     estimate_pi0(PValues(pValues), method)
@@ -8,7 +8,7 @@ end
 ## Storey estimator
 
 """
-Storey π0 estimator
+Storey π₀ estimator
 
 **Parameters**
 
@@ -45,7 +45,7 @@ end
 
 ## Storey bootstrap estimator
 """
-Storey closed-form bootstrap π0 estimator
+Storey closed-form bootstrap π₀ estimator
 
 StoreyBootstrap(λseq, q)
 
@@ -77,7 +77,7 @@ end
 ## Least SLope (LSL) estimator
 
 """
-Least SLope (LSL) π0 estimator
+Least SLope (LSL) π₀ estimator
 
 LeastSlope()
 """
@@ -121,9 +121,9 @@ end
 
 ## Oracle
 """
-Oracle π0
+Oracle π₀
 
-Oracle(π0)
+Oracle(π₀)
 """
 struct Oracle <: Pi0Estimator
     π0::Float64
@@ -141,7 +141,7 @@ end
 ## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006)
 
 """
-Two step π0 estimator
+Two step π₀ estimator
 
 TwoStep(α)
 
@@ -169,7 +169,7 @@ end
 # RightBoundary procedure as defined in Definition 2 of Liang and Nettleton 2012
 # "Adaptive and dynamic adaptive procedures for false discovery rate control and estimation"
 """
-Right boundary π0 estimator
+Right boundary π₀ estimator
 
 RightBoundary(λseq)
 """
@@ -200,7 +200,7 @@ end
 
 ## Censored BUM
 """
-Censored BUM π0 estimator
+Censored BUM π₀ estimator
 
 CensoredBUM(γ0, λ, xtol, maxiter)
 """
@@ -316,7 +316,7 @@ end
 
 ## BUM
 """
-BUM π0 estimator
+BUM π₀ estimator
 
 BUM(γ0, xtol, maxiter)
 """
@@ -364,11 +364,11 @@ end
 ## Longest constant interval in the Grenander estimator: Langaas et al., 2005
 
 """
-Flat Grenander π0 estimator
+Flat Grenander π₀ estimator
 
 FlatGrenander()
 
-Estimates π0 by the longest constant interval in the Grenander estimator
+Estimates π₀ by the longest constant interval in the Grenander estimator
 
 Reference: Langaas et al., 2005: section 4.3
 """
@@ -406,9 +406,9 @@ function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) w
 end
 
 
-## Convex Decreasing π0 estimator
+## Convex Decreasing π₀ estimator
 """
-Convex Decreasing π0 estimator
+Convex Decreasing π₀ estimator
 
 ConvexDecreasing(gridsize, xtol, maxiter)
 """

@@ -10,8 +10,8 @@ Beta Uniform Mixture Model (BUM)
 
 `MixtureModel`, as defined in the `Distributions` package, composed of
 
-- a uniform distribution in the interval [0, 1], with weight/prior π0
-- a Beta distribution with parameters α and β, with weight/prior 1-π0
+- a uniform distribution in the interval [0, 1], with weight/prior π₀
+- a Beta distribution with parameters α and β, with weight/prior 1-π₀
 
 **Examples**
 
