@@ -1,17 +1,45 @@
 # MultipleTesting.jl News and Changes
 
-## Unreleased
+## Version 0.3.0
+
+### New Features
+
+- Convex decreasing density estimator for π0 (#56)
+- Higher criticism scores (`HigherCriticismScores`) and threshold (`HigherCriticismThreshold`) estimation (#55)
+- List of publications which describe the implemented statistical methods (#54, #65)
+
 
 ### Changes
 
-- Drop support for julia 0.5, require julia 0.6 as minimum version
-- Drop `Compat` dependency
-- Support new `Distributions` interface
+#### User-facing changes
+
+- Fix p-value adjustments with unsorted inputs (#66)
+- Speed up p-value combinations (#75)
+- Define return types for p-value combinations (#76)
+- Update documentation notebooks (#67)
+- Drop support for julia 0.5, require julia 0.6 as the minimum version (#52, #64, #58)
+
+
+#### Internal changes
+
+- Simplify the method structure (#74)
+- Switch to new julia syntax (#71)
+- Simplify the step functions for p-value adjustments (#77)
+- Update tests and references for p-value combinations (#70)
+- Support the new `Distributions` interface (#52)
+- Drop the `Compat` dependency (#53)
+- Link comic logo in the readme file as an external resource (#69)
+
+
+### Removed
+
+- Drop `qvalues` in favour of BH-adjusted p-values (#73).
 
 
 ### Support
 
 - Requires julia 0.6
+- Preliminary support for julia 0.7 nightly builds
 
 
 ## Version 0.2.3
