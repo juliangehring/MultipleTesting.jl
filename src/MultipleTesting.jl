@@ -4,7 +4,8 @@ __precompile__()
 *MultipleTesting* package
 
 * Adjusting p-values for multiple testing
-* Estimating the fraction π0 of tests under the null hypothesis
+* Estimating the fraction π₀ of tests under the null hypothesis
+* Combination of p-values
 """
 module MultipleTesting
 
