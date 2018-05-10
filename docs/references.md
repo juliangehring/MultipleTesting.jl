@@ -68,7 +68,7 @@ Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
 proportion of true null hypotheses, with application to DNA microarray data.
 Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 555–572.
-[FlatGrenander]
+[FlatGrenander, ConvexDecreasing]
 
 Liang, K., and Nettleton, D. (2012). Adaptive and dynamic adaptive procedures
 for false discovery rate control and estimation. Journal of the Royal
