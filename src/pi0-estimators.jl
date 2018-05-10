@@ -262,10 +262,6 @@ function cbum_pi0(pValues::AbstractVector{T},
     for i in 1:maxiter
         γ = 1 - sz/n
         α = -szr / ( ll * szl + sum(zr .* lpr) )
-        # explicitly handle denominator of 0 in julia 0.5: min(x, NaN) == x
-        if isnan(α)
-           break
-        end
         γ = max.(min.(γ, 1), 0)
         α = max.(min.(α, 1), 0)
         xl = (1-γ) * (λ^α)
