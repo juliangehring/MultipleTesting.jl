@@ -15,6 +15,22 @@ end
 
 ## Fisher combination ##
 
+"""
+Fisher's p-value combination
+
+**Examples**
+
+```jldoctest
+FisherCombination()
+```
+
+**References**
+
+Fisher, R.A. (1925).
+Statistical methods for research workers
+(Genesis Publishing Pvt Ltd).
+
+"""
 struct FisherCombination <: PValueCombination
 end
 
@@ -34,6 +50,22 @@ end
 
 ## Logit combination ##
 
+"""
+Logit p-value combination
+
+**Examples**
+
+```jldoctest
+LogitCombination()
+```
+
+**References**
+
+Mudholkar, G.S., and George, E.O. (1977).
+The Logit Statistic for Combining Probabilities - An Overview
+(Rochester University NY, Dept of Statistics).
+
+"""
 struct LogitCombination <: PValueCombination
 end
 
@@ -54,6 +86,32 @@ end
 
 ## Stouffer combination ##
 
+"""
+Stouffer's p-value combination
+
+**Examples**
+
+```jldoctest
+julia> StoufferCombination()
+
+julia> p_values = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 1.0]
+julia> weights = [1.0, 2.0, 0.5, 1.0, 2.5, 0.8, 0.5, 1.6]
+julia> combine(p_values, StoufferCombination())
+
+1.3428837219938519e-5
+```
+
+**References**
+
+Stouffer, S.A. (1949).
+The American soldier. Vol. 1: Adjustment during army life
+(Princeton University Press).
+
+Liptak, T. (1958).
+On the combination of independent tests.
+Magyar Tud Akad Mat Kutato Int Kozl 3, 171–197.
+
+"""
 struct StoufferCombination <: PValueCombination
 end
 
@@ -92,6 +150,22 @@ end
 
 ## Tippett combination ##
 
+"""
+Tippett's p-value combination
+
+**Examples**
+
+```jldoctest
+TippettCombination()
+```
+
+**References**
+
+Tippett, L.H.C. (1931).
+The Methods of Statistics. An introduction mainly forworkers in the biological sciences. The Methods of Statistics. An Introduction
+Mainly for Workers in the Biological Sciences.
+
+"""
 struct TippettCombination <: PValueCombination
 end
 
@@ -107,6 +181,21 @@ end
 
 ## Simes combination ##
 
+"""
+Simes's p-value combination
+
+**Examples**
+
+```jldoctest
+SimesCombination()
+```
+
+**References**
+
+Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
+significance. Biometrika 73, 751–754.
+
+"""
 struct SimesCombination <: PValueCombination
 end
 
@@ -123,6 +212,21 @@ end
 
 ## Wilkinson combination ##
 
+"""
+Wilkinson's p-value combination
+
+**Examples**
+
+```jldoctest
+WilkinsonCombination()
+```
+
+**References**
+
+Wilkinson, B. (1951). A statistical consideration in psychological research.
+Psychological Bulletin 48, 156.
+
+"""
 struct WilkinsonCombination <: PValueCombination
     rank::Integer
 
@@ -151,6 +255,16 @@ end
 
 ## Generalised minimum combination ##
 
+"""
+Minimum of adjusted p-value combination
+
+**Examples**
+
+```jldoctest
+MinimumCombination(BenjaminiHochberg)
+```
+
+"""
 struct MinimumCombination <: PValueCombination
     adjustment::PValueAdjustment
 end

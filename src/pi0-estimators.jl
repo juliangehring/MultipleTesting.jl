@@ -1,4 +1,4 @@
-### estimators for π₀ (pi0)
+### estimators for π₀
 
 function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T<:AbstractFloat, M<:Pi0Estimator}
     estimate_pi0(PValues(pValues), method)
@@ -8,23 +8,21 @@ end
 ## Storey estimator
 
 """
-Storey π₀ estimator
-
-**Parameters**
-
-- λ : tuning parameter, FloatingPoint, default: 0.1
+Storey's π₀ estimator
 
 **Examples**
 
-```julia
+```jldoctest
 Storey()
 Storey(0.1)
 ```
 
 **References**
 
-Storey, JD (2002). "A Direct Approach to False Discovery Rates." Journal of the
-Royal Statistical Society, doi:10.1111/1467-9868.00346
+Storey, J.D., Taylor, J.E., and Siegmund, D. (2004). Strong control,
+conservative point estimation and simultaneous conservative consistency of false
+discovery rates: a unified approach. Journal of the Royal Statistical Society:
+Series B (Statistical Methodology) 66, 187–205.
 
 """
 struct Storey <: Pi0Estimator
@@ -44,12 +42,27 @@ end
 
 
 ## Storey bootstrap estimator
+
 """
-Storey closed-form bootstrap π₀ estimator
+Storey's closed-form bootstrap π₀ estimator
 
-StoreyBootstrap(λseq, q)
+**Examples**
 
-Reference: David Robinson, 2012
+```jldoctest
+StoreyBootstrap()
+Storey(0.1:0.1:0.9, 0.2)
+```
+
+**References**
+
+Robinson, D. (2016). Original Procedure for Choosing λ.
+http://varianceexplained.org/files/pi0boot.pdf
+
+Storey, J.D., Taylor, J.E., and Siegmund, D. (2004). Strong control,
+conservative point estimation and simultaneous conservative consistency of false
+discovery rates: a unified approach. Journal of the Royal Statistical Society:
+Series B (Statistical Methodology) 66, 187–205.
+
 """
 struct StoreyBootstrap <: Pi0Estimator
     λseq::Vector{Float64}
@@ -77,9 +90,20 @@ end
 ## Least SLope (LSL) estimator
 
 """
-Least SLope (LSL) π₀ estimator
+Least Slope (LSL) π₀ estimator
 
+**Examples**
+
+```jldoctest
 LeastSlope()
+```
+
+**References**
+
+Benjamini, Y., and Hochberg, Y. (2000). On the Adaptive Control of the False
+Discovery Rate in Multiple Testing With Independent Statistics. Journal of
+Educational and Behavioral Statistics 25, 60–83.
+
 """
 struct LeastSlope <: Pi0Estimator
 end
@@ -120,6 +144,7 @@ end
 
 
 ## Oracle
+
 """
 Oracle π₀
 
@@ -141,15 +166,24 @@ end
 ## Two-Step estimator: Benjamini, Krieger and Yekutieli (2006)
 
 """
-Two step π₀ estimator
+Two-step π₀ estimator
 
-TwoStep(α)
+**Examples**
 
-Reference: Benjamini, Krieger and Yekutieli, 2006
+```jldoctest
+TwoStep()
+TwoStep(0.05, BenjaminiLiu)
+```
+
+**References**
+
+Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
+procedures that control the false discovery rate. Biometrika 93, 491–507.
+
 """
 struct TwoStep <: Pi0Estimator
     α::Float64
-    method::PValueAdjustment
+    method::PValueAdjustment # TODO rename
 
     TwoStep(α, method) = isin(α, 0, 1) ? new(α, method) : throw(DomainError())
 end
@@ -166,12 +200,24 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T<:Abstr
 end
 
 
-# RightBoundary procedure as defined in Definition 2 of Liang and Nettleton 2012
-# "Adaptive and dynamic adaptive procedures for false discovery rate control and estimation"
+# RightBoundary procedure as defined in Definition 2 of Liang and Nettleton, 2012
+
 """
 Right boundary π₀ estimator
 
-RightBoundary(λseq)
+**Examples**
+
+```jldoctest
+RightBoundary()
+RightBoundary(0.1:0.1:0.9)
+```
+
+**References**
+
+Liang, K., and Nettleton, D. (2012). Adaptive and dynamic adaptive procedures
+for false discovery rate control and estimation. Journal of the Royal
+Statistical Society: Series B (Statistical Methodology) 74, 163–182.
+
 """
 struct RightBoundary <: Pi0Estimator
     λseq::Vector{Float64}
@@ -199,10 +245,22 @@ end
 
 
 ## Censored BUM
-"""
-Censored BUM π₀ estimator
 
-CensoredBUM(γ0, λ, xtol, maxiter)
+"""
+Censored Beta-Uniform Mixture (censorred BUM) π₀ estimator
+
+**Examples**
+
+```jldoctest
+CensoredBUM()
+```
+
+**References**
+
+Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
+estimation of the proportion of non-differentially expressed genes.
+Bioinformatics 26, 640–646.
+
 """
 struct CensoredBUM <: Pi0Estimator
     γ0::Float64
@@ -315,10 +373,23 @@ end
 
 
 ## BUM
-"""
-BUM π₀ estimator
 
-BUM(γ0, xtol, maxiter)
+"""
+Beta-Uniform Mixture (BUM) π₀ estimator
+
+**Examples**
+
+```jldoctest
+BUM()
+```
+
+**References**
+
+Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
+positives and false negatives in microarray studies by approximating and
+partitioning the empirical distribution of p-values. Bioinformatics 19,
+1236–1242.
+
 """
 struct BUM <: Pi0Estimator
     γ0::Float64
@@ -361,16 +432,26 @@ function estimate_pi0(pi0fit::BUMFit)
 end
 
 
-## Longest constant interval in the Grenander estimator: Langaas et al., 2005
+## Longest constant interval in the Grenander estimator
 
 """
 Flat Grenander π₀ estimator
 
+Estimates π₀ by finding the longest constant interval in the Grenander estimator.
+
+**Examples**
+
+```jldoctest
 FlatGrenander()
+```
 
-Estimates π₀ by the longest constant interval in the Grenander estimator
+**References**
 
-Reference: Langaas et al., 2005: section 4.3
+Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
+proportion of true null hypotheses, with application to DNA microarray data.
+Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
+555–572.
+
 """
 struct FlatGrenander <: Pi0Estimator
 end
@@ -407,10 +488,23 @@ end
 
 
 ## Convex Decreasing π₀ estimator
+
 """
 Convex Decreasing π₀ estimator
 
-ConvexDecreasing(gridsize, xtol, maxiter)
+**Examples**
+
+```jldoctest
+ConvexDecreasing()
+```
+
+**References**
+
+Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
+proportion of true null hypotheses, with application to DNA microarray data.
+Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
+555–572.
+
 """
 struct ConvexDecreasing <: Pi0Estimator
     gridsize::Int64

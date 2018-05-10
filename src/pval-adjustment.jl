@@ -12,6 +12,21 @@ end
 
 # Bonferroni
 
+"""
+Bonferroni adjustment
+
+**Examples**
+
+```jldoctest
+Bonferroni()
+```
+
+**References**
+
+Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle
+probabilita (Libreria internazionale Seeber).
+
+"""
 struct Bonferroni <: PValueAdjustment
 end
 
@@ -26,6 +41,22 @@ end
 
 # Benjamini-Hochberg
 
+"""
+Benjamini-Hochberg adjustment
+
+**Examples**
+
+```jldoctest
+BenjaminiHochberg()
+```
+
+**References**
+
+Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
+Practical and Powerful Approach to Multiple Testing. Journal of the Royal
+Statistical Society. Series B (Methodological) 57, 289–300.
+
+"""
 struct BenjaminiHochberg <: PValueAdjustment
 end
 
@@ -48,6 +79,22 @@ end
 
 # Benjamini-Hochberg Adaptive
 
+"""
+Adaptive Benjamini-Hochberg adjustment
+
+**Examples**
+
+```jldoctest
+BenjaminiHochbergAdaptive()
+```
+
+**References**
+
+Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
+Practical and Powerful Approach to Multiple Testing. Journal of the Royal
+Statistical Society. Series B (Methodological) 57, 289–300.
+
+"""
 struct BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
 end
@@ -68,6 +115,21 @@ end
 
 # Benjamini-Yekutieli
 
+"""
+Benjamini-Yekutieli adjustment
+
+**Examples**
+
+```jldoctest
+BenjaminiYekutieli()
+```
+
+**References**
+
+Benjamini, Y., and Yekutieli, D. (2001). The Control of the False Discovery Rate
+in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
+
+"""
 struct BenjaminiYekutieli <: PValueAdjustment
 end
 
@@ -90,6 +152,22 @@ end
 
 # Benjamini-Liu
 
+"""
+Benjamini-Liu adjustment
+
+**Examples**
+
+```jldoctest
+BenjaminiLiu()
+```
+
+**References**
+
+Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
+procedure that controls the false discovery rate under independence. Journal of
+Statistical Planning and Inference 82, 163–170.
+
+"""
 struct BenjaminiLiu <: PValueAdjustment
 end
 
@@ -115,6 +193,21 @@ end
 
 # Hochberg
 
+"""
+Hochberg adjustment
+
+**Examples**
+
+```jldoctest
+Hochberg()
+```
+
+**References**
+
+Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of
+significance. Biometrika 75, 800–802.
+
+"""
 struct Hochberg <: PValueAdjustment
 end
 
@@ -137,6 +230,21 @@ end
 
 # Holm
 
+"""
+Holm adjustment
+
+**Examples**
+
+```jldoctest
+Holm()
+```
+
+**References**
+
+Holm, S. (1979). A Simple Sequentially Rejective Multiple Test Procedure.
+Scandinavian Journal of Statistics 6, 65–70.
+
+"""
 struct Holm <: PValueAdjustment
 end
 
@@ -159,6 +267,21 @@ end
 
 # Hommel
 
+"""
+Hommel adjustment
+
+**Examples**
+
+```jldoctest
+Hommel()
+```
+
+**References**
+
+Hommel, G. (1988). A stagewise rejective multiple test procedure based on a
+modified Bonferroni test. Biometrika 75, 383–386.
+
+"""
 struct Hommel <: PValueAdjustment
 end
 
@@ -190,6 +313,22 @@ end
 
 # Sidak
 
+"""
+Šidák adjustment
+
+**Examples**
+
+```jldoctest
+Sidak()
+```
+
+**References**
+
+Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate
+Normal Distributions. Journal of the American Statistical Association 62,
+626–633.
+
+"""
 struct Sidak <: PValueAdjustment
 end
 
@@ -204,6 +343,22 @@ end
 
 # Forward Stop
 
+"""
+Forward-Stop adjustment
+
+**Examples**
+
+```jldoctest
+ForwardStop()
+```
+
+**References**
+
+G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential
+selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
+423–444.
+
+"""
 struct ForwardStop <: PValueAdjustment
 end
 
@@ -222,6 +377,25 @@ end
 
 
 # Barber-Candès
+
+"""
+Barber-Candès adjustment
+
+**Examples**
+
+```jldoctest
+BarberCandes()
+```
+
+**References**
+
+Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
+Electron. J. Statist. 11, 1983–2001.
+
+Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via
+knockoffs. Ann. Statist. 43, 2055–2085.
+
+"""
 struct BarberCandes <: PValueAdjustment
 end
 

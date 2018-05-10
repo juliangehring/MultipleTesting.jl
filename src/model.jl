@@ -15,7 +15,7 @@ Beta Uniform Mixture Model (BUM)
 
 **Examples**
 
-```julia
+```jldoctest
 bum = BetaUniformMixtureModel(0.2)
 bum = BetaUniformMixtureModel(0.2, 0.5, 1.0)
 
@@ -27,6 +27,13 @@ pdf.(bum, 0:0.05:1)
 
 cdf.(bum, 0:0.05:1)
 ```
+
+**References**
+
+Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
+positives and false negatives in microarray studies by approximating and
+partitioning the empirical distribution of p-values. Bioinformatics 19,
+1236–1242.
 
 """
 function BetaUniformMixtureModel end
