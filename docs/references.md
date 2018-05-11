@@ -120,8 +120,7 @@ Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
 [StoufferCombination]
 
 Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
-workers in the biological sciences. The Methods of Statistics. An Introduction
-Mainly for Workers in the Biological Sciences.
+workers in the biological sciences.
 [TippettCombination]
 
 Wilkinson, B. (1951). A statistical consideration in psychological research.
