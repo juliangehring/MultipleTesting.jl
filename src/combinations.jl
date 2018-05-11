@@ -21,7 +21,12 @@ Fisher's p-value combination
 **Examples**
 
 ```jldoctest
-FisherCombination()
+julia> FisherCombination();
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, FisherCombination())
+0.007616871850449092
 ```
 
 **References**
@@ -56,7 +61,12 @@ Logit p-value combination
 **Examples**
 
 ```jldoctest
-LogitCombination()
+julia> LogitCombination();
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, LogitCombination())
+0.006434494635148462
 ```
 
 **References**
@@ -92,13 +102,17 @@ Stouffer's p-value combination
 **Examples**
 
 ```jldoctest
-julia> StoufferCombination()
+julia> StoufferCombination();
 
-julia> p_values = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 1.0]
-julia> weights = [1.0, 2.0, 0.5, 1.0, 2.5, 0.8, 0.5, 1.6]
-julia> combine(p_values, StoufferCombination())
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
 
-1.3428837219938519e-5
+julia> combine(pv, StoufferCombination())
+0.007098326181265917
+
+julia> weights = [1.0, 2.0, 0.4, 1.5];
+
+julia> combine(pv, weights, StoufferCombination())
+0.007331653763696742
 ```
 
 **References**
@@ -156,14 +170,18 @@ Tippett's p-value combination
 **Examples**
 
 ```jldoctest
-TippettCombination()
+julia> TippettCombination();
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, TippettCombination())
+0.1
 ```
 
 **References**
 
-Tippett, L.H.C. (1931).
-The Methods of Statistics. An introduction mainly forworkers in the biological sciences. The Methods of Statistics. An Introduction
-Mainly for Workers in the Biological Sciences.
+Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
+workers in the biological sciences.
 
 """
 struct TippettCombination <: PValueCombination
@@ -187,7 +205,12 @@ Simes's p-value combination
 **Examples**
 
 ```jldoctest
-SimesCombination()
+julia> SimesCombination();
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, SimesCombination())
+0.1
 ```
 
 **References**
@@ -218,7 +241,12 @@ Wilkinson's p-value combination
 **Examples**
 
 ```jldoctest
-WilkinsonCombination()
+julia> WilkinsonCombination(2);
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, WilkinsonCombination(2))
+0.1
 ```
 
 **References**
@@ -259,6 +287,18 @@ end
 Minimum of adjusted p-value combination
 
 **Examples**
+
+```jldoctest
+julia> MinimumCombination(BenjaminiHochberg());
+
+julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pv, MinimumCombination(BenjaminiHochberg()))
+0.1
+
+julia> combine(pv, MinimumCombination(Bonferroni()))
+0.1
+```
 
 ```jldoctest
 MinimumCombination(BenjaminiHochberg)
