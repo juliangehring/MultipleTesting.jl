@@ -10,12 +10,19 @@ end
 """
 Storey's π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-Storey()
-Storey(0.1)
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, Storey())
+0.22222222222222224
+
+julia> estimate_pi0(pvals, Storey(0.4))
+0.33333333333333337
 ```
+
 
 **References**
 
@@ -46,12 +53,19 @@ end
 """
 Storey's closed-form bootstrap π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-StoreyBootstrap()
-Storey(0.1:0.1:0.9, 0.2)
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, StoreyBootstrap())
+0.0
+
+julia> estimate_pi0(pvals, StoreyBootstrap(0.1:0.1:0.9, 0.2))
+0.0
 ```
+
 
 **References**
 
@@ -92,11 +106,16 @@ end
 """
 Least Slope (LSL) π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-LeastSlope()
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, LeastSlope())
+1.0
 ```
+
 
 **References**
 
@@ -148,7 +167,15 @@ end
 """
 Oracle π₀
 
-Oracle(π₀)
+
+**Examples**
+
+```jldoctest
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, Oracle(0.5)) # a bit boring...
+0.5
+```
 """
 struct Oracle <: Pi0Estimator
     π0::Float64
@@ -168,12 +195,20 @@ end
 """
 Two-step π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-TwoStep()
-TwoStep(0.05, BenjaminiLiu)
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, TwoStep())
+0.2
+
+julia> estimate_pi0(pvals, TwoStep(0.05, BenjaminiLiu()))
+0.2
+
 ```
+
 
 **References**
 
@@ -205,12 +240,19 @@ end
 """
 Right boundary π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-RightBoundary()
-RightBoundary(0.1:0.1:0.9)
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, RightBoundary())
+0.2127659574468085
+
+julia> estimate_pi0(pvals, RightBoundary(0.1:0.1:0.9))
+0.25
 ```
+
 
 **References**
 
@@ -253,8 +295,13 @@ Censored Beta-Uniform Mixture (censorred BUM) π₀ estimator
 **Examples**
 
 ```jldoctest
-CensoredBUM()
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, CensoredBUM())
+0.21052495526400936
+
 ```
+
 
 **References**
 
@@ -374,11 +421,16 @@ end
 """
 Beta-Uniform Mixture (BUM) π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-BUM()
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, BUM())
+0.22802795505154264
 ```
+
 
 **References**
 
@@ -436,11 +488,16 @@ Flat Grenander π₀ estimator
 
 Estimates π₀ by finding the longest constant interval in the Grenander estimator.
 
+
 **Examples**
 
 ```jldoctest
-FlatGrenander()
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, FlatGrenander())
+0.42553191489361697
 ```
+
 
 **References**
 
@@ -489,11 +546,16 @@ end
 """
 Convex Decreasing π₀ estimator
 
+
 **Examples**
 
 ```jldoctest
-ConvexDecreasing()
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, ConvexDecreasing())
+0.013007051336745304
 ```
+
 
 **References**
 

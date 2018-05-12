@@ -127,7 +127,7 @@ julia> adjust(pvals, BenjaminiHochbergAdaptive(Oracle(0.5))) # known π₀ of 0.
  0.02
  0.25
 
-julia> adjust(pvals, BenjaminiHochbergAdaptive(StoreyBootstrap())) # π₀ estimator4-element Array{Float64,1}:
+julia> adjust(pvals, BenjaminiHochbergAdaptive(StoreyBootstrap())) # π₀ estimator
 4-element Array{Float64,1}:
  0.0
  0.0

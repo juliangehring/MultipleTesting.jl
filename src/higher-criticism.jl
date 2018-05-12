@@ -3,10 +3,19 @@
 """
 Higher criticism scores
 
+
 **Examples**
 
 ```jldoctest
-HigherCriticismScores()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> estimate(pvals, HigherCriticismScores())
+4-element Array{Float64,1}:
+ 1.15008
+ 1.96
+ 3.32554
+ 2.3094
+
 ```
 
 **References**
@@ -36,10 +45,14 @@ end
 """
 Higher criticism threshold
 
+
 **Examples**
 
 ```jldoctest
-HigherCriticismThreshold()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> estimate(pvals, HigherCriticismThreshold())
+0.03
 ```
 
 **References**
