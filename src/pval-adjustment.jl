@@ -15,11 +15,27 @@ end
 """
 Bonferroni adjustment
 
+
 **Examples**
 
 ```jldoctest
-Bonferroni()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, Bonferroni())
+4-element Array{Float64,1}:
+ 0.004
+ 0.04
+ 0.12
+ 1.0
+
+julia> adjust(pvals, 6, Bonferroni())
+4-element Array{Float64,1}:
+ 0.006
+ 0.06
+ 0.18
+ 1.0
 ```
+
 
 **References**
 
@@ -44,11 +60,27 @@ end
 """
 Benjamini-Hochberg adjustment
 
+
 **Examples**
 
 ```jldoctest
-BenjaminiHochberg()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.02
+ 0.04
+ 0.5
+
+julia> adjust(pvals, 6, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.006
+ 0.03
+ 0.06
+ 0.75
 ```
+
 
 **References**
 
@@ -82,11 +114,34 @@ end
 """
 Adaptive Benjamini-Hochberg adjustment
 
+
 **Examples**
 
 ```jldoctest
-BenjaminiHochbergAdaptive()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BenjaminiHochbergAdaptive(Oracle(0.5))) # known π₀ of 0.5
+4-element Array{Float64,1}:
+ 0.002
+ 0.01
+ 0.02
+ 0.25
+
+julia> adjust(pvals, BenjaminiHochbergAdaptive(StoreyBootstrap())) # π₀ estimator4-element Array{Float64,1}:
+4-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia> adjust(pvals, 6, BenjaminiHochbergAdaptive(StoreyBootstrap()))
+4-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
 ```
+
 
 **References**
 
@@ -118,11 +173,27 @@ end
 """
 Benjamini-Yekutieli adjustment
 
+
 **Examples**
 
 ```jldoctest
-BenjaminiYekutieli()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BenjaminiYekutieli())
+4-element Array{Float64,1}:
+ 0.00833333
+ 0.0416667
+ 0.0833333
+ 1.0
+
+julia> adjust(pvals, 6, BenjaminiYekutieli())
+4-element Array{Float64,1}:
+ 0.0147
+ 0.0735
+ 0.147
+ 1.0
 ```
+
 
 **References**
 
@@ -155,11 +226,27 @@ end
 """
 Benjamini-Liu adjustment
 
+
 **Examples**
 
 ```jldoctest
-BenjaminiLiu()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BenjaminiLiu())
+4-element Array{Float64,1}:
+ 0.003994
+ 0.0222757
+ 0.02955
+ 0.125
+
+julia> adjust(pvals, 6, BenjaminiLiu())
+4-element Array{Float64,1}:
+ 0.00598502
+ 0.0408416
+ 0.0764715
+ 0.4375
 ```
+
 
 **References**
 
@@ -196,11 +283,27 @@ end
 """
 Hochberg adjustment
 
+
 **Examples**
 
 ```jldoctest
-Hochberg()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, Hochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia> adjust(pvals, 6, Hochberg())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0
 ```
+
 
 **References**
 
@@ -233,11 +336,27 @@ end
 """
 Holm adjustment
 
+
 **Examples**
 
 ```jldoctest
-Holm()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, Holm())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia> adjust(pvals, 6, Holm())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0
 ```
+
 
 **References**
 
@@ -273,8 +392,23 @@ Hommel adjustment
 **Examples**
 
 ```jldoctest
-Hommel()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, Hommel())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia> adjust(pvals, 6, Hommel())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0
 ```
+
 
 **References**
 
@@ -316,11 +450,27 @@ end
 """
 Šidák adjustment
 
+
 **Examples**
 
 ```jldoctest
-Sidak()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, Sidak())
+4-element Array{Float64,1}:
+ 0.003994
+ 0.039404
+ 0.114707
+ 0.9375
+
+julia> adjust(pvals, 6, Sidak())
+4-element Array{Float64,1}:
+ 0.00598502
+ 0.0585199
+ 0.167028
+ 0.984375
 ```
+
 
 **References**
 
@@ -346,11 +496,27 @@ end
 """
 Forward-Stop adjustment
 
+
 **Examples**
 
 ```jldoctest
-ForwardStop()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, ForwardStop())
+4-element Array{Float64,1}:
+ 0.0010005
+ 0.00552542
+ 0.0138367
+ 0.183664
+
+julia> adjust(pvals, 6, ForwardStop())
+4-element Array{Float64,1}:
+ 0.0010005
+ 0.00552542
+ 0.0138367
+ 0.183664
 ```
+
 
 **References**
 
@@ -381,19 +547,28 @@ end
 """
 Barber-Candès adjustment
 
+
 **Examples**
 
 ```jldoctest
-BarberCandes()
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BarberCandes())
+4-element Array{Float64,1}:
+ 0.333333
+ 0.333333
+ 0.333333
+ 1.0
 ```
+
 
 **References**
 
-Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
-Electron. J. Statist. 11, 1983–2001.
-
 Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via
 knockoffs. Ann. Statist. 43, 2055–2085.
+
+Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
+Electron. J. Statist. 11, 1983–2001.
 
 """
 struct BarberCandes <: PValueAdjustment
