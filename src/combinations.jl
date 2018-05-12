@@ -18,16 +18,16 @@ end
 """
 Fisher's p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> FisherCombination();
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
-
-julia> combine(pv, FisherCombination())
+julia> combine(pvals, FisherCombination())
 0.007616871850449092
 ```
+
 
 **References**
 
@@ -58,16 +58,16 @@ end
 """
 Logit p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> LogitCombination();
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
-
-julia> combine(pv, LogitCombination())
+julia> combine(pvals, LogitCombination())
 0.006434494635148462
 ```
+
 
 **References**
 
@@ -99,21 +99,21 @@ end
 """
 Stouffer's p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> StoufferCombination();
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
-
-julia> combine(pv, StoufferCombination())
+julia> combine(pvals, StoufferCombination())
 0.007098326181265917
 
 julia> weights = [1.0, 2.0, 0.4, 1.5];
 
-julia> combine(pv, weights, StoufferCombination())
+julia> combine(pvals, weights, StoufferCombination())
 0.007331653763696742
 ```
+
 
 **References**
 
@@ -167,16 +167,16 @@ end
 """
 Tippett's p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> TippettCombination();
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
-
-julia> combine(pv, TippettCombination())
-0.1
+julia> combine(pvals, TippettCombination())
+0.039403990000000055
 ```
+
 
 **References**
 
@@ -202,16 +202,16 @@ end
 """
 Simes's p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> SimesCombination();
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
-
-julia> combine(pv, SimesCombination())
-0.1
+julia> combine(pvals, SimesCombination())
+0.04
 ```
+
 
 **References**
 
@@ -238,16 +238,19 @@ end
 """
 Wilkinson's p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> WilkinsonCombination(2);
-
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pv, WilkinsonCombination(2))
-0.1
+julia> combine(pv, WilkinsonCombination(1))  # combination with rank 1
+0.03940399000000003
+
+julia> combine(pv, WilkinsonCombination(4))  # combination with rank 4
+0.0625
 ```
+
 
 **References**
 
@@ -286,22 +289,17 @@ end
 """
 Minimum of adjusted p-value combination
 
+
 **Examples**
 
 ```jldoctest
-julia> MinimumCombination(BenjaminiHochberg());
-
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
 
 julia> combine(pv, MinimumCombination(BenjaminiHochberg()))
-0.1
+0.04
 
-julia> combine(pv, MinimumCombination(Bonferroni()))
-0.1
-```
-
-```jldoctest
-MinimumCombination(BenjaminiHochberg)
+julia> combine(pv, MinimumCombination(ForwardStop()))
+0.01005033585350145
 ```
 
 """
