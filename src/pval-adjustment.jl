@@ -16,7 +16,7 @@ end
 Bonferroni adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -37,7 +37,7 @@ julia> adjust(pvals, 6, Bonferroni())
 ```
 
 
-## References
+# References
 
 Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle
 probabilita (Libreria internazionale Seeber).
@@ -61,7 +61,7 @@ end
 Benjamini-Hochberg adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -82,7 +82,7 @@ julia> adjust(pvals, 6, BenjaminiHochberg())
 ```
 
 
-## References
+# References
 
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
@@ -115,7 +115,7 @@ end
 Adaptive Benjamini-Hochberg adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -143,7 +143,7 @@ julia> adjust(pvals, 6, BenjaminiHochbergAdaptive(StoreyBootstrap()))
 ```
 
 
-## References
+# References
 
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
@@ -174,7 +174,7 @@ end
 Benjamini-Yekutieli adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -195,7 +195,7 @@ julia> adjust(pvals, 6, BenjaminiYekutieli())
 ```
 
 
-## References
+# References
 
 Benjamini, Y., and Yekutieli, D. (2001). The Control of the False Discovery Rate
 in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
@@ -227,7 +227,7 @@ end
 Benjamini-Liu adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -248,7 +248,7 @@ julia> adjust(pvals, 6, BenjaminiLiu())
 ```
 
 
-## References
+# References
 
 Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
 procedure that controls the false discovery rate under independence. Journal of
@@ -284,7 +284,7 @@ end
 Hochberg adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -305,7 +305,7 @@ julia> adjust(pvals, 6, Hochberg())
 ```
 
 
-## References
+# References
 
 Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of
 significance. Biometrika 75, 800–802.
@@ -337,7 +337,7 @@ end
 Holm adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -358,7 +358,7 @@ julia> adjust(pvals, 6, Holm())
 ```
 
 
-## References
+# References
 
 Holm, S. (1979). A Simple Sequentially Rejective Multiple Test Procedure.
 Scandinavian Journal of Statistics 6, 65–70.
@@ -389,7 +389,7 @@ end
 """
 Hommel adjustment
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -410,7 +410,7 @@ julia> adjust(pvals, 6, Hommel())
 ```
 
 
-## References
+# References
 
 Hommel, G. (1988). A stagewise rejective multiple test procedure based on a
 modified Bonferroni test. Biometrika 75, 383–386.
@@ -451,7 +451,7 @@ end
 Šidák adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -472,7 +472,7 @@ julia> adjust(pvals, 6, Sidak())
 ```
 
 
-## References
+# References
 
 Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate
 Normal Distributions. Journal of the American Statistical Association 62,
@@ -497,7 +497,7 @@ end
 Forward-Stop adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -518,7 +518,7 @@ julia> adjust(pvals, 6, ForwardStop())
 ```
 
 
-## References
+# References
 
 G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential
 selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
@@ -548,7 +548,7 @@ end
 Barber-Candès adjustment
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
@@ -562,7 +562,7 @@ julia> adjust(pvals, BarberCandes())
 ```
 
 
-## References
+# References
 
 Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via
 knockoffs. Ann. Statist. 43, 2055–2085.

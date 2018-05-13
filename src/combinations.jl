@@ -2,11 +2,35 @@
 
 """
     combine(PValues, PValueCombination)
-    combine(PValues, Weights, PValueCombination)
 
 Combine p-values
 
-## Examples
+# Examples
+
+```jldoctest
+julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
+
+julia> combine(pvals, FisherCombination())
+0.007616871850449092
+julia> combine(pvals, StoufferCombination())
+0.007098326181265917
+
+julia> subtypes(PValueCombination)
+7-element Array{Union{DataType, UnionAll},1}:
+ MultipleTesting.FisherCombination
+ MultipleTesting.LogitCombination
+ MultipleTesting.MinimumCombination
+ MultipleTesting.SimesCombination
+ MultipleTesting.StoufferCombination
+ MultipleTesting.TippettCombination
+ MultipleTesting.WilkinsonCombination
+```
+
+# See also
+
+`PValueCombination`s:
+
+[`FisherCombination`](@ref) [`LogitCombination`](@ref) [`StoufferCombination`](@ref) [`TippettCombination`](@ref) [`SimesCombination`](@ref) [`WilkinsonCombination`](@ref) [`MinimumCombination`](@ref)
 
 """
 function combine end
@@ -22,7 +46,7 @@ end
 Fisher's p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -32,7 +56,7 @@ julia> combine(pvals, FisherCombination())
 ```
 
 
-## References
+# References
 
 Fisher, R.A. (1925).
 Statistical methods for research workers
@@ -62,7 +86,7 @@ end
 Logit p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -72,7 +96,7 @@ julia> combine(pvals, LogitCombination())
 ```
 
 
-## References
+# References
 
 Mudholkar, G.S., and George, E.O. (1977).
 The Logit Statistic for Combining Probabilities - An Overview
@@ -103,7 +127,7 @@ end
 Stouffer's p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -118,7 +142,7 @@ julia> combine(pvals, weights, StoufferCombination())
 ```
 
 
-## References
+# References
 
 Stouffer, S.A. (1949).
 The American soldier. Vol. 1: Adjustment during army life
@@ -171,7 +195,7 @@ end
 Tippett's p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -181,7 +205,7 @@ julia> combine(pvals, TippettCombination())
 ```
 
 
-## References
+# References
 
 Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
 workers in the biological sciences.
@@ -206,7 +230,7 @@ end
 Simes's p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -216,7 +240,7 @@ julia> combine(pvals, SimesCombination())
 ```
 
 
-## References
+# References
 
 Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
 significance. Biometrika 73, 751–754.
@@ -242,7 +266,7 @@ end
 Wilkinson's p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
@@ -255,7 +279,7 @@ julia> combine(pv, WilkinsonCombination(4))  # combination with rank 4
 ```
 
 
-## References
+# References
 
 Wilkinson, B. (1951). A statistical consideration in psychological research.
 Psychological Bulletin 48, 156.
@@ -293,7 +317,7 @@ end
 Minimum of adjusted p-value combination
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);

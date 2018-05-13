@@ -13,7 +13,7 @@ end
 Storey's π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -26,7 +26,7 @@ julia> estimate_pi0(pvals, Storey(0.4))
 ```
 
 
-## References
+# References
 
 Storey, J.D., Taylor, J.E., and Siegmund, D. (2004). Strong control,
 conservative point estimation and simultaneous conservative consistency of false
@@ -56,7 +56,7 @@ end
 Storey's closed-form bootstrap π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -69,7 +69,7 @@ julia> estimate_pi0(pvals, StoreyBootstrap(0.1:0.1:0.9, 0.2))
 ```
 
 
-## References
+# References
 
 Robinson, D. (2016). Original Procedure for Choosing λ.
 http://varianceexplained.org/files/pi0boot.pdf
@@ -109,7 +109,7 @@ end
 Least Slope (LSL) π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -119,7 +119,7 @@ julia> estimate_pi0(pvals, LeastSlope())
 ```
 
 
-## References
+# References
 
 Benjamini, Y., and Hochberg, Y. (2000). On the Adaptive Control of the False
 Discovery Rate in Multiple Testing With Independent Statistics. Journal of
@@ -170,7 +170,7 @@ end
 Oracle π₀
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -198,7 +198,7 @@ end
 Two-step π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -212,7 +212,7 @@ julia> estimate_pi0(pvals, TwoStep(0.05, BenjaminiLiu()))
 ```
 
 
-## References
+# References
 
 Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
 procedures that control the false discovery rate. Biometrika 93, 491–507.
@@ -243,7 +243,7 @@ end
 Right boundary π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -256,7 +256,7 @@ julia> estimate_pi0(pvals, RightBoundary(0.1:0.1:0.9))
 ```
 
 
-## References
+# References
 
 Liang, K., and Nettleton, D. (2012). Adaptive and dynamic adaptive procedures
 for false discovery rate control and estimation. Journal of the Royal
@@ -294,7 +294,7 @@ end
 """
 Censored Beta-Uniform Mixture (censorred BUM) π₀ estimator
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -305,7 +305,7 @@ julia> estimate_pi0(pvals, CensoredBUM())
 ```
 
 
-## References
+# References
 
 Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
 estimation of the proportion of non-differentially expressed genes.
@@ -424,7 +424,7 @@ end
 Beta-Uniform Mixture (BUM) π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -434,7 +434,7 @@ julia> estimate_pi0(pvals, BUM())
 ```
 
 
-## References
+# References
 
 Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
 positives and false negatives in microarray studies by approximating and
@@ -491,7 +491,7 @@ Flat Grenander π₀ estimator
 Estimates π₀ by finding the longest constant interval in the Grenander estimator.
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -501,7 +501,7 @@ julia> estimate_pi0(pvals, FlatGrenander())
 ```
 
 
-## References
+# References
 
 Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
 proportion of true null hypotheses, with application to DNA microarray data.
@@ -549,7 +549,7 @@ end
 Convex Decreasing π₀ estimator
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
@@ -559,7 +559,7 @@ julia> estimate_pi0(pvals, ConvexDecreasing())
 ```
 
 
-## References
+# References
 
 Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
 proportion of true null hypotheses, with application to DNA microarray data.

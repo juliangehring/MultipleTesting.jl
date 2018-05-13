@@ -2,13 +2,13 @@
 Beta Uniform Mixture (BUM) Model
 
 
-## Arguments
+# Arguments
 
 - π0 : Contributing fraction of the uniform distribution to the full model
 - α, β : Parameters of the Beta distribution, Float64, default: 0.5, 3.0
 
 
-## Return values
+# Return values
 
 `MixtureModel`, as defined in the `Distributions` package, composed of
 
@@ -16,7 +16,7 @@ Beta Uniform Mixture (BUM) Model
 - a Beta distribution with parameters α and β, with weight/prior 1-π₀
 
 
-## Examples
+# Examples
 
 ```jldoctest
 julia> bum = BetaUniformMixtureModel(0.2, 0.5, 1.0);
@@ -34,7 +34,7 @@ julia> pdf.(bum, 0.2:0.2:1.0)
 ```
 
 
-## References
+# References
 
 Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
 positives and false negatives in microarray studies by approximating and
