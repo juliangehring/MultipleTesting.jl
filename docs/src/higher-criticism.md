@@ -1,4 +1,4 @@
-# MultipleTesting.jl
+# Higher Criticism
 
 ```@meta
 CurrentModule = MultipleTesting
@@ -8,9 +8,7 @@ end
 ```
 
 
-## Package Features
-
-## Manual
-
-```@contents
+```@docs
+HigherCriticismScores
+HigherCriticismThreshold
 ```

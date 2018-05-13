@@ -1,4 +1,4 @@
-# MultipleTesting.jl
+# Modelling of p-Value Distributions
 
 ```@meta
 CurrentModule = MultipleTesting
@@ -8,9 +8,6 @@ end
 ```
 
 
-## Package Features
-
-## Manual
-
-```@contents
+```@docs
+BetaUniformMixtureModel
 ```
