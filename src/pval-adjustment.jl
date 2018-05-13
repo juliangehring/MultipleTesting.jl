@@ -20,7 +20,8 @@ adjust(pValues::PValues, method::Bonferroni) = adjust(pValues, length(pValues), 
 function adjust(pValues::PValues, n::Integer, method::Bonferroni)
     k = length(pValues)
     check_number_tests(k, n)
-    return min.(pValues * n, 1)
+    pAdjusted = clamp.(pValues * n, 0, 1)
+    return pAdjusted
 end
 
 
@@ -41,7 +42,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -83,7 +84,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= harmonic_number(n) .* n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -108,7 +109,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
     s = n .- (1:k) .+ 1
     pAdjusted = (1 .- (1 .- pAdjusted) .^ s) .* s ./ n
     stepdown!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -130,7 +131,7 @@ function adjust(pValues::PValues, n::Integer, method::Hochberg)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -152,7 +153,7 @@ function adjust(pValues::PValues, n::Integer, method::Holm)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepdown!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -197,7 +198,7 @@ adjust(pValues::PValues, method::Sidak) = adjust(pValues, length(pValues), metho
 
 function adjust(pValues::PValues, n::Integer, method::Sidak)
     check_number_tests(length(pValues), n)
-    pAdjusted = min.(1 .- (1 .- pValues).^n, 1)
+    pAdjusted = clamp.(1 .- (1 .- pValues).^n, 0, 1)
     return pAdjusted
 end
 
@@ -216,7 +217,7 @@ function adjust(pValues::PValues, n::Integer, method::ForwardStop)
     logsums = -cumsum(log.(1 .- pValues[sortedOrder]))
     logsums ./= (1:k)
     stepup!(logsums)
-    pAdjusted = max.(min.(logsums[originalOrder], 1), 0)
+    pAdjusted = clamp.(logsums[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -258,7 +259,7 @@ function adjust(pValues::PValues, method::BarberCandes)
     end
 
     stepup!(estimated_fdrs)
-    pAdjusted = min.(estimated_fdrs[original_order], 1)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
     return pAdjusted
 end
 
@@ -276,7 +277,7 @@ function barber_candes_brute_force(pValues::AbstractVector{T}) where T<:Abstract
         end
     end
     stepup!(estimated_fdrs)
-    pAdjusted = min.(estimated_fdrs[original_order], 1)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
     return pAdjusted
 end
 

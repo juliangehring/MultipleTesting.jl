@@ -38,7 +38,7 @@ Storey() = Storey(0.1)
 function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:AbstractFloat
     lambda = pi0estimator.λ
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
-    pi0 = min(pi0, 1)
+    pi0 = clamp(pi0, 0, 1)
     return pi0
 end
 
@@ -69,7 +69,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where 
     pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
-    pi0 = min(pi0[indmin(mse)], 1)
+    pi0 = clamp(pi0[indmin(mse)], 0, 1)
     return pi0
 end
 
@@ -194,7 +194,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T<
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
-    pi0 = min(pi0, 1)
+    pi0 = clamp(pi0, 0, 1)
     return pi0
 end
 
