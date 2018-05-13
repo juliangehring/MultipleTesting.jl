@@ -51,6 +51,7 @@ ConvexDecreasing
 ### Combination of p-Values
 
 ```@docs
+combine
 FisherCombination
 LogitCombination
 StoufferCombination
