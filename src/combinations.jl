@@ -15,14 +15,6 @@ function combine(pValues::AbstractVector{T}, method::M)::T where {T<:AbstractFlo
     combine(PValues(pValues), method)
 end
 
-function combine(pValues::AbstractVector{T}, weights::Weights, method::M)::T where {T<:AbstractFloat, M<:PValueCombination}
-    combine(PValues(pValues), weights, method)
-end
-
-function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::M)::T where {T<:AbstractFloat, R<:Real, M<:PValueCombination}
-    combine(PValues(pValues), weights, method)
-end
-
 
 ## Fisher combination ##
 
@@ -154,7 +146,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:A
     return p
 end
 
-function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -168,8 +160,8 @@ function combine(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombin
     return p
 end
 
-function combine(pValues::PValues{T}, weights::Weights, method::StoufferCombination)::T where T<:AbstractFloat
-    combine(pValues, values(weights), method)
+function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
+    combine(PValues(pValues), weights, method)
 end
 
 
