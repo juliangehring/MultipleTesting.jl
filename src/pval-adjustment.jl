@@ -2,6 +2,73 @@
 
 # promotion from float vectors to PValues type
 
+"""
+    adjust(PValues, PValueAdjustment)
+    adjust(PValues, Int, PValueAdjustment)
+
+Adjustment of p-values
+
+# Examples
+
+```jldoctest
+julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia> adjust(pvals, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.02
+ 0.04
+ 0.5
+julia> adjust(pvals, 6, BenjaminiHochberg()) # 4 out of 6 p-values
+4-element Array{Float64,1}:
+ 0.006
+ 0.03
+ 0.06
+ 0.75
+julia> adjust(pvals, BarberCandes())
+4-element Array{Float64,1}:
+ 0.333333
+ 0.333333
+ 0.333333
+ 1.0
+```
+
+```jldoctest
+julia> subtypes(PValueAdjustment)
+11-element Array{Union{DataType, UnionAll},1}:
+ MultipleTesting.BarberCandes
+ MultipleTesting.BenjaminiHochberg
+ MultipleTesting.BenjaminiHochbergAdaptive
+ MultipleTesting.BenjaminiLiu
+ MultipleTesting.BenjaminiYekutieli
+ MultipleTesting.Bonferroni
+ MultipleTesting.ForwardStop
+ MultipleTesting.Hochberg
+ MultipleTesting.Holm
+ MultipleTesting.Hommel
+ MultipleTesting.Sidak
+```
+
+
+# See also
+
+`PValueAdjustment`s:
+
+[`Bonferroni`](@ref)
+[`BenjaminiHochberg`](@ref)
+[`BenjaminiHochbergAdaptive`](@ref)
+[`BenjaminiYekutieli`](@ref)
+[`BenjaminiLiu`](@ref)
+[`Hochberg`](@ref)
+[`Holm`](@ref)
+[`Hommel`](@ref)
+[`Sidak`](@ref)
+[`ForwardStop`](@ref)
+[`BarberCandes`](@ref)
+
+"""
+function adjust end
+
 function adjust(pValues::Vector{T}, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
     adjust(PValues(pValues), method)
 end

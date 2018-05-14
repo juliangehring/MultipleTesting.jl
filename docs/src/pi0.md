@@ -9,6 +9,7 @@ end
 
 
 ```@docs
+estimate_pi0
 Storey
 StoreyBootstrap
 LeastSlope

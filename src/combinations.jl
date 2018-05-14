@@ -14,7 +14,9 @@ julia> combine(pvals, FisherCombination())
 0.007616871850449092
 julia> combine(pvals, StoufferCombination())
 0.007098326181265917
+```
 
+```jldoctest
 julia> subtypes(PValueCombination)
 7-element Array{Union{DataType, UnionAll},1}:
  MultipleTesting.FisherCombination

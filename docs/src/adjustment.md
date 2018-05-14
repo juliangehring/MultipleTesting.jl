@@ -9,6 +9,7 @@ end
 
 
 ```@docs
+adjust
 Bonferroni
 BenjaminiHochberg
 BenjaminiHochbergAdaptive

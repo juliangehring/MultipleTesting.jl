@@ -1,6 +1,53 @@
 ### estimators for π₀
 
+"""
+    estimate_pi0(PValues, Pi0Estimator)
 
+Estimate π₀, the fraction of tests under the null hypothesis
+
+# Examples
+
+```jldoctest
+julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
+
+julia> estimate_pi0(pvals, StoreyBootstrap())
+0.0
+julia> estimate_pi0(pvals, FlatGrenander())
+0.42553191489361697
+```
+
+```jldoctest
+julia> subtypes(Pi0Estimator)
+10-element Array{Union{DataType, UnionAll},1}:
+ MultipleTesting.BUM
+ MultipleTesting.CensoredBUM
+ MultipleTesting.ConvexDecreasing
+ MultipleTesting.FlatGrenander
+ MultipleTesting.LeastSlope
+ MultipleTesting.Oracle
+ MultipleTesting.RightBoundary
+ MultipleTesting.Storey
+ MultipleTesting.StoreyBootstrap
+ MultipleTesting.TwoStep
+```
+
+# See also
+
+`Pi0Estimator`s:
+
+[`Storey`](@ref)
+[`StoreyBootstrap`](@ref)
+[`LeastSlope`](@ref)
+[`Oracle`](@ref)
+[`TwoStep`](@ref)
+[`RightBoundary`](@ref)
+[`CensoredBUM`](@ref)
+[`BUM`](@ref)
+[`FlatGrenander`](@ref)
+[`ConvexDecreasing`](@ref)
+
+"""
+function estimate_pi0 end
 
 function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T<:AbstractFloat, M<:Pi0Estimator}
     estimate_pi0(PValues(pValues), method)
@@ -292,7 +339,7 @@ end
 ## Censored BUM
 
 """
-Censored Beta-Uniform Mixture (censorred BUM) π₀ estimator
+Censored Beta-Uniform Mixture (censored BUM) π₀ estimator
 
 # Examples
 
