@@ -7,9 +7,16 @@ DocTestSetup = quote
 end
 ```
 
+## Methods
 
 ```@docs
 adjust
+```
+
+
+## Types
+
+```@docs
 Bonferroni
 BenjaminiHochberg
 BenjaminiHochbergAdaptive

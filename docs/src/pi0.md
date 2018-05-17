@@ -8,8 +8,16 @@ end
 ```
 
 
+## Methods
+
 ```@docs
 estimate_pi0
+```
+
+
+## Types
+
+```@docs
 Storey
 StoreyBootstrap
 LeastSlope

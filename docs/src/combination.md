@@ -7,9 +7,16 @@ DocTestSetup = quote
 end
 ```
 
+## Methods
 
 ```@docs
 combine
+```
+
+
+## Types
+
+```@docs
 FisherCombination
 LogitCombination
 StoufferCombination
