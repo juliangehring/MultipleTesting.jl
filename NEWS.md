@@ -6,7 +6,7 @@
 
 - Convex decreasing density estimator for π0 (#56)
 - Higher criticism scores (`HigherCriticismScores`) and threshold (`HigherCriticismThreshold`) estimation (#55)
-- List of publications which describe the implemented statistical methods (#54, #65)
+- List of publications which describe the implemented statistical methods (#54, #65, #81, #83)
 
 
 ### Changes
@@ -16,16 +16,18 @@
 - Fix p-value adjustments with unsorted inputs (#66)
 - Speed up p-value combinations (#75)
 - Define return types for p-value combinations (#76)
+- Unify methods for weighted Stouffer combination (#84)
 - Update documentation notebooks (#67)
-- Drop support for julia 0.5, require julia 0.6 as the minimum version (#52, #64, #58)
+- Drop support for julia 0.5, require julia 0.6 as the minimum version (#52, #64, #58, #82)
 
 
 #### Internal changes
 
-- Simplify the method structure (#74)
-- Switch to new julia syntax (#71)
 - Simplify the step functions for p-value adjustments (#77)
+- Simplify the method structure (#74)
+- Switch to new julia syntax, with preliminary support for julia 0.7 (#71, #78)
 - Update tests and references for p-value combinations (#70)
+- Use `clamp` for better bounding of estimates (#85, #82)
 - Support the new `Distributions` interface (#52)
 - Drop the `Compat` dependency (#53)
 - Link comic logo in the readme file as an external resource (#69)
