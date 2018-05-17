@@ -38,7 +38,7 @@ Storey() = Storey(0.1)
 function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:AbstractFloat
     lambda = pi0estimator.λ
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
-    pi0 = min.(pi0, 1)
+    pi0 = clamp(pi0, 0, 1)
     return pi0
 end
 
@@ -69,8 +69,8 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where 
     pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
-    pi0 = min.(pi0[indmin(mse)], 1)
-    pi0
+    pi0 = clamp(pi0[indmin(mse)], 0, 1)
+    return pi0
 end
 
 
@@ -97,7 +97,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T<:Ab
         end
         s0 = s1
     end
-    pi0 = min.( 1/sx + 1, n ) / n
+    pi0 = min( 1/sx + 1, n ) / n
     return pi0
 end
 
@@ -114,7 +114,7 @@ function lsl_pi0_vec(pValues::AbstractVector{T}) where T<:AbstractFloat
     s = (1 .- pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = findfirst(d) + 1
-    pi0 = min.( 1/s[idx] + 1, n ) / n
+    pi0 = min( 1/s[idx] + 1, n ) / n
     return pi0
 end
 
@@ -194,7 +194,8 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T<
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
-    return min.(pi0, 1)
+    pi0 = clamp(pi0, 0, 1)
+    return pi0
 end
 
 
@@ -262,12 +263,8 @@ function cbum_pi0(pValues::AbstractVector{T},
     for i in 1:maxiter
         γ = 1 - sz/n
         α = -szr / ( ll * szl + sum(zr .* lpr) )
-        # explicitly handle denominator of 0 in julia 0.5: min(x, NaN) == x
-        if isnan(α)
-           break
-        end
-        γ = max.(min.(γ, 1), 0)
-        α = max.(min.(α, 1), 0)
+        γ = clamp(γ, 0, 1)
+        α = clamp(α, 0, 1)
         xl = (1-γ) * (λ^α)
         szl = (xl ./ (γ*λ + xl)) * n1
         xr = (1-γ) * α * pr.^(α-1)
@@ -296,7 +293,7 @@ function cbum_pi0_naive(pValues::AbstractVector{T},
     lpr = log.(pValues[idx_right])
     ll = log(λ)
     for i in 1:maxiter
-        γ = sum(1 .- z) / n  # TODO simplify
+        γ = sum(1 .- z) / n
         α = -sum(z[idx_right])
         α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
         xl = (1-γ) * (λ^α)
