@@ -1,27 +1,21 @@
 ### Combination methods for p-values ###
 
-combine{T<:AbstractFloat, M<:PValueCombination}(pValues::AbstractVector{T}, method::M) = combine(PValues(pValues), method)
-
-combine{T<:AbstractFloat, M<:PValueCombination}(pValues::AbstractVector{T}, weights::Weights, method::M) = combine(PValues(pValues), weights, method)
-
-combine{T<:AbstractFloat, R<:Real, M<:PValueCombination}(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::M) = combine(PValues(pValues), weights, method)
+function combine(pValues::AbstractVector{T}, method::M)::T where {T<:AbstractFloat, M<:PValueCombination}
+    combine(PValues(pValues), method)
+end
 
 
 ## Fisher combination ##
 
-immutable FisherCombination <: PValueCombination
+struct FisherCombination <: PValueCombination
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::FisherCombination)
-    fisher_combination(pValues)
-end
-
-function fisher_combination{T<:AbstractFloat}(pValues::PValues{T})
+function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    if minimum(pValues) == 0.0
+    if minimum(pValues) == 0
         return NaN
     end
     x = -2 * sum(log.(pValues))
@@ -32,24 +26,19 @@ end
 
 ## Logit combination ##
 
-immutable LogitCombination <: PValueCombination
+struct LogitCombination <: PValueCombination
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::LogitCombination)
-    logit_combination(pValues)
-end
-
-function logit_combination{T<:AbstractFloat}(pValues::PValues{T})
+function combine(pValues::PValues{T}, method::LogitCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
     c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log.(pValues./(1-pValues))) / c
+    x = -sum(log.(pValues./(1 .- pValues))) / c
     p = ccdf(TDist(5n+4), x)
     return p
 end
@@ -57,86 +46,68 @@ end
 
 ## Stouffer combination ##
 
-immutable StoufferCombination <: PValueCombination
+struct StoufferCombination <: PValueCombination
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::StoufferCombination)
-    stouffer_combination(pValues)
-end
-
-function combine{T<:AbstractFloat}(pValues::PValues{T}, weights::Vector{T}, method::StoufferCombination)
-    stouffer_combination(pValues, weights)
-end
-
-function combine{T<:AbstractFloat}(pValues::PValues{T}, weights::Weights, method::StoufferCombination)
-    stouffer_combination(pValues, values(weights))
-end
-
-function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T})
+function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    z = cquantile(Normal(), pValues)
+    z = cquantile.(Normal(), pValues)
     z = sum(z) ./ sqrt(n)
     p = ccdf(Normal(), z)
     return p
 end
 
-function stouffer_combination{T<:AbstractFloat}(pValues::PValues{T}, weights::Vector{T})
+function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    pmin, pmax = extrema(pValues)
-    if pmin == 0.0 || pmax == 1.0
+    if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    z = cquantile(Normal(), pValues) .* weights
-    z = sum(z) ./ sqrt(sum(weights.^2))
+    z = cquantile.(Normal(), pValues) .* weights
+    z = sum(z) ./ sqrt(sum(abs2, weights))
     p = ccdf(Normal(), z)
     return p
+end
+
+function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
+    combine(PValues(pValues), weights, method)
 end
 
 
 ## Tippett combination ##
 
-immutable TippettCombination <: PValueCombination
+struct TippettCombination <: PValueCombination
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::TippettCombination)
-    tippett_combination(pValues)
-end
-
-function tippett_combination{T<:AbstractFloat}(pValues::PValues{T})
+function combine(pValues::PValues{T}, method::TippettCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    p = 1.0 - (1.0 - minimum(pValues))^n
+    p = 1 - (1 - minimum(pValues))^n
     return p
 end
 
 
 ## Simes combination ##
 
-immutable SimesCombination <: PValueCombination
+struct SimesCombination <: PValueCombination
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::SimesCombination)
-    simes_combination(pValues)
-end
-
-function simes_combination{T<:AbstractFloat}(pValues::PValues{T})
+function combine(pValues::PValues{T}, method::SimesCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    pValues = sort(pValues)  # faster than `sortperm`
+    pValues = sort(pValues)
     p = n * minimum(pValues./(1:n))
     return p
 end
@@ -144,7 +115,7 @@ end
 
 ## Wilkinson combination ##
 
-immutable WilkinsonCombination <: PValueCombination
+struct WilkinsonCombination <: PValueCombination
     rank::Integer
 
     function WilkinsonCombination(rank)
@@ -155,19 +126,16 @@ immutable WilkinsonCombination <: PValueCombination
     end
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::WilkinsonCombination)
-    wilkinson_combination(pValues, method.rank)
-end
-
-function wilkinson_combination{T<:AbstractFloat}(pValues::PValues{T}, rank::Integer)
+function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:AbstractFloat
     n = length(pValues)
-    if rank < 1 || rank > n
-        throw(ArgumentError("Rank must be in 1,..,$(n)"))
-    end
     if n == 1
         return pValues[1]
     end
-    p_rank = sort(pValues)[rank]
+    rank = method.rank
+    if rank < 1 || rank > n
+        throw(ArgumentError("Rank must be in 1,..,$(n)"))
+    end
+    p_rank = select(pValues, rank) # faster than `sort(pValues)[rank]`
     p = cdf(Beta(rank, n-rank+1), p_rank)
     return p
 end
@@ -175,20 +143,16 @@ end
 
 ## Generalised minimum combination ##
 
-immutable MinimumCombination <: PValueCombination
-    method::PValueAdjustment
+struct MinimumCombination <: PValueCombination
+    adjustment::PValueAdjustment
 end
 
-function combine{T<:AbstractFloat}(pValues::PValues{T}, method::MinimumCombination)
-    minimum_combination(pValues, method.method)
-end
-
-function minimum_combination{T<:AbstractFloat}(pValues::PValues{T}, pAdjustMethod::PValueAdjustment)
+function combine(pValues::PValues{T}, method::MinimumCombination)::T where T<:AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
-    padj = adjust(pValues, pAdjustMethod)
+    padj = adjust(pValues, method.adjustment)
     p = minimum(padj)
     return p
 end

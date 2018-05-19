@@ -23,9 +23,9 @@ using Distributions
 
 rand(bum, 10)
 
-pdf(bum, 0:0.05:1)
+pdf.(bum, 0:0.05:1)
 
-cdf(bum, 0:0.05:1)
+cdf.(bum, 0:0.05:1)
 ```
 
 """

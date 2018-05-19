@@ -3,7 +3,7 @@ module Test_pval_pi0_adjustment
 
 using MultipleTesting
 using Base.Test
-using Compat
+
 
 @testset "p-Value π0 adjustment" begin
 
@@ -40,74 +40,12 @@ using Compat
         ## BH Adaptive same as BH for π0 missing or 1
         @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-8 )
         @test isapprox( adjust(pval1, t()), ref0, atol = 1e-8 )
-        @test isapprox( adjust(pval1, t(0.0)), zeros(ref0), atol = 1e-8 )
+        @test isapprox( adjust(pval1, t(0.0)), zero(ref0), atol = 1e-8 )
 
         # adaptive with pi0 estimator == oracle with estimated pi0
         @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate_pi0(pval1, Storey())))
         @test adjust(pval1, t(Storey(0.3))) == adjust(pval1, t(estimate_pi0(pval1, Storey(0.3))))
         @test adjust(pval1, t(LeastSlope())) == adjust(pval1, t(estimate_pi0(pval1, LeastSlope())))
-
-    end
-
-
-    @testset "q-value" begin
-
-        m = qValues
-
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = FALSE, pi0.method = "bootstrap")$qvalues```
-        ref = [0.0, 0.0002, 0.001333333, 0.01, 0.04, 0.066666667, 0.114285714, 0.2, 0.333333333, 0.4]
-
-        @test_throws MethodError m()
-
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
-
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
-
-        ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
-
-        ## compare with reference values
-        @test isapprox( m(pval1, pi0), ref, atol = 1e-8 )
-        @test isapprox( m(pval1, pi0, false), ref, atol = 1e-8 )
-
-    end
-
-
-    @testset "q-value pFDR" begin
-
-        m = qValues
-
-        # reference values taken from `qvalue` package, v2.6.0
-        # ```qvalue::qvalue(pval1, pi0, pfdr = TRUE, pi0.method = "bootstrap")$qvalues```
-        ref = [NaN, 0.09968523, 0.09968523, 0.09968523, 0.09968523, 0.10235600, 0.12803317, 0.20121668, 0.33333365, 0.4]
-
-        @test_throws MethodError m()
-
-        ## no integers as input
-        @test_throws MethodError m([0, 1])
-
-        ## no valid p-values as input
-        @test_throws DomainError m([-1.0, 0.5], pi0)
-        @test_throws DomainError m([0.5, 1.5], pi0)
-        @test_throws DomainError m([0.5, 0.7], -1.0)
-        @test_throws DomainError m([0.5, 0.7], 1.5)
-
-        ## single p-value is returned unchanged
-        pval = rand(1)
-        @test m(pval, pi0) == pval .* pi0
-
-        ## compare with reference values
-        # `isapprox` cannot compare NaNs in julia 0.5
-        # TODO use `isapprox(nans = true)` in julia 0.6
-        idx = @__dot__ !isnan.(ref)
-        @test isapprox( m(pval1, pi0, true)[idx], ref[idx], atol = 1e-8 )
 
     end
 

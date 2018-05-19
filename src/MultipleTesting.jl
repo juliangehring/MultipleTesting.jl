@@ -8,12 +8,13 @@ __precompile__()
 """
 module MultipleTesting
 
-using Compat
-
 using StatsBase
 import StatsBase: fit
 
 using Distributions
+import Distributions: estimate
+
+import SpecialFunctions: digamma
 
 export
     PValues,
@@ -30,7 +31,6 @@ export
     Sidak,
     ForwardStop,
     BarberCandes,
-    qValues,
     estimate_pi0,
     Pi0Estimator,
     Storey,
@@ -44,6 +44,8 @@ export
     BUM,
     BUMFit,
     FlatGrenander,
+    ConvexDecreasing,
+    ConvexDecreasingFit,
     isin,
     fit,
     BetaUniformMixtureModel,
@@ -55,15 +57,18 @@ export
     TippettCombination,
     SimesCombination,
     WilkinsonCombination,
-    MinimumCombination
+    MinimumCombination,
+    estimate,
+    HigherCriticismScores,
+    HigherCriticismThreshold
 
 
 include("types.jl")
 include("utils.jl")
 include("pval-adjustment.jl")
 include("pi0-estimators.jl")
-include("qvalue.jl")
 include("model.jl")
 include("combinations.jl")
+include("higher-criticism.jl")
 
 end

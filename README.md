@@ -1,8 +1,10 @@
 # MultipleTesting
 
-The `MultipleTesting` package offers common algorithms for p-value adjustment and combination as well as the estimation of the proportion π₀ of true null hypotheses.
+The `MultipleTesting` package offers common algorithms for p-value adjustment
+and combination as well as the estimation of the proportion π₀ of true null
+hypotheses.
 
-![xkcd p-value guide](pvalues.png)
+![xkcd p-value guide](https://imgs.xkcd.com/comics/p_values.png)
 
 
 ## Features
@@ -92,6 +94,17 @@ combine(pvals, MinimumCombination(PValueAdjustment()))
 ```
 
 
+### Higher criticism
+
+* Higher criticism scores
+* Higher criticism threshold
+
+```julia
+estimate(pvals, HigherCriticismScores())
+estimate(pvals, HigherCriticismThreshold())
+```
+
+
 ## Installation
 
 The `MultipleTesting` package is part of the Julia ecosphere and the latest
@@ -102,7 +115,7 @@ Pkg.add("MultipleTesting")
 ```
 
 More details on packages and how to manage them can be found in the
-[package section](http://docs.julialang.org/en/stable/manual/packages/#adding-and-removing-packages)
+[package section](https://docs.julialang.org/en/stable/manual/packages/#adding-and-removing-packages)
 of the Julia documentation.
 
 
@@ -114,12 +127,11 @@ requests or issues with your questions or ideas.
 
 ## Package Status
 
-The package is actively developed and uses [semantic versioning](http://semver.org/).
+The package is actively developed and uses [semantic versioning](https://semver.org/).
 
 [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
 
-[![Package Status](http://pkg.julialang.org/badges/MultipleTesting_0.6.svg)](http://pkg.julialang.org/?pkg=MultipleTesting)
-[![Package Status](http://pkg.julialang.org/badges/MultipleTesting_0.5.svg)](http://pkg.julialang.org/?pkg=MultipleTesting)
+[![Package Status](https://pkg.julialang.org/badges/MultipleTesting_0.6.svg)](https://pkg.julialang.org/?pkg=MultipleTesting)
 
 [![Linux/Mac Build Status](https://travis-ci.org/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/juliangehring/MultipleTesting.jl)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/juliangehring/multipletesting-jl/branch/master)

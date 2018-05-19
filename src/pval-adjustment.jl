@@ -2,54 +2,54 @@
 
 # promotion from float vectors to PValues type
 
-adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, method::M) = adjust(PValues(pvals), method)
+function adjust(pValues::Vector{T}, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+    adjust(PValues(pValues), method)
+end
 
-adjust{T<:AbstractFloat, M<:PValueAdjustment}(pvals::Vector{T}, n::Integer, method::M) = adjust(PValues(pvals), n, method)
-
+function adjust(pValues::Vector{T}, n::Integer, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+    adjust(PValues(pValues), n, method)
+end
 
 # Bonferroni
 
-immutable Bonferroni <: PValueAdjustment
+struct Bonferroni <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::Bonferroni) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::Bonferroni) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::Bonferroni) = bonferroni(pvals, n)
-
-function bonferroni(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::Bonferroni)
     k = length(pValues)
     check_number_tests(k, n)
-    return min.(pValues * n, 1)
+    pAdjusted = clamp.(pValues * n, 0, 1)
+    return pAdjusted
 end
 
 
 # Benjamini-Hochberg
 
-immutable BenjaminiHochberg <: PValueAdjustment
+struct BenjaminiHochberg <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::BenjaminiHochberg) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::BenjaminiHochberg) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::BenjaminiHochberg) = benjamini_hochberg(pvals, n)
-
-function benjamini_hochberg(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, bejamini_hochberg_step, k, n)
-    return min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= n ./ (1:k)
+    stepup!(pAdjusted)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    return pAdjusted
 end
-
-bejamini_hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * n/(k-i)
 
 
 # Benjamini-Hochberg Adaptive
 
-immutable BenjaminiHochbergAdaptive <: PValueAdjustment
+struct BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
 end
 
@@ -58,195 +58,182 @@ BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-adjust(pvals::PValues, method::BenjaminiHochbergAdaptive) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::BenjaminiHochbergAdaptive) = adjust(pValues, length(pValues), method)
 
-function adjust(pvals::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
-    π0 = estimate_pi0(pvals, method.pi0estimator)
-    return benjamini_hochberg(pvals, n) * π0
+function adjust(pValues::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
+    π0 = estimate_pi0(pValues, method.pi0estimator)
+    pAdjusted = adjust(pValues, n, BenjaminiHochberg()) * π0
+    return pAdjusted
 end
 
 
 # Benjamini-Yekutieli
 
-immutable BenjaminiYekutieli <: PValueAdjustment
+struct BenjaminiYekutieli <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::BenjaminiYekutieli) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::BenjaminiYekutieli) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::BenjaminiYekutieli) = benjamini_yekutieli(pvals, n)
-
-function benjamini_yekutieli(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, benjamini_yekutieli_step, k, n)
-    return min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= harmonic_number(n) .* n ./ (1:k)
+    stepup!(pAdjusted)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    return pAdjusted
 end
-
-benjamini_yekutieli_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * harmonic_number(n) * n/(k-i)
 
 
 # Benjamini-Liu
 
-immutable BenjaminiLiu <: PValueAdjustment
+struct BenjaminiLiu <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::BenjaminiLiu) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::BenjaminiLiu) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::BenjaminiLiu) = benjamini_liu(pvals, n)
-
-function benjamini_liu(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepdown!(sortedPValues, benjamini_liu_step, k, n)
-    return min.(sortedPValues[originalOrder], 1)
-end
-
-function benjamini_liu_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
-    s = n-i+1
-    return (1 - (1-p)^s) * s / n
+    s = n .- (1:k) .+ 1
+    pAdjusted = (1 .- (1 .- pAdjusted) .^ s) .* s ./ n
+    stepdown!(pAdjusted)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    return pAdjusted
 end
 
 
 # Hochberg
 
-immutable Hochberg <: PValueAdjustment
+struct Hochberg <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::Hochberg) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::Hochberg) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::Hochberg) = hochberg(pvals, n)
-
-function hochberg(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::Hochberg)
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepup!(sortedPValues, hochberg_step, k, n)
-    return min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= (n .- (1:k) .+ 1)
+    stepup!(pAdjusted)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    return pAdjusted
 end
-
-hochberg_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-k+i+1)
 
 
 # Holm
 
-immutable Holm <: PValueAdjustment
+struct Holm <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::Holm) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::Holm) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::Holm) = holm(pvals, n)
-
-function holm(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::Holm)
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
         return pValues
     end
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    stepdown!(sortedPValues, holm_step, k, n)
-    return min.(sortedPValues[originalOrder], 1)
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    pAdjusted .*= (n .- (1:k) .+ 1)
+    stepdown!(pAdjusted)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    return pAdjusted
 end
-
-holm_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * (n-i+1)
 
 
 # Hommel
 
-immutable Hommel <: PValueAdjustment
+struct Hommel <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::Hommel) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::Hommel) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::Hommel) = hommel(pvals, n)
-
-function hommel(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::Hommel)
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
-    pValues = vcat(pValues, ones(n-k))  # TODO avoid sorting of ones
-    sortedIndexes, originalOrder = reorder(pValues)
-    sortedPValues = pValues[sortedIndexes]
-    q = fill(minimum(n .* pValues./(1:n)), n)
+    pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
+    sortedOrder, originalOrder = reorder(pValues)
+    pAdjusted = pValues[sortedOrder]
+    q = fill(minimum(n .* pAdjusted./(1:n)), n)
     pa = fill(q[1], n)
     for j in (n-1):-1:2
         ij = 1:(n-j+1)
         i2 = (n-j+2):n
-        q1 = minimum(j .* sortedPValues[i2]./((2:j)))
-        q[ij] = min.(j .* sortedPValues[ij], q1)
+        q1 = minimum(j .* pAdjusted[i2]./((2:j)))
+        q[ij] = min.(j .* pAdjusted[ij], q1)
         q[i2] = q[n-j+1]
         pa = max.(pa, q)
     end
-    return max.(pa, sortedPValues)[originalOrder[1:k]]
+    pAdjusted = max.(pa, pAdjusted)[originalOrder[1:k]]
+    return pAdjusted
 end
 
 
 # Sidak
 
-immutable Sidak <: PValueAdjustment
+struct Sidak <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::Sidak) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::Sidak) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::Sidak) = sidak(pvals, n)
-
-function sidak(pValues::PValues, n::Integer)
+function adjust(pValues::PValues, n::Integer, method::Sidak)
     check_number_tests(length(pValues), n)
-    return min.(1-(1-pValues).^n, 1)
+    pAdjusted = clamp.(1 .- (1 .- pValues).^n, 0, 1)
+    return pAdjusted
 end
 
 
 # Forward Stop
 
-immutable ForwardStop <: PValueAdjustment
+struct ForwardStop <: PValueAdjustment
 end
 
-adjust(pvals::PValues, method::ForwardStop) = adjust(pvals, length(pvals), method)
+adjust(pValues::PValues, method::ForwardStop) = adjust(pValues, length(pValues), method)
 
-adjust(pvals::PValues, n::Integer, method::ForwardStop) = forwardstop(pvals, n)
-
-function forwardstop(pvalues::PValues, n::Integer)
-    k = length(pvalues)
+function adjust(pValues::PValues, n::Integer, method::ForwardStop)
+    k = length(pValues)
     check_number_tests(k, n)
-    logsums = -cumsum(log.(1-pvalues))
-    stepup!(logsums, forwardstop_step, k, n)
-    return max.(min.(logsums, 1), 0)
+    sortedOrder, originalOrder = reorder(pValues)
+    logsums = -cumsum(log.(1 .- pValues[sortedOrder]))
+    logsums ./= (1:k)
+    stepup!(logsums)
+    pAdjusted = clamp.(logsums[originalOrder], 0, 1)
+    return pAdjusted
 end
-
-forwardstop_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p * 1/(k-i)
 
 
 # Barber-Candès
-immutable BarberCandes <: PValueAdjustment
+struct BarberCandes <: PValueAdjustment
 end
 
-function adjust(pvals::PValues, method::BarberCandes)
-    n = length(pvals)
-
+function adjust(pValues::PValues, method::BarberCandes)
+    n = length(pValues)
     if n <= 1
-        return ones(pvals) # unlike other p-adjust methods
+        return fill(1.0, size(pValues)) # unlike other p-adjust methods
     end
 
-    sorted_indexes, original_order = reorder(pvals)
-    estimated_fdrs = pvals[sorted_indexes]
+    sorted_indexes, original_order = reorder(pValues)
+    estimated_fdrs = pValues[sorted_indexes]
 
     Rt = 1 # current number of discoveries
     Vt = 1 # estimated false discoveries at t
@@ -254,65 +241,60 @@ function adjust(pvals::PValues, method::BarberCandes)
     left_pv = estimated_fdrs[1]
     right_pv = estimated_fdrs[n]
 
-    while (left_pv < 0.5)
-        while ((1-right_pv <= left_pv) & (right_pv >= 0.5) & (Vt+Rt <= n))
-            estimated_fdrs[n-Vt+1] = 1.0;
+    while left_pv < 0.5
+        while (1 - right_pv <= left_pv) && (right_pv >= 0.5) && (Vt + Rt <= n)
+            estimated_fdrs[n-Vt+1] = 1.0
             right_pv = estimated_fdrs[n-Vt]
-            Vt +=1
+            Vt += 1
         end
         estimated_fdrs[Rt] = Vt/Rt
         Rt += 1
         left_pv = estimated_fdrs[Rt]
     end
 
-    while ((right_pv >= 0.5) & (Vt + Rt <= n+1))
-      estimated_fdrs[n-Vt+1] = 1.0;
-      right_pv = (Vt + Rt <= n)?estimated_fdrs[n-Vt]:0.0
-      Vt +=1
+    while (right_pv >= 0.5) && (Vt + Rt <= n+1)
+      estimated_fdrs[n-Vt+1] = 1.0
+      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n-Vt] : 0.0
+      Vt += 1
     end
 
-    stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
-    return min.(estimated_fdrs[original_order], 1)
+    stepup!(estimated_fdrs)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
+    return pAdjusted
 end
 
 # as test, inefficient implementation
-function barber_candes_brute_force{T<:AbstractFloat}(pvals::AbstractVector{T})
-    n = length(pvals)
-    sorted_indexes, original_order = reorder(pvals)
-    sorted_pvals = pvals[sorted_indexes]
-    estimated_fdrs = ones(pvals)
-    for (i,pv) in enumerate(sorted_pvals)
+function barber_candes_brute_force(pValues::AbstractVector{T}) where T<:AbstractFloat
+    n = length(pValues)
+    sorted_indexes, original_order = reorder(pValues)
+    sorted_pValues = pValues[sorted_indexes]
+    estimated_fdrs = fill(1.0, size(pValues))
+    for (i,pv) in enumerate(sorted_pValues)
         if pv >= 0.5
             break
         else
-            estimated_fdrs[i] = (sum(1-pvals .<= pv)+1)/i
+            estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1)/i
         end
     end
-    stepup!(estimated_fdrs, identity_step, n, n) # just monotonize, no multiplier needed
-    return min.(estimated_fdrs[original_order], 1)
+    stepup!(estimated_fdrs)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
+    return pAdjusted
 end
-
-identity_step(p::AbstractFloat, i::Integer, k::Integer, n::Integer) = p
 
 
 ## internal ##
 
 # step-up / step-down
 
-function stepup!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
-    sortedPValues[k] = stepfun(sortedPValues[k], 0, k, n)
-    for i in 1:(k-1)
-        sortedPValues[k-i] = min.(sortedPValues[k-i+1], stepfun(sortedPValues[k-i], i, k, n))
-    end
-    return sortedPValues
+function stepup!(values::AbstractVector{T}) where T<:AbstractFloat
+    accumulate!(min, values, reverse!(values))
+    reverse!(values)
+    return values
 end
 
-function stepdown!{T<:AbstractFloat}(sortedPValues::AbstractVector{T}, stepfun::Function, k::Integer, n::Integer)
-    sortedPValues[1] = stepfun(sortedPValues[1], 1, k, n)
-    for i in 2:k
-        sortedPValues[i] = max.(sortedPValues[i-1], stepfun(sortedPValues[i], i, k, n))
-    end
-    return sortedPValues
+function stepdown!(values::AbstractVector{T}) where T<:AbstractFloat
+    accumulate!(max, values, values)
+    return values
 end
 
 
