@@ -149,7 +149,7 @@ Reference: Benjamini, Krieger and Yekutieli, 2006
 """
 struct TwoStep <: Pi0Estimator
     α::Float64
-    method::PValueAdjustment
+    adjustment::PValueAdjustment
 
     TwoStep(α, method) = isin(α, 0, 1) ? new(α, method) : throw(DomainError())
 end
@@ -160,7 +160,7 @@ TwoStep(α) = TwoStep(α, BenjaminiHochberg())
 
 function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T<:AbstractFloat
     alpha = pi0estimator.α
-    padj = adjust(pValues, pi0estimator.method)
+    padj = adjust(pValues, pi0estimator.adjustment)
     pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
     return pi0
 end
