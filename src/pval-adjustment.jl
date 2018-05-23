@@ -15,9 +15,9 @@ end
 struct Bonferroni <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Bonferroni) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Bonferroni) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Bonferroni)
+function adjust(pValues::PValues{T}, n::Integer, method::Bonferroni) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     pAdjusted = clamp.(pValues * n, 0, 1)
@@ -30,9 +30,9 @@ end
 struct BenjaminiHochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiHochberg) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochberg) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -58,9 +58,9 @@ BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-adjust(pValues::PValues, method::BenjaminiHochbergAdaptive) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat
     π0 = estimate_pi0(pValues, method.pi0estimator)
     pAdjusted = adjust(pValues, n, BenjaminiHochberg()) * π0
     return pAdjusted
@@ -72,9 +72,9 @@ end
 struct BenjaminiYekutieli <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiYekutieli) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiYekutieli) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiYekutieli) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -94,9 +94,9 @@ end
 struct BenjaminiLiu <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiLiu) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiLiu) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
@@ -119,9 +119,9 @@ end
 struct Hochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Hochberg) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Hochberg)
+function adjust(pValues::PValues{T}, n::Integer, method::Hochberg) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -141,9 +141,9 @@ end
 struct Holm <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Holm) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Holm) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Holm)
+function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
@@ -163,9 +163,9 @@ end
 struct Hommel <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Hommel) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hommel) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Hommel)
+function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -194,9 +194,9 @@ end
 struct Sidak <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Sidak) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Sidak) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Sidak)
+function adjust(pValues::PValues{T}, n::Integer, method::Sidak) where T<:AbstractFloat
     check_number_tests(length(pValues), n)
     pAdjusted = clamp.(1 .- (1 .- pValues).^n, 0, 1)
     return pAdjusted
@@ -208,9 +208,9 @@ end
 struct ForwardStop <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::ForwardStop) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::ForwardStop) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::ForwardStop)
+function adjust(pValues::PValues{T}, n::Integer, method::ForwardStop) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     sortedOrder, originalOrder = reorder(pValues)
@@ -226,7 +226,7 @@ end
 struct BarberCandes <: PValueAdjustment
 end
 
-function adjust(pValues::PValues, method::BarberCandes)
+function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloat
     n = length(pValues)
     if n <= 1
         return fill(1.0, size(pValues)) # unlike other p-adjust methods
