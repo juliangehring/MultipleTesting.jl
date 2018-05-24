@@ -171,20 +171,20 @@ function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T<:Abstra
     if k <= 1
         return pValues
     end
-    pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
     sortedOrder, originalOrder = reorder(pValues)
-    pAdjusted = pValues[sortedOrder]
-    q = fill(minimum(n .* pAdjusted./(1:n)), n)
-    pa = fill(q[1], n)
+    pAdjusted = vcat(pValues[sortedOrder], fill(one(T), n-k))
+    lower = n * minimum(pAdjusted./(1:n))
+    q = fill(lower, n)
+    pa = fill(lower, n)
     for j in (n-1):-1:2
-        ij = 1:(n-j+1)
-        i2 = (n-j+2):n
-        q1 = minimum(j .* pAdjusted[i2]./((2:j)))
-        q[ij] = min.(j .* pAdjusted[ij], q1)
-        q[i2] = q[n-j+1]
-        pa = max.(pa, q)
+        idx_left = 1:(n-j+1)
+        idx_right = (n-j+2):n
+        q_right = minimum(view(pAdjusted, idx_right)./(2:j))
+        q[idx_left] .= j .* min.(view(pAdjusted, idx_left), q_right)
+        q[idx_right] .= q[n-j+1]
+        pa .= max.(pa, q)
     end
-    pAdjusted = max.(pa, pAdjusted)[originalOrder[1:k]]
+    pAdjusted = max.(pa[originalOrder], pValues)
     return pAdjusted
 end
 
