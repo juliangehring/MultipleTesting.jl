@@ -228,8 +228,12 @@ end
 
 function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloat
     n = length(pValues)
+    # special cases unlike other p-adjust methods
     if n <= 1
-        return fill(1.0, size(pValues)) # unlike other p-adjust methods
+        return fill(1.0, size(pValues))
+    end
+    if maximum(pValues) < 0.5
+        return fill(1/n, size(pValues))
     end
 
     sorted_indexes, original_order = reorder(pValues)
