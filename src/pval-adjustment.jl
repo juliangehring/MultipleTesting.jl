@@ -113,12 +113,13 @@ probabilita (Libreria internazionale Seeber).
 struct Bonferroni <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Bonferroni) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Bonferroni) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Bonferroni)
+function adjust(pValues::PValues{T}, n::Integer, method::Bonferroni) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
-    return min.(pValues * n, 1)
+    pAdjusted = clamp.(pValues * n, 0, 1)
+    return pAdjusted
 end
 
 
@@ -159,9 +160,9 @@ Statistical Society. Series B (Methodological) 57, 289–300.
 struct BenjaminiHochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiHochberg) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochberg) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -171,7 +172,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiHochberg)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -226,9 +227,9 @@ BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-adjust(pValues::PValues, method::BenjaminiHochbergAdaptive) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiHochbergAdaptive)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat
     π0 = estimate_pi0(pValues, method.pi0estimator)
     pAdjusted = adjust(pValues, n, BenjaminiHochberg()) * π0
     return pAdjusted
@@ -271,9 +272,9 @@ in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
 struct BenjaminiYekutieli <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiYekutieli) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiYekutieli) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiYekutieli) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -283,7 +284,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiYekutieli)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= harmonic_number(n) .* n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -325,9 +326,9 @@ Statistical Planning and Inference 82, 163–170.
 struct BenjaminiLiu <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::BenjaminiLiu) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiLiu) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
@@ -340,7 +341,7 @@ function adjust(pValues::PValues, n::Integer, method::BenjaminiLiu)
     s = n .- (1:k) .+ 1
     pAdjusted = (1 .- (1 .- pAdjusted) .^ s) .* s ./ n
     stepdown!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -381,9 +382,9 @@ significance. Biometrika 75, 800–802.
 struct Hochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Hochberg) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Hochberg)
+function adjust(pValues::PValues{T}, n::Integer, method::Hochberg) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -393,7 +394,7 @@ function adjust(pValues::PValues, n::Integer, method::Hochberg)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepup!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -434,9 +435,9 @@ Scandinavian Journal of Statistics 6, 65–70.
 struct Holm <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Holm) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Holm) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Holm)
+function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
@@ -446,7 +447,7 @@ function adjust(pValues::PValues, n::Integer, method::Holm)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepdown!(pAdjusted)
-    pAdjusted = min.(pAdjusted[originalOrder], 1)
+    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -486,28 +487,28 @@ modified Bonferroni test. Biometrika 75, 383–386.
 struct Hommel <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Hommel) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hommel) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Hommel)
+function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
-    pValues = vcat(pValues, fill(1.0, n-k))  # TODO avoid sorting of ones
     sortedOrder, originalOrder = reorder(pValues)
-    pAdjusted = pValues[sortedOrder]
-    q = fill(minimum(n .* pAdjusted./(1:n)), n)
-    pa = fill(q[1], n)
+    pAdjusted = vcat(pValues[sortedOrder], fill(one(T), n-k))
+    lower = n * minimum(pAdjusted./(1:n))
+    q = fill(lower, n)
+    pa = fill(lower, n)
     for j in (n-1):-1:2
-        ij = 1:(n-j+1)
-        i2 = (n-j+2):n
-        q1 = minimum(j .* pAdjusted[i2]./((2:j)))
-        q[ij] = min.(j .* pAdjusted[ij], q1)
-        q[i2] = q[n-j+1]
-        pa = max.(pa, q)
+        idx_left = 1:(n-j+1)
+        idx_right = (n-j+2):n
+        q_right = minimum(view(pAdjusted, idx_right)./(2:j))
+        q[idx_left] .= j .* min.(view(pAdjusted, idx_left), q_right)
+        q[idx_right] .= q[n-j+1]
+        pa .= max.(pa, q)
     end
-    pAdjusted = max.(pa, pAdjusted)[originalOrder[1:k]]
+    pAdjusted = max.(pa[originalOrder], pValues)
     return pAdjusted
 end
 
@@ -549,11 +550,11 @@ Normal Distributions. Journal of the American Statistical Association 62,
 struct Sidak <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::Sidak) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Sidak) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::Sidak)
+function adjust(pValues::PValues{T}, n::Integer, method::Sidak) where T<:AbstractFloat
     check_number_tests(length(pValues), n)
-    pAdjusted = min.(1 .- (1 .- pValues).^n, 1)
+    pAdjusted = clamp.(1 .- (1 .- pValues).^n, 0, 1)
     return pAdjusted
 end
 
@@ -595,16 +596,16 @@ selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
 struct ForwardStop <: PValueAdjustment
 end
 
-adjust(pValues::PValues, method::ForwardStop) = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::ForwardStop) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues, n::Integer, method::ForwardStop)
+function adjust(pValues::PValues{T}, n::Integer, method::ForwardStop) where T<:AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     sortedOrder, originalOrder = reorder(pValues)
     logsums = -cumsum(log.(1 .- pValues[sortedOrder]))
     logsums ./= (1:k)
     stepup!(logsums)
-    pAdjusted = max.(min.(logsums[originalOrder], 1), 0)
+    pAdjusted = clamp.(logsums[originalOrder], 0, 1)
     return pAdjusted
 end
 
@@ -641,7 +642,7 @@ Electron. J. Statist. 11, 1983–2001.
 struct BarberCandes <: PValueAdjustment
 end
 
-function adjust(pValues::PValues, method::BarberCandes)
+function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloat
     n = length(pValues)
     if n <= 1
         return fill(1.0, size(pValues)) # unlike other p-adjust methods
@@ -674,7 +675,7 @@ function adjust(pValues::PValues, method::BarberCandes)
     end
 
     stepup!(estimated_fdrs)
-    pAdjusted = min.(estimated_fdrs[original_order], 1)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
     return pAdjusted
 end
 
@@ -692,7 +693,7 @@ function barber_candes_brute_force(pValues::AbstractVector{T}) where T<:Abstract
         end
     end
     stepup!(estimated_fdrs)
-    pAdjusted = min.(estimated_fdrs[original_order], 1)
+    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
     return pAdjusted
 end
 
