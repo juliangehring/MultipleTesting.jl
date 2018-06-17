@@ -1,8 +1,12 @@
+COLOR := yes
+
 .PHONY: test docs
 
+all: test docs
+
 test:
-	julia --color=yes test/runtests.jl
+	julia --color=$(COLOR) test/runtests.jl
 
 docs:
-	julia --color=yes docs/make.jl
+	julia --color=$(COLOR) docs/make.jl
 

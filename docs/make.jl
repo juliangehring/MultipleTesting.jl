@@ -5,10 +5,11 @@ makedocs(
     modules = [MultipleTesting],
     format = :html,
     sitename = "MultipleTesting.jl",
-    doctest = :fix,
+    doctest = true,
     checkdocs = :exports,
-    linkcheck = false,
+    linkcheck = true,
     html_disable_git = true, # disable source and edit links to github
+    html_canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/",
     pages = [
         "Home" => "index.md",
         "Library" => Any[
@@ -19,4 +20,13 @@ makedocs(
             "models.md",
         ]
     ]
+)
+
+deploydocs(
+    repo = "github.com/juliangehring/MultipleTesting.jl.git",
+    julia = "0.6",
+    target = "build",
+    latest = "develop",
+    deps   = nothing,
+    make   = nothing
 )
