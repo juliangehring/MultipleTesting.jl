@@ -5,7 +5,7 @@ using MultipleTesting
 using Base.Test
 
 
-@testset "p-Value π0 adjustment" begin
+@testset "p-Value π₀ adjustment" begin
 
     pval1 = [0.0, 0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.75, 1.0]
     pi0 = 0.4
@@ -37,7 +37,7 @@ using Base.Test
         ## compare with reference values
         @test isapprox( adjust(pval1, t(pi0)), ref, atol = 1e-8 )
 
-        ## BH Adaptive same as BH for π0 missing or 1
+        ## BH Adaptive same as BH for π₀ missing or 1
         @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-8 )
         @test isapprox( adjust(pval1, t()), ref0, atol = 1e-8 )
         @test isapprox( adjust(pval1, t(0.0)), zero(ref0), atol = 1e-8 )
