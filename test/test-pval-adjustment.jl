@@ -141,6 +141,12 @@ using Base.Test
         end
     end
 
+    @testset "BarberCandès: All p-values < 0.5 (#87)" begin
+        for pv in ([0.05, 0.1, 0.3], [0.01, 0.17, 0.25, 0.37, 0.47])
+            n = length(pv)
+            @test isapprox( adjust(PValues(pv), BarberCandes()), fill(1/n, n) )
+        end
+    end
 
     @testset "Step-up/down" begin
 
