@@ -8,6 +8,7 @@ julia:
   - nightly
 
 matrix:
+  fast_finish: true
   allow_failures:
     - julia: nightly
 
@@ -22,3 +23,5 @@ script:
 
 after_success:
   - julia -e 'cd(Pkg.dir("MultipleTesting")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder(), flags="julia_$(VERSION.major)_$(VERSION.minor)")'
+  - julia -e 'Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("MultipleTesting")); include(joinpath("docs", "make.jl"))'

@@ -1,5 +1,28 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.3.1
+
+### New Features
+
+- Build and deploy the package documentation (#94)
+
+
+### Changes
+
+#### User-facing changes
+
+- Fix Barber-Candes adjustemt if all p-values are < 0.5 (#93)
+- Update the documentation notebooks (#88)
+- Type the `adjust` methods (#90)
+- Rename the adjustment field in `TwoStep` type (#89)
+
+
+#### Internal changes
+
+- Optimise the Hommel adjustment (#91)
+- Enable fast finishing for CI builds (#92)
+
+
 ## Version 0.3.0
 
 ### New Features
@@ -69,7 +92,7 @@
 ### Changes
 
 - Adds compatibility with julia 0.6 development versions, including automated tests
-- Fixes Censored BUM π0 edge case when all p-values are equal to 1
+- Fixes Censored BUM π₀ edge case when all p-values are equal to 1
 - Updates test cases and reference values for `qValues`
 - Introduces `Compat` as a new dependency
 - Separates test coverage reports for different julia versions
@@ -122,7 +145,7 @@
 
 ### New Features
 
-- New π0 estimators: BUM, Censored BUM, Flat Grenander
+- New π₀ estimators: BUM, Censored BUM, Flat Grenander
 - New p-value adjustment methods: Forward Stop, Benjamini-Liu
 - BUM model for simulating p-value distributions
 - Fast isotonic regression
@@ -153,7 +176,7 @@
 
 ### New features
 
-- New π0 estimators: Two Step, Right Boundary
+- New π₀ estimators: Two Step, Right Boundary
 - New p-value adjustment methods: Benjamini-Hochberg Adaptive, Oracle, Sidak
 - Package precompilation
 
