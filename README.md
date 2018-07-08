@@ -127,7 +127,7 @@ requests or issues with your questions or ideas.
 
 ## Package Status
 
-The package is actively developed and uses [semantic versioning](https://semver.org/).
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliangehring.github.io/MultipleTesting.jl/stable)
 
 [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
 
@@ -136,3 +136,5 @@ The package is actively developed and uses [semantic versioning](https://semver.
 [![Linux/Mac Build Status](https://travis-ci.org/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/juliangehring/MultipleTesting.jl)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/juliangehring/multipletesting-jl/branch/master)
 [![Coverage Status](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
+
+The package uses [semantic versioning](https://semver.org/).
