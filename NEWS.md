@@ -1,5 +1,28 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.3.1
+
+### New Features
+
+- Build and deploy the package documentation (#94)
+
+
+### Changes
+
+#### User-facing changes
+
+- Fix Barber-Candes adjustemt if all p-values are < 0.5 (#93)
+- Update the documentation notebooks (#88)
+- Type the `adjust` methods (#90)
+- Rename the adjustment field in `TwoStep` type (#89)
+
+
+#### Internal changes
+
+- Optimise the Hommel adjustment (#91)
+- Enable fast finishing for CI builds (#92)
+
+
 ## Version 0.3.0
 
 ### New Features
