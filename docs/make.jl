@@ -24,7 +24,7 @@ makedocs(
 
 deploydocs(
     repo = "github.com/juliangehring/MultipleTesting.jl.git",
-    julia = "0.6",
+    julia = "0.7",
     target = "build",
     deps   = nothing,
     make   = nothing
