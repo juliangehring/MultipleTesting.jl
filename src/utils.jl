@@ -41,7 +41,7 @@ end
 
 function valid_pvalues(x::AbstractVector{T}) where T<:AbstractFloat
     if !isin(x)
-        throw(DomainError())
+        throw(DomainError("p-values must all be in [0, 1]"))
     end
 end
 
