@@ -17,6 +17,8 @@ import Distributions: estimate
 
 import SpecialFunctions: digamma
 
+import Random: shuffle!
+
 export
     PValues,
     adjust,

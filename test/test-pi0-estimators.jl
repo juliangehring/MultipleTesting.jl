@@ -2,8 +2,9 @@
 module Test_pi0
 
 using MultipleTesting
-using Base.Test
+using Test
 using StatsBase
+
 
 @testset "π₀ estimators" begin
 

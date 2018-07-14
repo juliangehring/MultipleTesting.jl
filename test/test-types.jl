@@ -2,7 +2,8 @@
 module Test_types
 
 using MultipleTesting
-using Base.Test
+using Test
+
 
 @testset "Types" begin
 
