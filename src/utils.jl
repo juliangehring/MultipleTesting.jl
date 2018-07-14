@@ -60,11 +60,9 @@ function isotonic_regression_reference(y::AbstractVector{T}, w::AbstractVector{T
     # TODO ignore zero weights
     y = copy(y)
     w = copy(w)
-    m = length(y)
-    cnts = fill(1, m)
+    cnts = fill(1, length(y))
     i = 2
-    # ... not most efficient way but could be fun to (ab)use iterator protocol
-    while !done(y, i)
+    while i <= length(y)
         if y[i] < y[i-1]
             y[i-1] = (w[i]*y[i]+w[i-1]*y[i-1])/(w[i]+w[i-1])
             w[i-1] = w[i]+w[i-1]
