@@ -2,7 +2,9 @@
 module Test_pval_adjustment
 
 using MultipleTesting
-using Base.Test
+using Test
+using Random
+
 
 @testset "p-Value adjustment" begin
 

@@ -726,4 +726,4 @@ function check_number_tests(k::Integer, n::Integer)
 end
 
 
-harmonic_number(n::Integer) =  digamma(n+1) + γ
+harmonic_number(n::Integer) =  digamma(n+1) + MathConstants.γ

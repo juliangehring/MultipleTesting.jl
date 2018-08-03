@@ -2,7 +2,8 @@
 module Test_grenander
 
 using MultipleTesting
-using Base.Test
+using Test
+
 
 @testset "Grenander estimators" begin
 

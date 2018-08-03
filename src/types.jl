@@ -21,9 +21,9 @@ struct PValues{T<:AbstractFloat} <: AbstractVector{T}
     function(::Type{PValues})(values::AbstractVector{T}) where T
         min, max = extrema(values)
         if min < zero(T) || max > one(T)
-            throw(DomainError())
+            throw(DomainError("p-values must all be in [0, 1]"))
         end
-        new{T}(copy(values), min, max)
+        return new{T}(copy(values), min, max)
     end
 end
 

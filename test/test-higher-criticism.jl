@@ -2,7 +2,7 @@
 module Test_HigherCriticism
 
 using MultipleTesting
-using Base.Test
+using Test
 
 
 @testset "Higher criticism" begin

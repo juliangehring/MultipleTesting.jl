@@ -3,7 +3,7 @@ module Test_combinations
 
 using MultipleTesting
 using StatsBase
-using Base.Test
+using Test
 
 
 @testset "p-Value combinations" begin
