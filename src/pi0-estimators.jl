@@ -84,7 +84,10 @@ Series B (Statistical Methodology) 66, 187–205.
 struct Storey <: Pi0Estimator
     λ::Float64
 
-    Storey(λ) = isin(λ, 0, 1) ? new(λ) : throw(DomainError())
+    function Storey(λ)
+        isin(λ, 0, 1) || throw(DomainError("λ must be in [0, 1]"))
+        return new(λ)
+    end
 end
 
 Storey() = Storey(0.1)
@@ -131,8 +134,11 @@ struct StoreyBootstrap <: Pi0Estimator
     λseq::Vector{Float64}
     q   ::Float64
 
-    StoreyBootstrap(λseq, q) =
-        isin(λseq, 0, 1) && isin(q, 0, 1) ? new(λseq, q) : throw(DomainError())
+    function StoreyBootstrap(λseq, q)
+        isin(λseq, 0, 1) || throw(DomainError("λseq must be in [0, 1]"))
+        isin(q, 0, 1) || throw(DomainError("q must be in [0, 1]"))
+        return new(λseq, q)
+    end
 end
 
 StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
@@ -145,7 +151,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where 
     pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
-    pi0 = clamp(pi0[indmin(mse)], 0, 1)
+    pi0 = clamp(pi0[argmin(mse)], 0, 1)
     return pi0
 end
 
@@ -205,7 +211,7 @@ function lsl_pi0_vec(pValues::AbstractVector{T}) where T<:AbstractFloat
     pValues = sort_if_needed(pValues)
     s = (1 .- pValues) ./ (n:-1:1)
     d = diff(s) .< 0
-    idx = findfirst(d) + 1
+    idx = something(findfirst(d), 0) + 1
     pi0 = min( 1/s[idx] + 1, n ) / n
     return pi0
 end
@@ -229,7 +235,10 @@ julia> estimate_pi0(pvals, Oracle(0.5)) # a bit boring...
 struct Oracle <: Pi0Estimator
     π0::Float64
 
-    Oracle(π0) = isin(π0, 0, 1) ? new(π0) : throw(DomainError())
+    function Oracle(π0)
+        isin(π0, 0, 1) || throw(DomainError("π0 must be in [0, 1]"))
+        return new(π0)
+    end
 end
 
 Oracle() = Oracle(1.0)
@@ -269,7 +278,10 @@ struct TwoStep <: Pi0Estimator
     α::Float64
     adjustment::PValueAdjustment
 
-    TwoStep(α, method) = isin(α, 0, 1) ? new(α, method) : throw(DomainError())
+    function TwoStep(α, method)
+        isin(α, 0, 1) || throw(DomainError("α must be in [0, 1]"))
+        return new(α, method)
+    end
 end
 
 TwoStep() = TwoStep(0.05)
@@ -313,8 +325,10 @@ Statistical Society: Series B (Statistical Methodology) 74, 163–182.
 struct RightBoundary <: Pi0Estimator
     λseq::Vector{Float64}
 
-    RightBoundary(λseq) =
-        isin(λseq, 0, 1) ? new(λseq) : throw(DomainError())
+    function RightBoundary(λseq)
+        isin(λseq, 0, 1) || throw(DomainError("λseq must be in [0, 1]"))
+        return new(λseq)
+    end
 end
 
 # λseq used in Liang, Nettleton 2012
@@ -330,7 +344,7 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T<
     pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1 .- λseq)./n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
-    pi0 = pi0_estimates[findfirst(pi0_decrease, true) + 1]
+    pi0 = pi0_estimates[something(findfirst(pi0_decrease), 0) + 1]
     pi0 = clamp(pi0, 0, 1)
     return pi0
 end
@@ -366,11 +380,11 @@ struct CensoredBUM <: Pi0Estimator
     maxiter::Int64
 
     function CensoredBUM(γ0, λ, xtol, maxiter)
-        if isin(γ0, 0, 1) && isin(λ, 0, 1) && isin(xtol, 0, 1) && maxiter > 0
-            new(γ0, λ, xtol, maxiter)
-        else
-            throw(DomainError())
-        end
+        isin(γ0, 0, 1) || throw(DomainError("γ0 must be in [0, 1]"))
+        isin(λ, 0, 1) || throw(DomainError("λ must be in [0, 1]"))
+        isin(xtol, 0, 1) || throw(DomainError("xtol must be in [0, 1]"))
+        maxiter > 0 || throw(DomainError("maxiter must be a positive number"))
+        return new(γ0, λ, xtol, maxiter)
     end
 end
 
@@ -451,7 +465,7 @@ function cbum_pi0_naive(pValues::AbstractVector{T},
         α = -sum(z[idx_right])
         α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
         xl = (1-γ) * (λ^α)
-        z[idx_left] = xl ./ (γ*λ + xl)
+        z[idx_left] .= xl / (γ*λ + xl)
         xr = (1-γ) * α * pValues[idx_right].^(α-1)
         z[idx_right] = xr ./ (γ .+ xr)
         pi0_new = γ + (1-γ)*α
@@ -495,11 +509,10 @@ struct BUM <: Pi0Estimator
     maxiter::Int64
 
     function BUM(γ0, xtol, maxiter)
-        if isin(γ0, 0, 1) && isin(xtol, 0, 1)
-            new(γ0, xtol, maxiter)
-        else
-            throw(DomainError())
-        end
+        isin(γ0, 0, 1) || throw(DomainError("γ0 must be in [0, 1]"))
+        isin(xtol, 0, 1) || throw(DomainError("xtol must be in [0, 1]"))
+        maxiter > 0 || throw(DomainError("maxiter must be a positive number"))
+        return new(γ0, xtol, maxiter)
     end
 end
 
@@ -620,11 +633,10 @@ struct ConvexDecreasing <: Pi0Estimator
     maxiter::Int64
 
     function ConvexDecreasing(gridsize, xtol, maxiter)
-        if gridsize > 0 && isin(xtol, 0, 1) && maxiter > 0
-            new(gridsize, xtol, maxiter)
-        else
-            throw(DomainError())
-        end
+        gridsize > 0 || throw(DomainError("gridsize must be a positive number"))
+        isin(xtol, 0, 1) || throw(DomainError("xtol must be in [0, 1]"))
+        maxiter > 0 || throw(DomainError("maxiter must be a positive number"))
+        return new(gridsize, xtol, maxiter)
     end
 end
 
@@ -713,11 +725,11 @@ function convex_decreasing(pValues::AbstractVector{T},
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64})
-    return indmax( [theta.^-2 * sum(theta .- p[p .< theta]) for theta in t] )
+    return argmax( [theta.^-2 * sum(theta .- p[p .< theta]) for theta in t] )
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64}, f_p::Vector{Float64})
-    return indmax( [theta.^-2 * sum( (theta .- p) .* (p .< theta) ./ f_p ) for theta in t] )
+    return argmax( [theta.^-2 * sum( (theta .- p) .* (p .< theta) ./ f_p ) for theta in t] )
 end
 
 function decide(f_p::Vector{Float64}, f_theta_p::Vector{Float64}, ε::Float64)

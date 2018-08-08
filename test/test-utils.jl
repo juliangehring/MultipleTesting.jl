@@ -2,7 +2,8 @@
 module Test_utils
 
 using MultipleTesting
-using Base.Test
+using Test
+using Random
 
 
 @testset "Utility functions" begin

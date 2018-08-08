@@ -166,7 +166,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:A
     if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    z = cquantile.(Normal(), pValues)
+    z = cquantile.(Ref(Normal()), pValues)
     z = sum(z) ./ sqrt(n)
     p = ccdf(Normal(), z)
     return p
@@ -180,7 +180,7 @@ function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::Stouff
     if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    z = cquantile.(Normal(), pValues) .* weights
+    z = cquantile.(Ref(Normal()), pValues) .* weights
     z = sum(z) ./ sqrt(sum(abs2, weights))
     p = ccdf(Normal(), z)
     return p
@@ -307,7 +307,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:
     if rank < 1 || rank > n
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
-    p_rank = select(pValues, rank) # faster than `sort(pValues)[rank]`
+    p_rank = partialsort(pValues, rank)
     p = cdf(Beta(rank, n-rank+1), p_rank)
     return p
 end
