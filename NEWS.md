@@ -1,5 +1,20 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.4.0
+
+### Changes
+
+#### User-facing changes
+
+- Require julia v0.7 as the minimum version, drop support for julia v0.6 
+- Describe package features in the documentation
+
+
+### Support
+
+- Requires julia 0.7
+
+
 ## Version 0.3.1
 
 ### New Features
