@@ -2,9 +2,11 @@ language: julia
 
 os:
   - linux
+  - osx
 
 julia:
   - 0.7
+  - 1.0
 
 matrix:
   fast_finish: true
