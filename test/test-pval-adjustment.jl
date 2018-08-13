@@ -3,7 +3,6 @@ module Test_pval_adjustment
 
 using MultipleTesting
 using Test
-using Random
 
 
 @testset "p-Value adjustment" begin
@@ -136,7 +135,6 @@ using Random
 
     @testset "BarberCandès #2:" begin
         for k = 1:5
-            srand(k)
             pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
             @test isapprox(adjust(pv, BarberCandes()),
                            MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
