@@ -1,5 +1,17 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.4.1
+
+### Changes
+
+- Update continuous integration configuration
+- Add support for julia v1.0
+
+### Support
+
+- Supports julia v0.7 and v1.0
+
+
 ## Version 0.4.0
 
 ### Changes

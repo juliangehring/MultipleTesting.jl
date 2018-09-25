@@ -3,7 +3,6 @@ module Test_utils
 
 using MultipleTesting
 using Test
-using Random
 
 
 @testset "Utility functions" begin
