@@ -1,5 +1,12 @@
 # MultipleTesting.jl News and Changes
 
+## Unreleased
+
+### Changes
+
+- Pin `Documenter` to v0.19 for building of the documentation (#104)
+
+
 ## Version 0.4.1
 
 ### Changes
