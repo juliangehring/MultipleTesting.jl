@@ -111,6 +111,7 @@ The `MultipleTesting` package is part of the Julia ecosphere and the latest
 release version can be installed with
 
 ```julia
+using Pkg
 Pkg.add("MultipleTesting")
 ```
 
