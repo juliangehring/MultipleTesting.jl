@@ -5,6 +5,7 @@
 
 Estimate π₀, the fraction of tests under the null hypothesis
 
+
 # Examples
 
 ```jldoctest
@@ -16,20 +17,6 @@ julia> estimate_pi0(pvals, FlatGrenander())
 0.42553191489361697
 ```
 
-```jldoctest
-julia> subtypes(Pi0Estimator)
-10-element Array{Union{DataType, UnionAll},1}:
- MultipleTesting.BUM
- MultipleTesting.CensoredBUM
- MultipleTesting.ConvexDecreasing
- MultipleTesting.FlatGrenander
- MultipleTesting.LeastSlope
- MultipleTesting.Oracle
- MultipleTesting.RightBoundary
- MultipleTesting.Storey
- MultipleTesting.StoreyBootstrap
- MultipleTesting.TwoStep
-```
 
 # See also
 
@@ -354,6 +341,7 @@ end
 
 """
 Censored Beta-Uniform Mixture (censored BUM) π₀ estimator
+
 
 # Examples
 

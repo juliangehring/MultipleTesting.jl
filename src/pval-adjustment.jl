@@ -8,6 +8,7 @@
 
 Adjustment of p-values
 
+
 # Examples
 
 ```jldoctest
@@ -17,36 +18,22 @@ julia> adjust(pvals, BenjaminiHochberg())
 4-element Array{Float64,1}:
  0.004
  0.02
- 0.04
+ 0.039999999999999994
  0.5
+
 julia> adjust(pvals, 6, BenjaminiHochberg()) # 4 out of 6 p-values
 4-element Array{Float64,1}:
  0.006
  0.03
  0.06
  0.75
+
 julia> adjust(pvals, BarberCandes())
 4-element Array{Float64,1}:
- 0.333333
- 0.333333
- 0.333333
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.3333333333333333
  1.0
-```
-
-```jldoctest
-julia> subtypes(PValueAdjustment)
-11-element Array{Union{DataType, UnionAll},1}:
- MultipleTesting.BarberCandes
- MultipleTesting.BenjaminiHochberg
- MultipleTesting.BenjaminiHochbergAdaptive
- MultipleTesting.BenjaminiLiu
- MultipleTesting.BenjaminiYekutieli
- MultipleTesting.Bonferroni
- MultipleTesting.ForwardStop
- MultipleTesting.Hochberg
- MultipleTesting.Holm
- MultipleTesting.Hommel
- MultipleTesting.Sidak
 ```
 
 
@@ -65,15 +52,14 @@ julia> subtypes(PValueAdjustment)
 [`Sidak`](@ref)
 [`ForwardStop`](@ref)
 [`BarberCandes`](@ref)
-
 """
 function adjust end
 
-function adjust(pValues::Vector{T}, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+function adjust(pValues::Vector{T}, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
     adjust(PValues(pValues), method)
 end
 
-function adjust(pValues::Vector{T}, n::Integer, method::M) where {T<:AbstractFloat, M<:PValueAdjustment}
+function adjust(pValues::Vector{T}, n::Integer, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
     adjust(PValues(pValues), n, method)
 end
 
@@ -108,14 +94,13 @@ julia> adjust(pvals, 6, Bonferroni())
 
 Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle
 probabilita (Libreria internazionale Seeber).
-
 """
 struct Bonferroni <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::Bonferroni) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Bonferroni) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::Bonferroni) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::Bonferroni) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     pAdjusted = clamp.(pValues * n, 0, 1)
@@ -138,7 +123,7 @@ julia> adjust(pvals, BenjaminiHochberg())
 4-element Array{Float64,1}:
  0.004
  0.02
- 0.04
+ 0.039999999999999994
  0.5
 
 julia> adjust(pvals, 6, BenjaminiHochberg())
@@ -155,14 +140,13 @@ julia> adjust(pvals, 6, BenjaminiHochberg())
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
-
 """
 struct BenjaminiHochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::BenjaminiHochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochberg) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochberg) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochberg) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -192,7 +176,7 @@ julia> adjust(pvals, BenjaminiHochbergAdaptive(Oracle(0.5))) # known π₀ of 0.
 4-element Array{Float64,1}:
  0.002
  0.01
- 0.02
+ 0.019999999999999997
  0.25
 
 julia> adjust(pvals, BenjaminiHochbergAdaptive(StoreyBootstrap())) # π₀ estimator
@@ -216,7 +200,6 @@ julia> adjust(pvals, 6, BenjaminiHochbergAdaptive(StoreyBootstrap()))
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
-
 """
 struct BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
@@ -227,9 +210,9 @@ BenjaminiHochbergAdaptive(π0::AbstractFloat) = BenjaminiHochbergAdaptive(Oracle
 
 BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 
-adjust(pValues::PValues{T}, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiHochbergAdaptive) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochbergAdaptive) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochbergAdaptive) where T <: AbstractFloat
     π0 = estimate_pi0(pValues, method.pi0estimator)
     pAdjusted = adjust(pValues, n, BenjaminiHochberg()) * π0
     return pAdjusted
@@ -249,16 +232,16 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> adjust(pvals, BenjaminiYekutieli())
 4-element Array{Float64,1}:
- 0.00833333
- 0.0416667
- 0.0833333
+ 0.00833333333333334
+ 0.0416666666666667
+ 0.0833333333333334
  1.0
 
 julia> adjust(pvals, 6, BenjaminiYekutieli())
 4-element Array{Float64,1}:
- 0.0147
- 0.0735
- 0.147
+ 0.01470000000000001
+ 0.07350000000000005
+ 0.14700000000000008
  1.0
 ```
 
@@ -267,14 +250,13 @@ julia> adjust(pvals, 6, BenjaminiYekutieli())
 
 Benjamini, Y., and Yekutieli, D. (2001). The Control of the False Discovery Rate
 in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
-
 """
 struct BenjaminiYekutieli <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::BenjaminiYekutieli) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiYekutieli) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiYekutieli) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiYekutieli) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -302,16 +284,16 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> adjust(pvals, BenjaminiLiu())
 4-element Array{Float64,1}:
- 0.003994
- 0.0222757
- 0.02955
+ 0.003994003998999962
+ 0.022275749999999983
+ 0.02955000000000002
  0.125
 
 julia> adjust(pvals, 6, BenjaminiLiu())
 4-element Array{Float64,1}:
- 0.00598502
- 0.0408416
- 0.0764715
+ 0.0059850199850060015
+ 0.04084162508333341
+ 0.07647146000000005
  0.4375
 ```
 
@@ -321,14 +303,13 @@ julia> adjust(pvals, 6, BenjaminiLiu())
 Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
 procedure that controls the false discovery rate under independence. Journal of
 Statistical Planning and Inference 82, 163–170.
-
 """
 struct BenjaminiLiu <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::BenjaminiLiu) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::BenjaminiLiu) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if n <= 1
@@ -339,7 +320,7 @@ function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T<:
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n .- (1:k) .+ 1
-    pAdjusted = (1 .- (1 .- pAdjusted) .^ s) .* s ./ n
+    pAdjusted = (1 .- (1 .- pAdjusted).^s) .* s ./ n
     stepdown!(pAdjusted)
     pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
     return pAdjusted
@@ -377,14 +358,13 @@ julia> adjust(pvals, 6, Hochberg())
 
 Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of
 significance. Biometrika 75, 800–802.
-
 """
 struct Hochberg <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::Hochberg) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hochberg) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::Hochberg) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::Hochberg) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
@@ -430,17 +410,16 @@ julia> adjust(pvals, 6, Holm())
 
 Holm, S. (1979). A Simple Sequentially Rejective Multiple Test Procedure.
 Scandinavian Journal of Statistics 6, 65–70.
-
 """
 struct Holm <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::Holm) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Holm) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
-    if n <= 1
+        if n <= 1
         return pValues
     end
     sortedOrder, originalOrder = reorder(pValues)
@@ -456,6 +435,7 @@ end
 
 """
 Hommel adjustment
+
 
 # Examples
 
@@ -482,30 +462,29 @@ julia> adjust(pvals, 6, Hommel())
 
 Hommel, G. (1988). A stagewise rejective multiple test procedure based on a
 modified Bonferroni test. Biometrika 75, 383–386.
-
 """
 struct Hommel <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::Hommel) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Hommel) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     if k <= 1
         return pValues
     end
     sortedOrder, originalOrder = reorder(pValues)
-    pAdjusted = vcat(pValues[sortedOrder], fill(one(T), n-k))
-    lower = n * minimum(pAdjusted./(1:n))
+    pAdjusted = vcat(pValues[sortedOrder], fill(one(T), n - k))
+    lower = n * minimum(pAdjusted ./ (1:n))
     q = fill(lower, n)
     pa = fill(lower, n)
-    for j in (n-1):-1:2
-        idx_left = 1:(n-j+1)
-        idx_right = (n-j+2):n
-        q_right = minimum(view(pAdjusted, idx_right)./(2:j))
+    for j in (n - 1):-1:2
+        idx_left = 1:(n - j + 1)
+        idx_right = (n - j + 2):n
+        q_right = minimum(view(pAdjusted, idx_right) ./ (2:j))
         q[idx_left] .= j .* min.(view(pAdjusted, idx_left), q_right)
-        q[idx_right] .= q[n-j+1]
+        q[idx_right] .= q[n - j + 1]
         pa .= max.(pa, q)
     end
     pAdjusted = max.(pa[originalOrder], pValues)
@@ -526,16 +505,16 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> adjust(pvals, Sidak())
 4-element Array{Float64,1}:
- 0.003994
- 0.039404
- 0.114707
+ 0.003994003998999962
+ 0.039403990000000055
+ 0.11470719000000007
  0.9375
 
 julia> adjust(pvals, 6, Sidak())
 4-element Array{Float64,1}:
- 0.00598502
- 0.0585199
- 0.167028
+ 0.0059850199850060015
+ 0.058519850599
+ 0.1670279950710002
  0.984375
 ```
 
@@ -545,14 +524,13 @@ julia> adjust(pvals, 6, Sidak())
 Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate
 Normal Distributions. Journal of the American Statistical Association 62,
 626–633.
-
 """
 struct Sidak <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::Sidak) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::Sidak) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::Sidak) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::Sidak) where T <: AbstractFloat
     check_number_tests(length(pValues), n)
     pAdjusted = clamp.(1 .- (1 .- pValues).^n, 0, 1)
     return pAdjusted
@@ -572,17 +550,17 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> adjust(pvals, ForwardStop())
 4-element Array{Float64,1}:
- 0.0010005
- 0.00552542
- 0.0138367
- 0.183664
+ 0.0010005003335835344
+ 0.005525418093542492
+ 0.013836681223931188
+ 0.1836643060579347
 
 julia> adjust(pvals, 6, ForwardStop())
 4-element Array{Float64,1}:
- 0.0010005
- 0.00552542
- 0.0138367
- 0.183664
+ 0.0010005003335835344
+ 0.005525418093542492
+ 0.013836681223931188
+ 0.1836643060579347
 ```
 
 
@@ -591,14 +569,13 @@ julia> adjust(pvals, 6, ForwardStop())
 G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential
 selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
 423–444.
-
 """
 struct ForwardStop <: PValueAdjustment
 end
 
-adjust(pValues::PValues{T}, method::ForwardStop) where T<:AbstractFloat = adjust(pValues, length(pValues), method)
+adjust(pValues::PValues{T}, method::ForwardStop) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
-function adjust(pValues::PValues{T}, n::Integer, method::ForwardStop) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, n::Integer, method::ForwardStop) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
     sortedOrder, originalOrder = reorder(pValues)
@@ -623,9 +600,9 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> adjust(pvals, BarberCandes())
 4-element Array{Float64,1}:
- 0.333333
- 0.333333
- 0.333333
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.3333333333333333
  1.0
 ```
 
@@ -637,19 +614,18 @@ knockoffs. Ann. Statist. 43, 2055–2085.
 
 Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
 Electron. J. Statist. 11, 1983–2001.
-
 """
 struct BarberCandes <: PValueAdjustment
 end
 
-function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloat
+function adjust(pValues::PValues{T}, method::BarberCandes) where T <: AbstractFloat
     n = length(pValues)
     # special cases unlike other p-adjust methods
     if n <= 1
-        return fill(1.0, size(pValues))
+    return fill(1.0, size(pValues))
     end
     if maximum(pValues) < 0.5
-        return fill(1/n, size(pValues))
+        return fill(1 / n, size(pValues))
     end
 
     sorted_indexes, original_order = reorder(pValues)
@@ -663,18 +639,18 @@ function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloa
 
     while left_pv < 0.5
         while (1 - right_pv <= left_pv) && (right_pv >= 0.5) && (Vt + Rt <= n)
-            estimated_fdrs[n-Vt+1] = 1.0
-            right_pv = estimated_fdrs[n-Vt]
+            estimated_fdrs[n - Vt + 1] = 1.0
+            right_pv = estimated_fdrs[n - Vt]
             Vt += 1
         end
-        estimated_fdrs[Rt] = Vt/Rt
+        estimated_fdrs[Rt] = Vt / Rt
         Rt += 1
         left_pv = estimated_fdrs[Rt]
     end
 
-    while (right_pv >= 0.5) && (Vt + Rt <= n+1)
-      estimated_fdrs[n-Vt+1] = 1.0
-      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n-Vt] : 0.0
+    while (right_pv >= 0.5) && (Vt + Rt <= n + 1)
+      estimated_fdrs[n - Vt + 1] = 1.0
+      right_pv = (Vt + Rt <= n) ? estimated_fdrs[n - Vt] : 0.0
       Vt += 1
     end
 
@@ -684,16 +660,16 @@ function adjust(pValues::PValues{T}, method::BarberCandes) where T<:AbstractFloa
 end
 
 # as test, inefficient implementation
-function barber_candes_brute_force(pValues::AbstractVector{T}) where T<:AbstractFloat
+function barber_candes_brute_force(pValues::AbstractVector{T}) where T <: AbstractFloat
     n = length(pValues)
     sorted_indexes, original_order = reorder(pValues)
     sorted_pValues = pValues[sorted_indexes]
     estimated_fdrs = fill(1.0, size(pValues))
-    for (i,pv) in enumerate(sorted_pValues)
+    for (i, pv) in enumerate(sorted_pValues)
         if pv >= 0.5
             break
         else
-            estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1)/i
+            estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1) / i
         end
     end
     stepup!(estimated_fdrs)
@@ -706,13 +682,13 @@ end
 
 # step-up / step-down
 
-function stepup!(values::AbstractVector{T}) where T<:AbstractFloat
+function stepup!(values::AbstractVector{T}) where T <: AbstractFloat
     accumulate!(min, values, reverse!(values))
     reverse!(values)
     return values
 end
 
-function stepdown!(values::AbstractVector{T}) where T<:AbstractFloat
+function stepdown!(values::AbstractVector{T}) where T <: AbstractFloat
     accumulate!(max, values, values)
     return values
 end
@@ -726,4 +702,4 @@ function check_number_tests(k::Integer, n::Integer)
 end
 
 
-harmonic_number(n::Integer) =  digamma(n+1) + MathConstants.γ
+harmonic_number(n::Integer) =  digamma(n + 1) + MathConstants.γ

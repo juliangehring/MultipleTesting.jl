@@ -5,6 +5,7 @@
 
 Combine p-values
 
+
 # Examples
 
 ```jldoctest
@@ -16,23 +17,18 @@ julia> combine(pvals, StoufferCombination())
 0.007098326181265917
 ```
 
-```jldoctest
-julia> subtypes(PValueCombination)
-7-element Array{Union{DataType, UnionAll},1}:
- MultipleTesting.FisherCombination
- MultipleTesting.LogitCombination
- MultipleTesting.MinimumCombination
- MultipleTesting.SimesCombination
- MultipleTesting.StoufferCombination
- MultipleTesting.TippettCombination
- MultipleTesting.WilkinsonCombination
-```
 
 # See also
 
 `PValueCombination`s:
 
-[`FisherCombination`](@ref) [`LogitCombination`](@ref) [`StoufferCombination`](@ref) [`TippettCombination`](@ref) [`SimesCombination`](@ref) [`WilkinsonCombination`](@ref) [`MinimumCombination`](@ref)
+[`FisherCombination`](@ref)
+[`LogitCombination`](@ref)
+[`StoufferCombination`](@ref)
+[`TippettCombination`](@ref)
+[`SimesCombination`](@ref)
+[`WilkinsonCombination`](@ref)
+[`MinimumCombination`](@ref)
 
 """
 function combine end
