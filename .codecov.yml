@@ -12,7 +12,7 @@ coverage:
   round: down
   status:
     changes: false
-    patch: true
+    patch: false
     project: false
 
 parsers:
