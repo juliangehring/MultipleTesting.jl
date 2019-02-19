@@ -1,15 +1,13 @@
 using Documenter
 using MultipleTesting
 
-makedocs(
-    modules = [MultipleTesting],
-    format = :html,
+makedocs(modules = [MultipleTesting],
     sitename = "MultipleTesting.jl",
+    format = Documenter.HTML(disable_git = true,  # disable source and edit links to github
+        canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/"),
     doctest = true,
     checkdocs = :exports,
     linkcheck = true,
-    html_disable_git = true, # disable source and edit links to github
-    html_canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/",
     pages = [
         "Home" => "index.md",
         "Library" => Any[
@@ -19,13 +17,6 @@ makedocs(
             "higher-criticism.md",
             "models.md",
         ]
-    ]
-)
+    ])
 
-deploydocs(
-    repo = "github.com/juliangehring/MultipleTesting.jl.git",
-    julia = "0.7",
-    target = "build",
-    deps   = nothing,
-    make   = nothing
-)
+deploydocs(repo = "github.com/juliangehring/MultipleTesting.jl.git")

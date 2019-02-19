@@ -11,10 +11,10 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> estimate(pvals, HigherCriticismScores())
 4-element Array{Float64,1}:
- 1.15008
+ 1.1500817362257345
  1.96
- 3.32554
- 2.3094
+ 3.3255375505322444
+ 2.3094010767584976
 
 ```
 

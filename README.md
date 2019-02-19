@@ -111,6 +111,7 @@ The `MultipleTesting` package is part of the Julia ecosphere and the latest
 release version can be installed with
 
 ```julia
+using Pkg
 Pkg.add("MultipleTesting")
 ```
 
@@ -131,10 +132,6 @@ requests or issues with your questions or ideas.
 
 [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
 
-[![Package Status](https://pkg.julialang.org/badges/MultipleTesting_0.6.svg)](https://pkg.julialang.org/?pkg=MultipleTesting)
-
-[![Linux/Mac Build Status](https://travis-ci.org/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.org/juliangehring/MultipleTesting.jl)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/1ld0ppptisirryt1/branch/master?svg=true)](https://ci.appveyor.com/project/juliangehring/multipletesting-jl/branch/master)
-[![Coverage Status](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
+[![Linux/Mac Build Status](https://travis-ci.com/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.com/juliangehring/MultipleTesting.jl)
 
 The package uses [semantic versioning](https://semver.org/).

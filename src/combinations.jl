@@ -5,6 +5,7 @@
 
 Combine p-values
 
+
 # Examples
 
 ```jldoctest
@@ -16,23 +17,18 @@ julia> combine(pvals, StoufferCombination())
 0.007098326181265917
 ```
 
-```jldoctest
-julia> subtypes(PValueCombination)
-7-element Array{Union{DataType, UnionAll},1}:
- MultipleTesting.FisherCombination
- MultipleTesting.LogitCombination
- MultipleTesting.MinimumCombination
- MultipleTesting.SimesCombination
- MultipleTesting.StoufferCombination
- MultipleTesting.TippettCombination
- MultipleTesting.WilkinsonCombination
-```
 
 # See also
 
 `PValueCombination`s:
 
-[`FisherCombination`](@ref) [`LogitCombination`](@ref) [`StoufferCombination`](@ref) [`TippettCombination`](@ref) [`SimesCombination`](@ref) [`WilkinsonCombination`](@ref) [`MinimumCombination`](@ref)
+[`FisherCombination`](@ref)
+[`LogitCombination`](@ref)
+[`StoufferCombination`](@ref)
+[`TippettCombination`](@ref)
+[`SimesCombination`](@ref)
+[`WilkinsonCombination`](@ref)
+[`MinimumCombination`](@ref)
 
 """
 function combine end
@@ -77,7 +73,7 @@ function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:Abs
         return NaN
     end
     x = -2 * sum(log.(pValues))
-    p = ccdf(Chisq(2n), x)
+    p = ccdf(Chisq(2n), Float64(x))
     return p
 end
 
@@ -308,7 +304,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
     p_rank = partialsort(pValues, rank)
-    p = cdf(Beta(rank, n-rank+1), p_rank)
+    p = cdf(Beta(rank, n-rank+1), Float64(p_rank))
     return p
 end
 
