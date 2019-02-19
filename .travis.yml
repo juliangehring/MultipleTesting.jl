@@ -19,7 +19,7 @@ notifications:
     on_success: never
     on_failure: change
 
-codecov: true
+codecov: false
 
 jobs:
   include:
