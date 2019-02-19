@@ -73,7 +73,7 @@ function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:Abs
         return NaN
     end
     x = -2 * sum(log.(pValues))
-    p = ccdf(Chisq(2n), x)
+    p = ccdf(Chisq(2n), Float64(x))
     return p
 end
 
@@ -304,7 +304,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
     p_rank = partialsort(pValues, rank)
-    p = cdf(Beta(rank, n-rank+1), p_rank)
+    p = cdf(Beta(rank, n-rank+1), Float64(p_rank))
     return p
 end
 
