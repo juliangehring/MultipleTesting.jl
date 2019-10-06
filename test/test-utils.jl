@@ -83,7 +83,7 @@ using Test
         n = 20
         xs = sort(rand(n)) # sorted
         xr = reverse(xs) # reverse sorted
-        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
 
         unsort = MultipleTesting.unsort
@@ -108,7 +108,7 @@ using Test
         n = 20
         xs = sort(rand(n)) # sorted
         xr = reverse(xs) # reverse sorted
-        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
 
         unorder = MultipleTesting.unorder
@@ -146,7 +146,7 @@ using Test
             max_d = max(abs(hn1 - hn2), max_d)
         end
         # approximation error in the range of floating point inaccuracy
-        @test max_d < (10*eps())
+        @test max_d < (10 * eps())
 
     end
 

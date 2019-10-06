@@ -30,7 +30,7 @@ using Test
         pv = [0.1, 0.2, 0.5, 0.6, 0.9]
         p, f, F = MultipleTesting.grenander(pv)
         @test p ≈ pv
-        @test f ≈ [2.0, 1.0, 1.0, 2/3, 2/3]
+        @test f ≈ [2.0, 1.0, 1.0, 2 / 3, 2 / 3]
         @test F ≈ [0.2, 0.4, 0.7, 0.8, 1.0]
 
     end

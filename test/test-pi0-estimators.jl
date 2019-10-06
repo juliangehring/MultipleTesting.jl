@@ -10,7 +10,7 @@ using StatsBase
 
     ## test case: deterministic
     p0 = collect(0.01:0.01:1)
-    p1 = p0 .^ 10
+    p1 = p0.^10
     p = [p0; p1] ## unsorted
     pi0 = length(p0) / length(p)
 
@@ -73,9 +73,9 @@ using StatsBase
         @test typeof(LeastSlope()) <: Pi0Estimator
 
         ## checked against structSSI::pi0.lsl
-        @test isapprox( estimate_pi0(p, LeastSlope()), 0.62, atol = 1e-2 )
-        @test isapprox( estimate_pi0(p0, LeastSlope()), 1.0, atol = 1e-2 )
-        @test isapprox( estimate_pi0(p1, LeastSlope()), 0.16, atol = 1e-2 )
+        @test isapprox(estimate_pi0(p, LeastSlope()), 0.62, atol = 1e-2)
+        @test isapprox(estimate_pi0(p0, LeastSlope()), 1.0, atol = 1e-2)
+        @test isapprox(estimate_pi0(p1, LeastSlope()), 0.16, atol = 1e-2)
 
         ## check against internal reference implementation
         @test estimate_pi0(p, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p)
@@ -87,12 +87,12 @@ using StatsBase
         ## unsorted p-values
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test isapprox( estimate_pi0(p_unsort, LeastSlope()), 0.62, atol = 1e-2 )
+        @test isapprox(estimate_pi0(p_unsort, LeastSlope()), 0.62, atol = 1e-2)
         @test !issorted(p_unsort)
 
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test isapprox( MultipleTesting.lsl_pi0_vec(p_unsort), 0.62, atol = 1e-2 )
+        @test isapprox(MultipleTesting.lsl_pi0_vec(p_unsort), 0.62, atol = 1e-2)
         @test !issorted(p_unsort)
 
     end
@@ -154,9 +154,9 @@ using StatsBase
         @test typeof(RightBoundary(lambdas)) <: Pi0Estimator
 
         # only eps because pi0 package uses right closed histograms
-        @test isapprox( estimate_pi0(p, RightBoundary(lambdas)), 0.5714286, atol = 0.02 )
+        @test isapprox(estimate_pi0(p, RightBoundary(lambdas)), 0.5714286, atol = 0.02)
         @test estimate_pi0(p0, RightBoundary(lambdas)) ≈ 1.0
-        @test isapprox( estimate_pi0(p1, RightBoundary(lambdas)), 0.1428571, atol = 1e-7 )
+        @test isapprox(estimate_pi0(p1, RightBoundary(lambdas)), 0.1428571, atol = 1e-7)
 
         @test estimate_pi0(p, RightBoundary(lambdas)) ≈ estimate_pi0(p, RightBoundary(unsort(lambdas)))
 
@@ -165,7 +165,7 @@ using StatsBase
 
         p_unsort = unsort(p1)
         @test !issorted(p_unsort)
-        @test isapprox( estimate_pi0(p_unsort, RightBoundary(lambdas)), 0.1428571, atol = 1e-7 )
+        @test isapprox(estimate_pi0(p_unsort, RightBoundary(lambdas)), 0.1428571, atol = 1e-7)
         @test !issorted(p_unsort)
 
     end
@@ -176,9 +176,9 @@ using StatsBase
         @test typeof(CensoredBUM()) <: Pi0Estimator
         @test typeof(CensoredBUM(0.2, 0.1)) <: Pi0Estimator
 
-        @test isapprox( estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5 )
-        @test isapprox( estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5 )
-        @test isapprox( estimate_pi0(p1, CensoredBUM()), 0.11608, atol = 2e-5 )
+        @test isapprox(estimate_pi0(p, CensoredBUM()), 0.55797, atol = 1e-5)
+        @test isapprox(estimate_pi0(p0, CensoredBUM()), 1.0, atol = 1e-5)
+        @test isapprox(estimate_pi0(p1, CensoredBUM()), 0.11608, atol = 2e-5)
 
         # test against internal reference implementation
         # p0 case is not handled well by naive implementation
@@ -199,17 +199,17 @@ using StatsBase
 
         f = fit(CensoredBUM(), p)
         @test typeof(f) <: CensoredBUMFit
-        @test isapprox( f.π0, 0.55797, atol = 1e-5 )
+        @test isapprox(f.π0, 0.55797, atol = 1e-5)
 
         # denominator becomes 0 if all p-values are 1
-        @test isnan( estimate_pi0(ones(20), CensoredBUM()) )
+        @test isnan(estimate_pi0(ones(20), CensoredBUM()))
 
         pi0_est, pars, is_converged = MultipleTesting.cbum_pi0(ones(20))
-        @test isnan( pi0_est )
+        @test isnan(pi0_est)
         @test !is_converged
 
         pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(20))
-        @test isnan( pi0_est )
+        @test isnan(pi0_est)
         @test !is_converged
 
     end
@@ -217,10 +217,10 @@ using StatsBase
 
     @testset "BUM π₀" begin
 
-        @test isapprox( estimate_pi0(p, BUM(0.5)), 0.55528, atol = 1e-5 )
-        @test isapprox( estimate_pi0(p, BUM()), 0.55528, atol = 1e-5 )
-        @test isapprox( estimate_pi0(p0, BUM()), 1.0, atol = 1e-5 )
-        @test isapprox( estimate_pi0(p1, BUM()), 0.10874, atol = 1e-5 )
+        @test isapprox(estimate_pi0(p, BUM(0.5)), 0.55528, atol = 1e-5)
+        @test isapprox(estimate_pi0(p, BUM()), 0.55528, atol = 1e-5)
+        @test isapprox(estimate_pi0(p0, BUM()), 1.0, atol = 1e-5)
+        @test isapprox(estimate_pi0(p1, BUM()), 0.10874, atol = 1e-5)
 
         ## test case that does not converge
         @test isnan(estimate_pi0(p, BUM(0.5, 1e-6, 2)))
@@ -243,8 +243,8 @@ using StatsBase
 
         # no reference values from literature/software available
         @test estimate_pi0(p0, FlatGrenander()) ≈ 1.0
-        @test isapprox( estimate_pi0(p1, FlatGrenander()), 0.10458, atol = 1e-4 )
-        @test isapprox( estimate_pi0(p, FlatGrenander()), pi0, atol = 0.1)
+        @test isapprox(estimate_pi0(p1, FlatGrenander()), 0.10458, atol = 1e-4)
+        @test isapprox(estimate_pi0(p, FlatGrenander()), pi0, atol = 0.1)
 
         ## longest constant interval: low level
         lci = MultipleTesting.longest_constant_interval
@@ -278,11 +278,11 @@ using StatsBase
         @test typeof(ConvexDecreasing()) <: Pi0Estimator
         @test typeof(ConvexDecreasing(100, 1e-6, 1000)) <: Pi0Estimator
 
-        @test isapprox( estimate_pi0(p, ConvexDecreasing()), 0.5739054, atol = 1e-4)
-        @test isapprox( estimate_pi0(p0, ConvexDecreasing()), 1.0, atol = 1e-6 )
-        @test isapprox( estimate_pi0(p1, ConvexDecreasing()), 0.1323284, atol = 1e-3)
+        @test isapprox(estimate_pi0(p, ConvexDecreasing()), 0.5739054, atol = 1e-4)
+        @test isapprox(estimate_pi0(p0, ConvexDecreasing()), 1.0, atol = 1e-6)
+        @test isapprox(estimate_pi0(p1, ConvexDecreasing()), 0.1323284, atol = 1e-3)
 
-        @test isapprox( estimate_pi0(ones(20), ConvexDecreasing()), 1.0, atol = 1e-6 )
+        @test isapprox(estimate_pi0(ones(20), ConvexDecreasing()), 1.0, atol = 1e-6)
 
         ## test case that does not converge
         @test isnan(estimate_pi0(p, ConvexDecreasing(100, 1e-6, 2)))
@@ -294,7 +294,7 @@ using StatsBase
 
         f = fit(ConvexDecreasing(), p)
         @test typeof(f) <: ConvexDecreasingFit
-        @test isapprox( f.π0, 0.5739054, atol = 1e-4 )
+        @test isapprox(f.π0, 0.5739054, atol = 1e-4)
 
     end
 
