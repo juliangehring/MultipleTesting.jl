@@ -1,5 +1,7 @@
 name = "MultipleTesting"
 uuid = "f8716d33-7c4a-5097-896f-ce0ecbd3ef6b"
+license = "MIT"
+authors = "Julian Gehring"
 repository = "https://github.com/juliangehring/MultipleTesting.jl"
 version = "0.4.1"
 
