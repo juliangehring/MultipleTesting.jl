@@ -36,7 +36,7 @@ julia> estimate_pi0(pvals, FlatGrenander())
 """
 function estimate_pi0 end
 
-function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T<:AbstractFloat, M<:Pi0Estimator}
+function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T <: AbstractFloat,M <: Pi0Estimator}
     estimate_pi0(PValues(pValues), method)
 end
 
@@ -79,7 +79,7 @@ end
 
 Storey() = Storey(0.1)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T <: AbstractFloat
     lambda = pi0estimator.λ
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
     pi0 = clamp(pi0, 0, 1)
@@ -119,7 +119,7 @@ Series B (Statistical Methodology) 66, 187–205.
 """
 struct StoreyBootstrap <: Pi0Estimator
     λseq::Vector{Float64}
-    q   ::Float64
+    q::Float64
 
     function StoreyBootstrap(λseq, q)
         isin(λseq, 0, 1) || throw(DomainError("λseq must be in [0, 1]"))
@@ -130,14 +130,14 @@ end
 
 StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T <: AbstractFloat
     lambdas = pi0estimator.λseq
     q = pi0estimator.q
     n = length(pValues)
     w = [sum(pValues .>= l) for l in lambdas]  # TODO: check if >= or >
     pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
-    mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w/n) + (pi0 .- min_pi0).^2
+    mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w / n) + (pi0 .- min_pi0).^2
     pi0 = clamp(pi0[argmin(mse)], 0, 1)
     return pi0
 end
@@ -169,7 +169,7 @@ Educational and Behavioral Statistics 25, 60–83.
 struct LeastSlope <: Pi0Estimator
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T <: AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
@@ -182,24 +182,24 @@ function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T<:Ab
         end
         s0 = s1
     end
-    pi0 = min( 1/sx + 1, n ) / n
+    pi0 = min(1 / sx + 1, n) / n
     return pi0
 end
 
-function lsl_slope(i::Integer, n::Integer, pValue::AbstractVector{T}) where T<:AbstractFloat
+function lsl_slope(i::Integer, n::Integer, pValue::AbstractVector{T}) where T <: AbstractFloat
     s = (1 - pValue[i]) / (n - i + 1)
     return s
 end
 
 # alternative, vectorized version
 # used for comparison and compactness
-function lsl_pi0_vec(pValues::AbstractVector{T}) where T<:AbstractFloat
+function lsl_pi0_vec(pValues::AbstractVector{T}) where T <: AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s = (1 .- pValues) ./ (n:-1:1)
     d = diff(s) .< 0
     idx = something(findfirst(d), 0) + 1
-    pi0 = min( 1/s[idx] + 1, n ) / n
+    pi0 = min(1 / s[idx] + 1, n) / n
     return pi0
 end
 
@@ -230,7 +230,7 @@ end
 
 Oracle() = Oracle(1.0)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::Oracle) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::Oracle) where T <: AbstractFloat
     pi0estimator.π0
 end
 
@@ -267,7 +267,7 @@ struct TwoStep <: Pi0Estimator
 
     function TwoStep(α, method)
         isin(α, 0, 1) || throw(DomainError("α must be in [0, 1]"))
-        return new(α, method)
+    return new(α, method)
     end
 end
 
@@ -275,10 +275,10 @@ TwoStep() = TwoStep(0.05)
 
 TwoStep(α) = TwoStep(α, BenjaminiHochberg())
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T <: AbstractFloat
     alpha = pi0estimator.α
     padj = adjust(pValues, pi0estimator.adjustment)
-    pi0 = sum(padj .>= (alpha/(1+alpha))) / length(padj)
+    pi0 = sum(padj .>= (alpha / (1 + alpha))) / length(padj)
     return pi0
 end
 
@@ -321,14 +321,14 @@ end
 # λseq used in Liang, Nettleton 2012
 RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T <: AbstractFloat
     n = length(pValues)
     λseq = sort_if_needed(pi0estimator.λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
-    h = fit(Histogram, pValues, [λseq; Inf], closed=:left)
-    pi0_estimates = reverse(cumsum(reverse(h.weights)))./(1 .- λseq)./n
+    h = fit(Histogram, pValues, [λseq; Inf], closed = :left)
+    pi0_estimates = reverse(cumsum(reverse(h.weights))) ./ (1 .- λseq) ./ n
     pi0_decrease = diff(pi0_estimates) .>= 0
     pi0_decrease[end] = true
     pi0 = pi0_estimates[something(findfirst(pi0_decrease), 0) + 1]
@@ -385,14 +385,14 @@ struct CensoredBUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::CensoredBUM, pValues::AbstractVector{T}; kw...) where T<:AbstractFloat
+function fit(pi0estimator::CensoredBUM, pValues::AbstractVector{T}; kw...) where T <: AbstractFloat
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, pi0estimator.λ,
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
     return CensoredBUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::CensoredBUM) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::CensoredBUM) where T <: AbstractFloat
     estimate_pi0(fit(pi0estimator, pValues))
 end
 
@@ -403,31 +403,31 @@ end
 
 function cbum_pi0(pValues::AbstractVector{T},
                   γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                  xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T<:AbstractFloat
+                  xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T <: AbstractFloat
     n = length(pValues)
     idx_right = pValues .>= λ
     n2 = sum(idx_right)
     n1 = n - n2
-    sz = (1-γ0)*n
-    szr = (1-γ0)*n2
+    sz = (1 - γ0) * n
+    szr = (1 - γ0) * n2
     szl = sz - szr
     pr = pValues[idx_right]
     lpr = log.(pr)
     ll = log(λ)
-    zr = fill(1-γ0, n2)
+    zr = fill(1 - γ0, n2)
     pi0_old = γ0 = α = γ = Inf
     for i in 1:maxiter
-        γ = 1 - sz/n
+        γ = 1 - sz / n
         α = -szr / ( ll * szl + sum(zr .* lpr) )
         γ = clamp(γ, 0, 1)
         α = clamp(α, 0, 1)
-        xl = (1-γ) * (λ^α)
-        szl = (xl ./ (γ*λ + xl)) * n1
-        xr = (1-γ) * α * pr.^(α-1)
+        xl = (1 - γ) * (λ^α)
+        szl = (xl ./ (γ * λ + xl)) * n1
+        xr = (1 - γ) * α * pr.^(α - 1)
         zr = xr ./ (γ .+ xr)
         szr = sum(zr)
         sz = szl + szr
-        pi0_new = γ + (1-γ)*α
+        pi0_new = γ + (1 - γ) * α
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, [γ, α], true
         end
@@ -439,9 +439,9 @@ end
 
 function cbum_pi0_naive(pValues::AbstractVector{T},
                         γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                        xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T<:AbstractFloat
+                        xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T <: AbstractFloat
     n = length(pValues)
-    z = fill(1-γ0, n)
+    z = fill(1 - γ0, n)
     idx_left = pValues .< λ
     idx_right = .!idx_left
     pi0_old = γ0 = α = γ = Inf
@@ -452,11 +452,11 @@ function cbum_pi0_naive(pValues::AbstractVector{T},
         γ = sum(1 .- z) / n
         α = -sum(z[idx_right])
         α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
-        xl = (1-γ) * (λ^α)
-        z[idx_left] .= xl / (γ*λ + xl)
-        xr = (1-γ) * α * pValues[idx_right].^(α-1)
+        xl = (1 - γ) * (λ^α)
+        z[idx_left] .= xl / (γ * λ + xl)
+        xr = (1 - γ) * α * pValues[idx_right].^(α - 1)
         z[idx_right] = xr ./ (γ .+ xr)
-        pi0_new = γ + (1-γ)*α
+        pi0_new = γ + (1 - γ) * α
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, [γ, α], true
         end
@@ -514,18 +514,18 @@ struct BUMFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::BUM, pValues::AbstractVector{T}; kw...) where T<:AbstractFloat
+function fit(pi0estimator::BUM, pValues::AbstractVector{T}; kw...) where T <: AbstractFloat
     π0, param, is_converged = cbum_pi0(pValues, pi0estimator.γ0, eps(),
                                        pi0estimator.xtol, pi0estimator.maxiter;
                                        kw...)
     return BUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::BUM) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::BUM) where T <: AbstractFloat
     estimate_pi0(fit(pi0estimator, pValues))
 end
 
-function estimate_pi0(pi0fit::BUMFit)
+    function estimate_pi0(pi0fit::BUMFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -560,27 +560,27 @@ Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 struct FlatGrenander <: Pi0Estimator
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::FlatGrenander) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::FlatGrenander) where T <: AbstractFloat
     p, f, F = grenander(pValues)
     pi0 = longest_constant_interval(p, f)
     return pi0
 end
 
-function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) where T<:AbstractFloat
+function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) where T <: AbstractFloat
     p = [0.0; p]
     f = [Inf; f]
     i2 = length(f)
     Δp_max = Δp = 0.0
     pi0 = 1
-    for i1 in (length(f)-1):-1:1
+    for i1 in (length(f) - 1):-1:1
         if f[i2] ≈ f[i1] # within constant interval
             Δp = p[i2] - p[i1]
         else
             if Δp >= Δp_max
-                Δp_max = Δp
+            Δp_max = Δp
                 pi0 = f[i2]
-            end
-            i2 = i1
+        end
+        i2 = i1
             Δp = 0.0
         end
         if f[i1] > 1
@@ -636,7 +636,7 @@ struct ConvexDecreasingFit <: Pi0Fit
     is_converged::Bool
 end
 
-function fit(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T}) where T<:AbstractFloat
+function fit(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T}) where T <: AbstractFloat
     π0, param, is_converged = convex_decreasing(pValues,
                                                 pi0estimator.gridsize,
                                                 pi0estimator.xtol,
@@ -644,11 +644,11 @@ function fit(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T}) where T
     return ConvexDecreasingFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::ConvexDecreasing) where T<:AbstractFloat
+function estimate_pi0(pValues::PValues{T}, pi0estimator::ConvexDecreasing) where T <: AbstractFloat
     estimate_pi0(fit(pi0estimator, pValues))
 end
 
-function estimate_pi0(pi0fit::ConvexDecreasingFit)
+    function estimate_pi0(pi0fit::ConvexDecreasingFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -656,32 +656,32 @@ end
 function convex_decreasing(pValues::AbstractVector{T},
                            gridsize::Integer = 100,
                            xtol::AbstractFloat = 1e-5,
-                           maxiter::Integer = 10000) where T<:AbstractFloat
+                           maxiter::Integer = 10000) where T <: AbstractFloat
 
     n = length(pValues)
     p = sort(pValues)
     dx = 1 / gridsize
     t = collect(dx:dx:1)
     x = collect(0:dx:1)
-    f = fill(one(T), gridsize+1)
+    f = fill(one(T), gridsize + 1)
     f_p = fill(one(T), n)
     theta = dx * find_theta(t, p)
     f_theta = triangular_weighting(x, theta)
     f_theta_p = triangular_weighting(p, theta)
     idx_lower = round.(Int, round.(gridsize .* p, RoundDown) .+ 1)
-    p_upper = round.(gridsize .* p, RoundUp)/gridsize
+    p_upper = round.(gridsize .* p, RoundUp) / gridsize
     idx_upper = round.(Int, gridsize .* p_upper) .+ 1
     px = p_upper .- p
     thetas = T[]
-    pi0_new = pi0_old = Inf
+        pi0_new = pi0_old = Inf
     for j in 1:maxiter
-        if sum((f_p.-f_theta_p)./f_p) > 0
+        if sum((f_p .- f_theta_p) ./ f_p) > 0
             ε = 0.0
-        else
+            else
             l = 0.0
             u = 1
-            while abs(u-l) > xtol
-                ε = (l+u)/2.0
+            while abs(u - l) > xtol
+                ε = (l + u) / 2.0
                 if decide(f_p, f_theta_p, ε) < 0
                     l = ε
                 else
@@ -689,8 +689,8 @@ function convex_decreasing(pValues::AbstractVector{T},
                 end
             end
         end
-        @. f = (1-ε)*f + ε*f_theta
-        @. f_p = (1-ε)*f_p + ε*f_theta_p
+        @. f = (1 - ε) * f + ε * f_theta
+        @. f_p = (1 - ε) * f_p + ε * f_theta_p
         theta = dx * find_theta(t, p, f_p)
         f_theta .= triangular_weighting(x, theta)
         pi0_new = f[end]
@@ -713,18 +713,18 @@ function convex_decreasing(pValues::AbstractVector{T},
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64})
-    return argmax( [theta.^-2 * sum(theta .- p[p .< theta]) for theta in t] )
+    return argmax([theta.^-2 * sum(theta .- p[p .< theta]) for theta in t])
 end
 
 function find_theta(t::Vector{Float64}, p::Vector{Float64}, f_p::Vector{Float64})
-    return argmax( [theta.^-2 * sum( (theta .- p) .* (p .< theta) ./ f_p ) for theta in t] )
+    return argmax([theta.^-2 * sum((theta .- p) .* (p .< theta) ./ f_p) for theta in t])
 end
 
 function decide(f_p::Vector{Float64}, f_theta_p::Vector{Float64}, ε::Float64)
     idx = f_p .> 0
-    return sum( @. ( f_p[idx] - f_theta_p[idx] ) / ( (1-ε) * f_p[idx] + ε * f_theta_p[idx] ) )
+    return sum(@. ( f_p[idx] - f_theta_p[idx] ) / ( (1 - ε) * f_p[idx] + ε * f_theta_p[idx] ))
 end
 
-function triangular_weighting(x::Vector{T}, mid::T) where T<:AbstractFloat
-    return @. 2 / mid^2 * (mid-x) * (x<mid)
+function triangular_weighting(x::Vector{T}, mid::T) where T <: AbstractFloat
+    return @. 2 / mid^2 * (mid - x) * (x < mid)
 end

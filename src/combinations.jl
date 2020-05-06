@@ -33,7 +33,7 @@ julia> combine(pvals, StoufferCombination())
 """
 function combine end
 
-function combine(pValues::AbstractVector{T}, method::M)::T where {T<:AbstractFloat, M<:PValueCombination}
+function combine(pValues::AbstractVector{T}, method::M)::T where {T <: AbstractFloat,M <: PValueCombination}
     combine(PValues(pValues), method)
 end
 
@@ -64,7 +64,7 @@ Statistical methods for research workers
 struct FisherCombination <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::FisherCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -104,7 +104,7 @@ The Logit Statistic for Combining Probabilities - An Overview
 struct LogitCombination <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::LogitCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::LogitCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -112,9 +112,9 @@ function combine(pValues::PValues{T}, method::LogitCombination)::T where T<:Abst
     if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log.(pValues./(1 .- pValues))) / c
-    p = ccdf(TDist(5n+4), x)
+    c = sqrt((5n + 2) * n * pi^2 / ((5n + 4) * 3))
+    x = -sum(log.(pValues ./ (1 .- pValues))) / c
+    p = ccdf(TDist(5n + 4), x)
     return p
 end
 
@@ -154,7 +154,7 @@ Magyar Tud Akad Mat Kutato Int Kozl 3, 171–197.
 struct StoufferCombination <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::StoufferCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -168,7 +168,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:A
     return p
 end
 
-function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
+function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T <: AbstractFloat,R <: Real}
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -182,7 +182,7 @@ function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::Stouff
     return p
 end
 
-function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
+function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T <: AbstractFloat,R <: Real}
     combine(PValues(pValues), weights, method)
 end
 
@@ -212,7 +212,7 @@ workers in the biological sciences.
 struct TippettCombination <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::TippettCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::TippettCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -247,13 +247,13 @@ significance. Biometrika 73, 751–754.
 struct SimesCombination <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::SimesCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::SimesCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
     pValues = sort(pValues)
-    p = n * minimum(pValues./(1:n))
+    p = n * minimum(pValues ./ (1:n))
     return p
 end
 
@@ -291,10 +291,10 @@ struct WilkinsonCombination <: PValueCombination
             throw(ArgumentError("Rank must be positive."))
         end
         return new(rank)
-    end
+end
 end
 
-function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -304,7 +304,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
     p_rank = partialsort(pValues, rank)
-    p = cdf(Beta(rank, n-rank+1), Float64(p_rank))
+    p = cdf(Beta(rank, n - rank + 1), Float64(p_rank))
     return p
 end
 
@@ -332,7 +332,7 @@ struct MinimumCombination <: PValueCombination
     adjustment::PValueAdjustment
 end
 
-function combine(pValues::PValues{T}, method::MinimumCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::MinimumCombination)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]

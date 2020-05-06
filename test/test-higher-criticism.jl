@@ -20,10 +20,10 @@ using Test
     @testset "Higher criticism scores" begin
 
         hcs1 = estimate(PValues(pval1), HigherCriticismScores())
-        @test isapprox( hcs1, hcs1_ref, atol = 1e-5 )
+        @test isapprox(hcs1, hcs1_ref, atol = 1e-5)
 
         hcs2 = estimate(PValues(pval2), HigherCriticismScores())
-        @test isapprox( hcs2, hcs2_ref, atol = 1e-5 )
+        @test isapprox(hcs2, hcs2_ref, atol = 1e-5)
 
         @test_throws MethodError estimate(PValues(pval1))
         @test_throws MethodError estimate(HigherCriticismScores())
