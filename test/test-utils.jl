@@ -34,11 +34,11 @@ using Test
         @test_throws DomainError valid_pvalues([0.1, -0.3, 0.2])
 
         # test against valid vector inputs
-        @test valid_pvalues([0.0]) == nothing
-        @test valid_pvalues([1.0]) == nothing
-        @test valid_pvalues(rand(1)) == nothing
-        @test valid_pvalues([0.1, 0.2, 0.9]) == nothing
-        @test valid_pvalues(rand(5)) == nothing
+        @test valid_pvalues([0.0]) === nothing
+        @test valid_pvalues([1.0]) === nothing
+        @test valid_pvalues(rand(1)) === nothing
+        @test valid_pvalues([0.1, 0.2, 0.9]) === nothing
+        @test valid_pvalues(rand(5)) === nothing
 
     end
 

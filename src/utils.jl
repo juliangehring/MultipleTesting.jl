@@ -56,33 +56,6 @@ function isin(x::AbstractVector{T}, lower::Real = 0., upper::Real = 1.) where T 
 end
 
 
-function isotonic_regression_reference(y::AbstractVector{T}, w::AbstractVector{T}) where T <: AbstractFloat
-    # TODO ignore zero weights
-    y = copy(y)
-    w = copy(w)
-    cnts = fill(1, length(y))
-    i = 2
-    while i <= length(y)
-        if y[i] < y[i - 1]
-            y[i - 1] = (w[i] * y[i] + w[i - 1] * y[i - 1]) / (w[i] + w[i - 1])
-            w[i - 1] = w[i] + w[i - 1]
-            cnts[i - 1] += cnts[i]
-            deleteat!(y, i)
-            deleteat!(w, i)
-            deleteat!(cnts, i)
-            i = max(i - 2, 1)
-        end
-        i += 1
-    end
-    yisotonic = vcat([y[idx] .* fill(1.0, cnt) for (idx, cnt) in enumerate(cnts)]...)
-    return yisotonic
-end
-
-function isotonic_regression_reference(y::AbstractVector{T}) where T <: AbstractFloat
-    isotonic_regression_reference(y, fill(1.0, size(y)))
-end
-
-
 function isotonic_regression(y::AbstractVector{T}, weights::AbstractVector{T}) where T <: AbstractFloat
     n = length(y)
     if n <= 1

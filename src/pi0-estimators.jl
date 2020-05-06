@@ -378,7 +378,7 @@ end
 
 CensoredBUM() = CensoredBUM(0.5, 0.05, 1e-6, 10000)
 CensoredBUM(γ0, λ) = CensoredBUM(γ0, λ, 1e-6, 10000)
-
+    
 struct CensoredBUMFit <: Pi0Fit
     π0::Float64
     param::Vector{Float64}

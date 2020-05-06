@@ -34,7 +34,6 @@ using StatsBase
 
         @test_throws DomainError Storey(-0.1)
         @test_throws DomainError Storey(1.1)
-        #@test_throws DomainError estimate_pi0(p, Storey(1.0)) ## CHCK
 
     end
 

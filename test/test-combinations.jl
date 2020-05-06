@@ -117,8 +117,7 @@ using Test
     end
 
 
-    @testset "Minimum combination with $(p_adjustment)" for
-        (p_adjustment, p_combination) in p_adjust_combinations
+    @testset "Minimum combination with $(p_adjustment)" for (p_adjustment, p_combination) in p_adjust_combinations
 
         @test_throws MethodError MinimumCombination()
 
