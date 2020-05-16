@@ -1,7 +1,7 @@
 ### estimators for π₀
 
 """
-    estimate_pi0(PValues, Pi0Estimator)
+    estimate(PValues, Pi0Estimator)
 
 Estimate π₀, the fraction of tests under the null hypothesis
 
@@ -11,9 +11,9 @@ Estimate π₀, the fraction of tests under the null hypothesis
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, StoreyBootstrap())
+julia> estimate(pvals, StoreyBootstrap())
 0.0
-julia> estimate_pi0(pvals, FlatGrenander())
+julia> estimate(pvals, FlatGrenander())
 0.42553191489361697
 ```
 
@@ -34,10 +34,10 @@ julia> estimate_pi0(pvals, FlatGrenander())
 [`ConvexDecreasing`](@ref)
 
 """
-function estimate_pi0 end
+function estimate end
 
-function estimate_pi0(pValues::AbstractVector{T}, method::M) where {T <: AbstractFloat,M <: Pi0Estimator}
-    estimate_pi0(PValues(pValues), method)
+function estimate(pValues::AbstractVector{T}, method::M) where {T <: AbstractFloat,M <: Pi0Estimator}
+    estimate(PValues(pValues), method)
 end
 
 
@@ -52,10 +52,10 @@ Storey's π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, Storey())
+julia> estimate(pvals, Storey())
 0.22222222222222224
 
-julia> estimate_pi0(pvals, Storey(0.4))
+julia> estimate(pvals, Storey(0.4))
 0.33333333333333337
 ```
 
@@ -79,7 +79,7 @@ end
 
 Storey() = Storey(0.1)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::Storey) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::Storey) where T <: AbstractFloat
     lambda = pi0estimator.λ
     pi0 = (sum(pValues .>= lambda) / length(pValues)) / (1 - lambda)
     pi0 = clamp(pi0, 0, 1)
@@ -98,10 +98,10 @@ Storey's closed-form bootstrap π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, StoreyBootstrap())
+julia> estimate(pvals, StoreyBootstrap())
 0.0
 
-julia> estimate_pi0(pvals, StoreyBootstrap(0.1:0.1:0.9, 0.2))
+julia> estimate(pvals, StoreyBootstrap(0.1:0.1:0.9, 0.2))
 0.0
 ```
 
@@ -130,7 +130,7 @@ end
 
 StoreyBootstrap() = StoreyBootstrap(0.05:0.05:0.95, 0.1)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T <: AbstractFloat
     lambdas = pi0estimator.λseq
     q = pi0estimator.q
     n = length(pValues)
@@ -154,7 +154,7 @@ Least Slope (LSL) π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, LeastSlope())
+julia> estimate(pvals, LeastSlope())
 1.0
 ```
 
@@ -169,7 +169,7 @@ Educational and Behavioral Statistics 25, 60–83.
 struct LeastSlope <: Pi0Estimator
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::LeastSlope) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::LeastSlope) where T <: AbstractFloat
     n = length(pValues)
     pValues = sort_if_needed(pValues)
     s0 = lsl_slope(1, n, pValues)
@@ -215,7 +215,7 @@ Oracle π₀
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, Oracle(0.5)) # a bit boring...
+julia> estimate(pvals, Oracle(0.5)) # a bit boring...
 0.5
 ```
 """
@@ -230,7 +230,7 @@ end
 
 Oracle() = Oracle(1.0)
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::Oracle) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::Oracle) where T <: AbstractFloat
     pi0estimator.π0
 end
 
@@ -246,10 +246,10 @@ Two-step π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, TwoStep())
+julia> estimate(pvals, TwoStep())
 0.2
 
-julia> estimate_pi0(pvals, TwoStep(0.05, BenjaminiLiu()))
+julia> estimate(pvals, TwoStep(0.05, BenjaminiLiu()))
 0.2
 
 ```
@@ -275,7 +275,7 @@ TwoStep() = TwoStep(0.05)
 
 TwoStep(α) = TwoStep(α, BenjaminiHochberg())
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::TwoStep) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::TwoStep) where T <: AbstractFloat
     alpha = pi0estimator.α
     padj = adjust(pValues, pi0estimator.adjustment)
     pi0 = sum(padj .>= (alpha / (1 + alpha))) / length(padj)
@@ -294,10 +294,10 @@ Right boundary π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, RightBoundary())
+julia> estimate(pvals, RightBoundary())
 0.2127659574468085
 
-julia> estimate_pi0(pvals, RightBoundary(0.1:0.1:0.9))
+julia> estimate(pvals, RightBoundary(0.1:0.1:0.9))
 0.25
 ```
 
@@ -321,7 +321,7 @@ end
 # λseq used in Liang, Nettleton 2012
 RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::RightBoundary) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::RightBoundary) where T <: AbstractFloat
     n = length(pValues)
     λseq = sort_if_needed(pi0estimator.λseq)
     # make sure we catch p-values equal to 1 despite left closure
@@ -348,7 +348,7 @@ Censored Beta-Uniform Mixture (censored BUM) π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, CensoredBUM())
+julia> estimate(pvals, CensoredBUM())
 0.21052495526400936
 
 ```
@@ -392,11 +392,11 @@ function fit(pi0estimator::CensoredBUM, pValues::AbstractVector{T}; kw...) where
     return CensoredBUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::CensoredBUM) where T <: AbstractFloat
-    estimate_pi0(fit(pi0estimator, pValues))
+function estimate(pValues::PValues{T}, pi0estimator::CensoredBUM) where T <: AbstractFloat
+    estimate(fit(pi0estimator, pValues))
 end
 
-function estimate_pi0(pi0fit::CensoredBUMFit)
+function estimate(pi0fit::CensoredBUMFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -478,7 +478,7 @@ Beta-Uniform Mixture (BUM) π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, BUM())
+julia> estimate(pvals, BUM())
 0.22802795505154264
 ```
 
@@ -521,11 +521,11 @@ function fit(pi0estimator::BUM, pValues::AbstractVector{T}; kw...) where T <: Ab
     return BUMFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::BUM) where T <: AbstractFloat
-    estimate_pi0(fit(pi0estimator, pValues))
+function estimate(pValues::PValues{T}, pi0estimator::BUM) where T <: AbstractFloat
+    estimate(fit(pi0estimator, pValues))
 end
 
-    function estimate_pi0(pi0fit::BUMFit)
+    function estimate(pi0fit::BUMFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -544,7 +544,7 @@ Estimates π₀ by finding the longest constant interval in the Grenander estima
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, FlatGrenander())
+julia> estimate(pvals, FlatGrenander())
 0.42553191489361697
 ```
 
@@ -560,7 +560,7 @@ Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 struct FlatGrenander <: Pi0Estimator
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::FlatGrenander) where T <: AbstractFloat
+function estimate(pValues::PValues{T}, pi0estimator::FlatGrenander) where T <: AbstractFloat
     p, f, F = grenander(pValues)
     pi0 = longest_constant_interval(p, f)
     return pi0
@@ -602,7 +602,7 @@ Convex Decreasing π₀ estimator
 ```jldoctest
 julia> pvals = PValues([0.001, 0.002, 0.01, 0.03, 0.5]);
 
-julia> estimate_pi0(pvals, ConvexDecreasing())
+julia> estimate(pvals, ConvexDecreasing())
 0.013007051336745304
 ```
 
@@ -644,11 +644,11 @@ function fit(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T}) where T
     return ConvexDecreasingFit(π0, param, is_converged)
 end
 
-function estimate_pi0(pValues::PValues{T}, pi0estimator::ConvexDecreasing) where T <: AbstractFloat
-    estimate_pi0(fit(pi0estimator, pValues))
+function estimate(pValues::PValues{T}, pi0estimator::ConvexDecreasing) where T <: AbstractFloat
+    estimate(fit(pi0estimator, pValues))
 end
 
-    function estimate_pi0(pi0fit::ConvexDecreasingFit)
+    function estimate(pi0fit::ConvexDecreasingFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end

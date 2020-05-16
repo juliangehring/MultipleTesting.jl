@@ -213,7 +213,7 @@ BenjaminiHochbergAdaptive() = BenjaminiHochbergAdaptive(1.0)
 adjust(pValues::PValues{T}, method::BenjaminiHochbergAdaptive) where T <: AbstractFloat = adjust(pValues, length(pValues), method)
 
 function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochbergAdaptive) where T <: AbstractFloat
-    π0 = estimate_pi0(pValues, method.pi0estimator)
+    π0 = estimate(pValues, method.pi0estimator)
     pAdjusted = adjust(pValues, n, BenjaminiHochberg()) * π0
     return pAdjusted
 end

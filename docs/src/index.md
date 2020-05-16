@@ -66,17 +66,17 @@ adjust(pvals, n, PValueAdjustmentMethod)
 * Oracle for known π₀
 
 ```julia
-estimate_pi0(pvals, Storey())
-estimate_pi0(pvals, StoreyBootstrap())
-estimate_pi0(pvals, LeastSlope())
-estimate_pi0(pvals, TwoStep())
-estimate_pi0(pvals, TwoStep(0.05))
-estimate_pi0(pvals, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
-estimate_pi0(pvals, RightBoundary())
-estimate_pi0(pvals, CensoredBUM())
-estimate_pi0(pvals, BUM())
-estimate_pi0(pvals, FlatGrenander())
-estimate_pi0(pvals, Oracle(0.9))
+estimate(pvals, Storey())
+estimate(pvals, StoreyBootstrap())
+estimate(pvals, LeastSlope())
+estimate(pvals, TwoStep())
+estimate(pvals, TwoStep(0.05))
+estimate(pvals, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
+estimate(pvals, RightBoundary())
+estimate(pvals, CensoredBUM())
+estimate(pvals, BUM())
+estimate(pvals, FlatGrenander())
+estimate(pvals, Oracle(0.9))
 ```
 
 
