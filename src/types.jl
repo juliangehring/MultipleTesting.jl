@@ -18,7 +18,7 @@ struct PValues{T <: AbstractFloat} <: AbstractVector{T}
     min::T
     max::T
 
-    function(::Type{PValues})(values::AbstractVector{T}) where T
+    function (::Type{PValues})(values::AbstractVector{T}) where T
         min, max = extrema(values)
         if min < zero(T) || max > one(T)
             throw(DomainError("p-values must all be in [0, 1]"))

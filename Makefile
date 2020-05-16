@@ -9,4 +9,3 @@ test:
 
 docs:
 	julia --color=$(COLOR) docs/make.jl
-

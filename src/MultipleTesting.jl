@@ -18,8 +18,7 @@ import SpecialFunctions: digamma
 
 import Random: shuffle!
 
-export
-    PValues,
+export PValues,
     adjust,
     PValueAdjustment,
     Bonferroni,

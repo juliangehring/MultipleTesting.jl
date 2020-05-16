@@ -123,8 +123,8 @@ using Test
     @testset "argument checking for number of tests" begin
 
         @test_throws ArgumentError MultipleTesting.check_number_tests(3, 2)
-        @test MultipleTesting.check_number_tests(2, 2) == nothing
-        @test MultipleTesting.check_number_tests(2, 3) == nothing
+        @test MultipleTesting.check_number_tests(2, 2) === nothing
+        @test MultipleTesting.check_number_tests(2, 3) === nothing
 
     end
 
