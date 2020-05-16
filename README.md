@@ -111,12 +111,11 @@ The `MultipleTesting` package is part of the Julia ecosphere and the latest
 release version can be installed with
 
 ```julia
-using Pkg
-Pkg.add("MultipleTesting")
+pkg> add MultipleTesting
 ```
 
 More details on packages and how to manage them can be found in the
-[package section](https://docs.julialang.org/en/stable/manual/packages/#adding-and-removing-packages)
+[package section](https://docs.julialang.org/en/v1/stdlib/Pkg/index.html)
 of the Julia documentation.
 
 
@@ -132,6 +131,6 @@ requests or issues with your questions or ideas.
 
 [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
 
-[![Linux/Mac Build Status](https://travis-ci.com/juliangehring/MultipleTesting.jl.svg?branch=master)](https://travis-ci.com/juliangehring/MultipleTesting.jl)
+![Testing](https://github.com/juliangehring/MultipleTesting.jl/workflows/Testing/badge.svg)
 
 The package uses [semantic versioning](https://semver.org/).
