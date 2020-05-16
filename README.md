@@ -133,4 +133,6 @@ requests or issues with your questions or ideas.
 
 ![Testing](https://github.com/juliangehring/MultipleTesting.jl/workflows/Testing/badge.svg)
 
+[![Coverage](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
+
 The package uses [semantic versioning](https://semver.org/).
