@@ -30,7 +30,6 @@ end
 Base.convert(::Type{PValues}, x::AbstractVector{T}) where T <: AbstractFloat = PValues(x)
 
 Base.size(pv::PValues) = size(pv.values)
-Base.IndexStyle(::Type{T}) where T <: PValues = IndexLinear()
 Base.getindex(pv::PValues, i::Integer) = pv.values[i]
 Base.setindex!(pv::PValues, x::AbstractFloat, i::Integer) =
     throw(ErrorException("Modification of values is not permitted"))
