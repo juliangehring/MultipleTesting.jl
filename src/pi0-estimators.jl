@@ -37,7 +37,7 @@ julia> estimate(pvals, FlatGrenander())
 function estimate end
 
 function estimate(pValues::AbstractVector{T}, method::M) where {T <: AbstractFloat,M <: Pi0Estimator}
-    estimate(PValues(pValues), method)
+    return estimate(PValues(pValues), method)
 end
 
 
@@ -134,7 +134,7 @@ function estimate(pValues::PValues{T}, pi0estimator::StoreyBootstrap) where T <:
     lambdas = pi0estimator.λseq
     q = pi0estimator.q
     n = length(pValues)
-    w = [sum(pValues .>= l) for l in lambdas]  # TODO: check if >= or >
+    w = [sum(pValues .>= l) for l in lambdas]
     pi0 = w ./ n ./ (1 .- lambdas)
     min_pi0 = quantile(pi0, q)
     mse = (w ./ (n.^2 .* (1 .- lambdas).^2 )) .* (1 .- w / n) + (pi0 .- min_pi0).^2
@@ -231,7 +231,7 @@ end
 Oracle() = Oracle(1.0)
 
 function estimate(pValues::PValues{T}, pi0estimator::Oracle) where T <: AbstractFloat
-    pi0estimator.π0
+    return pi0estimator.π0
 end
 
 
@@ -267,7 +267,7 @@ struct TwoStep <: Pi0Estimator
 
     function TwoStep(α, method)
         isin(α, 0, 1) || throw(DomainError("α must be in [0, 1]"))
-    return new(α, method)
+        return new(α, method)
     end
 end
 
@@ -393,7 +393,7 @@ function fit(pi0estimator::CensoredBUM, pValues::AbstractVector{T}; kw...) where
 end
 
 function estimate(pValues::PValues{T}, pi0estimator::CensoredBUM) where T <: AbstractFloat
-    estimate(fit(pi0estimator, pValues))
+    return estimate(fit(pi0estimator, pValues))
 end
 
 function estimate(pi0fit::CensoredBUMFit)
@@ -522,10 +522,10 @@ function fit(pi0estimator::BUM, pValues::AbstractVector{T}; kw...) where T <: Ab
 end
 
 function estimate(pValues::PValues{T}, pi0estimator::BUM) where T <: AbstractFloat
-    estimate(fit(pi0estimator, pValues))
+    return estimate(fit(pi0estimator, pValues))
 end
 
-    function estimate(pi0fit::BUMFit)
+function estimate(pi0fit::BUMFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -577,10 +577,10 @@ function longest_constant_interval(p::AbstractVector{T}, f::AbstractVector{T}) w
             Δp = p[i2] - p[i1]
         else
             if Δp >= Δp_max
-            Δp_max = Δp
+                Δp_max = Δp
                 pi0 = f[i2]
-        end
-        i2 = i1
+            end
+            i2 = i1
             Δp = 0.0
         end
         if f[i1] > 1
@@ -645,10 +645,10 @@ function fit(pi0estimator::ConvexDecreasing, pValues::AbstractVector{T}) where T
 end
 
 function estimate(pValues::PValues{T}, pi0estimator::ConvexDecreasing) where T <: AbstractFloat
-    estimate(fit(pi0estimator, pValues))
+    return estimate(fit(pi0estimator, pValues))
 end
 
-    function estimate(pi0fit::ConvexDecreasingFit)
+function estimate(pi0fit::ConvexDecreasingFit)
     pi0 = pi0fit.is_converged ? pi0fit.π0 : NaN
     return pi0
 end
@@ -673,11 +673,11 @@ function convex_decreasing(pValues::AbstractVector{T},
     idx_upper = round.(Int, gridsize .* p_upper) .+ 1
     px = p_upper .- p
     thetas = T[]
-        pi0_new = pi0_old = Inf
+    pi0_new = pi0_old = Inf
     for j in 1:maxiter
         if sum((f_p .- f_theta_p) ./ f_p) > 0
             ε = 0.0
-            else
+        else
             l = 0.0
             u = 1
             while abs(u - l) > xtol

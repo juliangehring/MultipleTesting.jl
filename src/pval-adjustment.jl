@@ -56,11 +56,11 @@ julia> adjust(pvals, BarberCandes())
 function adjust end
 
 function adjust(pValues::Vector{T}, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
-    adjust(PValues(pValues), method)
+    return adjust(PValues(pValues), method)
 end
 
 function adjust(pValues::Vector{T}, n::Integer, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
-    adjust(PValues(pValues), n, method)
+    return adjust(PValues(pValues), n, method)
 end
 
 # Bonferroni
@@ -419,7 +419,7 @@ adjust(pValues::PValues{T}, method::Holm) where T <: AbstractFloat = adjust(pVal
 function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
-        if n <= 1
+    if n <= 1
         return pValues
     end
     sortedOrder, originalOrder = reorder(pValues)
