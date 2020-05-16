@@ -3,7 +3,7 @@ using MultipleTesting
 
 DocMeta.setdocmeta!(MultipleTesting, :DocTestSetup, :(using MultipleTesting); recursive=true)
 
-makedocs(modules = [MultipleTesting],
+makedocs(
     modules = [MultipleTesting],
     sitename = "MultipleTesting.jl",
     format = Documenter.HTML(disable_git = true,  # disable source and edit links to github
