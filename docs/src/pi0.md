@@ -11,7 +11,7 @@ end
 ## Methods
 
 ```@docs
-estimate_pi0
+estimate
 ```
 
 
