@@ -659,24 +659,6 @@ function adjust(pValues::PValues{T}, method::BarberCandes) where T <: AbstractFl
     return pAdjusted
 end
 
-# as test, inefficient implementation
-function barber_candes_brute_force(pValues::AbstractVector{T}) where T <: AbstractFloat
-    n = length(pValues)
-    sorted_indexes, original_order = reorder(pValues)
-    sorted_pValues = pValues[sorted_indexes]
-    estimated_fdrs = fill(1.0, size(pValues))
-    for (i, pv) in enumerate(sorted_pValues)
-        if pv >= 0.5
-            break
-        else
-            estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1) / i
-        end
-    end
-    stepup!(estimated_fdrs)
-    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
-    return pAdjusted
-end
-
 
 ## internal ##
 

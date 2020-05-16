@@ -130,10 +130,28 @@ using Test
 
 
     @testset "BarberCandès #2:" begin
+
+        # inefficient implementation for testing
+        function barber_candes_brute_force(pValues::AbstractVector{T}) where T <: AbstractFloat
+            n = length(pValues)
+            sorted_indexes, original_order = MultipleTesting.reorder(pValues)
+            sorted_pValues = pValues[sorted_indexes]
+            estimated_fdrs = fill(1.0, size(pValues))
+            for (i, pv) in enumerate(sorted_pValues)
+                if pv >= 0.5
+                    break
+                else
+                    estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1) / i
+                end
+            end
+            MultipleTesting.stepup!(estimated_fdrs)
+            pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
+            return pAdjusted
+        end
+
         for k = 1:5
             pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
-            @test isapprox(adjust(pv, BarberCandes()),
-                           MultipleTesting.barber_candes_brute_force(pv), atol = 1e-9)
+            @test isapprox(adjust(pv, BarberCandes()), barber_candes_brute_force(pv), atol = 1e-9)
         end
     end
 
