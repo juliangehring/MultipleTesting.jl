@@ -12,31 +12,61 @@ hypotheses.
 ### Adjustment of p-values
 
 * Bonferroni
-* Benjamini-Hochberg
-* Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
-* Benjamini-Yekutieli
-* Benjamini-Liu
-* Hochberg
-* Holm
-* Hommel
-* Sidak
-* Forward Stop
-* Barber-Candès
+    ```julia
+    adjust(pvals, Bonferroni())
+    ```
 
-```julia
-adjust(pvals, Bonferroni())
-adjust(pvals, BenjaminiHochberg())
-adjust(pvals, BenjaminiHochbergAdaptive(0.9))
-adjust(pvals, BenjaminiHochbergAdaptive(Storey()))
-adjust(pvals, BenjaminiYekutieli())
-adjust(pvals, BenjaminiLiu())
-adjust(pvals, Hochberg())
-adjust(pvals, Holm())
-adjust(pvals, Hommel())
-adjust(pvals, Sidak())
-adjust(pvals, ForwardStop())
-adjust(pvals, BarberCandes())
-```
+* Benjamini-Hochberg
+    ```julia
+    adjust(pvals, BenjaminiHochberg())
+    ```
+
+* Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
+    ```julia
+    adjust(pvals, BenjaminiHochbergAdaptive(0.9))
+    adjust(pvals, BenjaminiHochbergAdaptive(Storey()))
+    ```
+
+* Benjamini-Yekutieli
+    ```julia
+    adjust(pvals, BenjaminiYekutieli())
+    ```
+
+* Benjamini-Liu
+    ```julia
+    adjust(pvals, BenjaminiLiu())
+    ```
+
+* Hochberg
+    ```julia
+    adjust(pvals, Hochberg())
+    ```
+
+* Holm
+    ```julia
+    adjust(pvals, Holm())
+    ```
+
+* Hommel
+    ```julia
+    adjust(pvals, Hommel())
+    ```
+
+* Sidak
+    ```julia
+    adjust(pvals, Sidak())
+    ```
+
+* Forward Stop
+    ```julia
+    adjust(pvals, ForwardStop())
+    ```
+
+* Barber-Candès
+    ```julia
+    adjust(pvals, BarberCandes())
+    ```
+
 
 The adjustment can also be performed on the `k` smallest out of `n` p-values:
 
@@ -48,61 +78,103 @@ adjust(pvals, n, PValueAdjustmentMethod)
 ### Estimation of π₀
 
 * Storey
-* Storey's closed-form bootstrap
-* Least Slope
-* Two Step
-* RightBoundary (Storey's estimate with dynamically chosen λ)
-* Beta-Uniform Mixture (BUM)
-* Censored BUM
-* Flat Grenander
-* Oracle for known π₀
+    ```julia
+    estimate(pvals, Storey())
+    ```
 
-```julia
-estimate(pvals, Storey())
-estimate(pvals, StoreyBootstrap())
-estimate(pvals, LeastSlope())
-estimate(pvals, TwoStep())
-estimate(pvals, TwoStep(0.05))
-estimate(pvals, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
-estimate(pvals, RightBoundary())
-estimate(pvals, CensoredBUM())
-estimate(pvals, BUM())
-estimate(pvals, FlatGrenander())
-estimate(pvals, Oracle(0.9))
-```
+* Storey's closed-form bootstrap
+    ```julia
+    estimate(pvals, StoreyBootstrap())
+    ```
+
+* Least Slope
+    ```julia
+    estimate(pvals, LeastSlope())
+    ```
+
+* Two Step
+    ```julia
+    estimate(pvals, TwoStep())
+    estimate(pvals, TwoStep(0.05))
+    estimate(pvals, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
+    ```
+
+* RightBoundary (Storey's estimate with dynamically chosen λ)
+    ```julia
+    estimate(pvals, RightBoundary())
+    ```
+
+* Beta-Uniform Mixture (BUM)
+    ```julia
+    estimate(pvals, BUM())
+    ```
+
+* Censored BUM
+    ```julia
+    estimate(pvals, CensoredBUM())
+    ```
+
+* Flat Grenander
+    ```julia
+    estimate(pvals, FlatGrenander())
+    ```
+
+* Oracle for known π₀
+    ```julia
+    estimate(pvals, Oracle(0.9))
+    ```
 
 
 ### Combination of p-values
 
 * Fisher
-* Stouffer, optionally with weights
-* Logit
-* Tippett
-* Simes
-* Wilkinson
-* Minimum of adjusted p-values
+    ```julia
+    combine(pvals, FisherCombination())
+    ```
 
-```julia
-combine(pvals, FisherCombination())
-combine(pvals, StoufferCombination())
-combine(pvals, weights, StoufferCombination())
-combine(pvals, LogitCombination())
-combine(pvals, TippettCombination())
-combine(pvals, SimesCombination())
-combine(pvals, WilkinsonCombination(rank))
-combine(pvals, MinimumCombination(PValueAdjustment()))
-```
+* Stouffer, optionally with weights
+    ```julia
+    combine(pvals, StoufferCombination())
+    combine(pvals, weights, StoufferCombination())
+    ```
+
+* Logit
+    ```julia
+    combine(pvals, LogitCombination())
+    ```
+
+* Tippett
+    ```julia
+    combine(pvals, TippettCombination())
+    ```
+
+* Simes
+    ```julia
+    combine(pvals, SimesCombination())
+    ```
+
+* Wilkinson
+    ```julia
+    combine(pvals, WilkinsonCombination(rank))
+    ```
+
+* Minimum of adjusted p-values
+    ```julia
+    combine(pvals, MinimumCombination(PValueAdjustment()))
+    ```
 
 
 ### Higher criticism
 
 * Higher criticism scores
-* Higher criticism threshold
+    ```julia
+    estimate(pvals, HigherCriticismScores())
+    ```
 
-```julia
-estimate(pvals, HigherCriticismScores())
-estimate(pvals, HigherCriticismThreshold())
-```
+* Higher criticism threshold
+    ```julia
+    estimate(pvals, HigherCriticismThreshold())
+    ```
 
 
 ## Installation
