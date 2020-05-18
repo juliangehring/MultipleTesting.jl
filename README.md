@@ -11,170 +11,330 @@ hypotheses.
 
 ### Adjustment of p-values
 
-* Bonferroni
-    ```julia
-    adjust(pvals, Bonferroni())
-    ```
-
-* Benjamini-Hochberg
-    ```julia
-    adjust(pvals, BenjaminiHochberg())
-    ```
-
-* Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
-    ```julia
-    adjust(pvals, BenjaminiHochbergAdaptive(0.9))
-    adjust(pvals, BenjaminiHochbergAdaptive(Storey()))
-    ```
-
-* Benjamini-Yekutieli
-    ```julia
-    adjust(pvals, BenjaminiYekutieli())
-    ```
-
-* Benjamini-Liu
-    ```julia
-    adjust(pvals, BenjaminiLiu())
-    ```
-
-* Hochberg
-    ```julia
-    adjust(pvals, Hochberg())
-    ```
-
-* Holm
-    ```julia
-    adjust(pvals, Holm())
-    ```
-
-* Hommel
-    ```julia
-    adjust(pvals, Hommel())
-    ```
-
-* Sidak
-    ```julia
-    adjust(pvals, Sidak())
-    ```
-
-* Forward Stop
-    ```julia
-    adjust(pvals, ForwardStop())
-    ```
-
-* Barber-Candès
-    ```julia
-    adjust(pvals, BarberCandes())
-    ```
-
-
 The adjustment can also be performed on the `k` smallest out of `n` p-values:
 
 ```julia
-adjust(pvals, n, PValueAdjustmentMethod)
+adjust(pvalues, n, PValueAdjustmentMethod)
 ```
+
+#### Bonferroni
+    
+```julia
+adjust(pvalues, Bonferroni())
+```
+
+Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle probabilita
+(Libreria internazionale Seeber).
+
+
+#### Benjamini-Hochberg
+
+```julia
+adjust(pvalues, BenjaminiHochberg())
+```
+
+Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
+
+```julia
+adjust(pvalues, BenjaminiHochbergAdaptive(0.9))
+adjust(pvalues, BenjaminiHochbergAdaptive(Storey()))
+```
+
+Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
+Practical and Powerful Approach to Multiple Testing. Journal of the Royal
+Statistical Society. Series B (Methodological) 57, 289–300.
+
+
+#### Benjamini-Yekutieli
+
+```julia
+adjust(pvalues, BenjaminiYekutieli())
+```
+
+Benjamini, Y., and Yekutieli, D. (2001). The Control of the False Discovery Rate
+in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.
+
+
+#### Benjamini-Liu
+
+```julia
+adjust(pvalues, BenjaminiLiu())
+```
+
+Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
+procedure that controls the false discovery rate under independence. Journal of
+Statistical Planning and Inference 82, 163–170.
+
+
+#### Hochberg
+
+```julia
+adjust(pvalues, Hochberg())
+```
+
+Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of
+significance. Biometrika 75, 800–802.
+
+
+#### Holm
+
+```julia
+adjust(pvalues, Holm())
+```
+
+Holm, S. (1979). A Simple Sequentially Rejective Multiple Test Procedure.
+Scandinavian Journal of Statistics 6, 65–70.
+
+
+#### Hommel
+
+```julia
+adjust(pvalues, Hommel())
+```
+
+Hommel, G. (1988). A stagewise rejective multiple test procedure based on a
+modified Bonferroni test. Biometrika 75, 383–386.
+
+
+#### Sidak
+
+```julia
+adjust(pvalues, Sidak())
+```
+
+Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate
+Normal Distributions. Journal of the American Statistical Association 62,
+626–633.
+
+
+#### Forward Stop
+
+```julia
+adjust(pvalues, ForwardStop())
+```
+
+G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential
+selection procedures and false discovery rate control. J. R. Stat. Soc. B 78,
+423–444.
+
+
+#### Barber-Candès
+
+```julia
+adjust(pvalues, BarberCandes())
+```
+
+Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via
+knockoffs. Ann. Statist. 43, 2055–2085.
+
+Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
+Electron. J. Statist. 11, 1983–2001.
 
 
 ### Estimation of π₀
 
-* Storey
-    ```julia
-    estimate(pvals, Storey())
-    ```
+#### Storey
 
-* Storey's closed-form bootstrap
-    ```julia
-    estimate(pvals, StoreyBootstrap())
-    ```
+```julia
+estimate(pvalues, Storey())
+```
 
-* Least Slope
-    ```julia
-    estimate(pvals, LeastSlope())
-    ```
+Storey, J.D., Taylor, J.E., and Siegmund, D. (2004). Strong control,
+conservative point estimation and simultaneous conservative consistency of false
+discovery rates: a unified approach. Journal of the Royal Statistical Society:
+Series B (Statistical Methodology) 66, 187–205.
 
-* Two Step
-    ```julia
-    estimate(pvals, TwoStep())
-    estimate(pvals, TwoStep(0.05))
-    estimate(pvals, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
-    ```
 
-* RightBoundary (Storey's estimate with dynamically chosen λ)
-    ```julia
-    estimate(pvals, RightBoundary())
-    ```
+#### Storey's closed-form bootstrap
 
-* Beta-Uniform Mixture (BUM)
-    ```julia
-    estimate(pvals, BUM())
-    ```
+```julia
+estimate(pvalues, StoreyBootstrap())
+```
 
-* Censored BUM
-    ```julia
-    estimate(pvals, CensoredBUM())
-    ```
+Robinson, D. (2016). Original Procedure for Choosing λ.
+http://varianceexplained.org/files/pi0boot.pdf
 
-* Flat Grenander
-    ```julia
-    estimate(pvals, FlatGrenander())
-    ```
 
-* Oracle for known π₀
-    ```julia
-    estimate(pvals, Oracle(0.9))
-    ```
+#### Least Slope
+
+```julia
+estimate(pvalues, LeastSlope())
+```
+
+Benjamini, Y., and Hochberg, Y. (2000). On the Adaptive Control of the False
+Discovery Rate in Multiple Testing With Independent Statistics. Journal of
+Educational and Behavioral Statistics 25, 60–83.
+
+
+#### Two Step
+
+```julia
+estimate(pvalues, TwoStep())
+estimate(pvalues, TwoStep(0.05))
+estimate(pvalues, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
+```
+
+Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
+procedures that control the false discovery rate. Biometrika 93, 491–507.
+
+
+#### RightBoundary
+
+Storey's estimate with dynamically chosen λ
+
+```julia
+estimate(pvalues, RightBoundary())
+```
+
+Liang, K., and Nettleton, D. (2012). Adaptive and dynamic adaptive procedures
+for false discovery rate control and estimation. Journal of the Royal
+Statistical Society: Series B (Statistical Methodology) 74, 163–182.
+
+
+#### Beta-Uniform Mixture (BUM)
+
+```julia
+estimate(pvalues, BUM())
+```
+
+Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
+positives and false negatives in microarray studies by approximating and
+partitioning the empirical distribution of p-values. Bioinformatics 19,
+1236–1242.
+
+
+#### Censored BUM
+
+```julia
+estimate(pvalues, CensoredBUM())
+```
+
+Markitsis, A., and Lai, Y. (2010). A censored beta mixture model for the
+estimation of the proportion of non-differentially expressed genes.
+Bioinformatics 26, 640–646.
+
+
+#### Flat Grenander
+
+```julia
+estimate(pvalues, FlatGrenander())
+```
+
+Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
+proportion of true null hypotheses, with application to DNA microarray data.
+Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
+555–572.
+
+
+#### ConvexDecreasing
+
+```julia
+estimate(pvalues, ConvexDecreasing())
+fit(ConvexDecreasing(), pvalues)
+```
+
+Langaas, M., Lindqvist, B.H., and Ferkingstad, E. (2005). Estimating the
+proportion of true null hypotheses, with application to DNA microarray data.
+Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
+555–572.
+
+
+#### Oracle for known π₀
+
+```julia
+estimate(pvalues, Oracle(0.9))
+```
 
 
 ### Combination of p-values
 
-* Fisher
-    ```julia
-    combine(pvals, FisherCombination())
-    ```
+#### Fisher
 
-* Stouffer, optionally with weights
-    ```julia
-    combine(pvals, StoufferCombination())
-    combine(pvals, weights, StoufferCombination())
-    ```
+```julia
+combine(pvalues, FisherCombination())
+```
 
-* Logit
-    ```julia
-    combine(pvals, LogitCombination())
-    ```
+Fisher, R.A. (1925). Statistical methods for research workers (Genesis
+Publishing Pvt Ltd).
 
-* Tippett
-    ```julia
-    combine(pvals, TippettCombination())
-    ```
 
-* Simes
-    ```julia
-    combine(pvals, SimesCombination())
-    ```
+#### Stouffer
 
-* Wilkinson
-    ```julia
-    combine(pvals, WilkinsonCombination(rank))
-    ```
+Optionally with weights
 
-* Minimum of adjusted p-values
-    ```julia
-    combine(pvals, MinimumCombination(PValueAdjustment()))
-    ```
+```julia
+combine(pvalues, StoufferCombination())
+combine(pvalues, weights, StoufferCombination())
+```
+
+Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
+(Princeton University Press).
+
+Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
+Kutato Int Kozl 3, 171–197.
+
+
+#### Logit
+
+```julia
+combine(pvalues, LogitCombination())
+```
+
+Mudholkar, G.S., and George, E.O. (1977). The Logit Statistic for Combining
+Probabilities - An Overview (Rochester University NY, Dept of Statistics).
+
+
+#### Tippett
+
+```julia
+combine(pvalues, TippettCombination())
+```
+
+Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
+workers in the biological sciences.
+
+
+#### Simes
+
+```julia
+combine(pvalues, SimesCombination())
+```
+
+Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
+significance. Biometrika 73, 751–754.
+
+
+#### Wilkinson
+
+```julia
+combine(pvalues, WilkinsonCombination(rank))
+```
+
+Wilkinson, B. (1951). A statistical consideration in psychological research.
+Psychological Bulletin 48, 156.
+
+
+#### Minimum of adjusted p-values
+
+```julia
+combine(pvalues, MinimumCombination(PValueAdjustment()))
+```
 
 
 ### Higher criticism
 
-* Higher criticism scores
-    ```julia
-    estimate(pvals, HigherCriticismScores())
-    ```
+Higher criticism scores and threshold
 
-* Higher criticism threshold
-    ```julia
-    estimate(pvals, HigherCriticismThreshold())
-    ```
+```julia
+estimate(pvalues, HigherCriticismScores())
+estimate(pvalues, HigherCriticismThreshold())
+```
+
+Donoho, D., and Jin, J. (2008). Higher criticism thresholding: Optimal feature
+selection when useful features are rare and weak. PNAS 105, 14790–14795.
+
+Klaus, B., and Strimmer, K. (2013). Signal identification for rare and weak
+features: higher criticism or false discovery rates? Biostatistics 14, 129–143.
 
 
 ## Installation
