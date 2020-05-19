@@ -73,7 +73,7 @@ using StatsBase
         # used for comparison and compactness
         function lsl_pi0_vec(pValues::AbstractVector{T}) where T <: AbstractFloat
             n = length(pValues)
-            pValues = sort_if_needed(pValues)
+            pValues = MultipleTesting.sort_if_needed(pValues)
             s = (1 .- pValues) ./ (n:-1:1)
             d = diff(s) .< 0
             idx = something(findfirst(d), 0) + 1
