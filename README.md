@@ -42,8 +42,8 @@ adjust(pvalues, BenjaminiHochberg())
 Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
 
 ```julia
-adjust(pvalues, BenjaminiHochbergAdaptive(0.9))
-adjust(pvalues, BenjaminiHochbergAdaptive(Storey()))
+adjust(pvalues, BenjaminiHochbergAdaptive(π₀))
+adjust(pvalues, BenjaminiHochbergAdaptive(<:PValueAdjustmentMethod))
 ```
 
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
@@ -182,8 +182,8 @@ Educational and Behavioral Statistics 25, 60–83.
 
 ```julia
 estimate(pvalues, TwoStep())
-estimate(pvalues, TwoStep(0.05))
-estimate(pvalues, TwoStep(0.05, BenjaminiHochbergAdaptive(0.9))
+estimate(pvalues, TwoStep(α))
+estimate(pvalues, TwoStep(α, <:PValueAdjustmentMethod)
 ```
 
 Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
@@ -254,7 +254,7 @@ Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 #### Oracle for known π₀
 
 ```julia
-estimate(pvalues, Oracle(0.9))
+estimate(pvalues, Oracle(π₀))
 ```
 
 
