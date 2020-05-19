@@ -9,13 +9,19 @@ hypotheses.
 
 ## Features
 
+
 ### Adjustment of p-values
+
+```julia
+adjust(pvalues, <:PValueAdjustmentMethod)
+```
 
 The adjustment can also be performed on the `k` smallest out of `n` p-values:
 
 ```julia
-adjust(pvalues, n, PValueAdjustmentMethod)
+adjust(pvalues, n, <:PValueAdjustmentMethod)
 ```
+
 
 #### Bonferroni
     
@@ -131,7 +137,13 @@ Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing.
 Electron. J. Statist. 11, 1983–2001.
 
 
+
 ### Estimation of π₀
+
+```julia
+estimate(pvalues, <:Pi0Estimator)
+```
+
 
 #### Storey
 
@@ -246,7 +258,13 @@ estimate(pvalues, Oracle(0.9))
 ```
 
 
+
 ### Combination of p-values
+
+```julia
+combine(pvalues, <:PValueCombination)
+```
+
 
 #### Fisher
 
@@ -319,6 +337,7 @@ Psychological Bulletin 48, 156.
 ```julia
 combine(pvalues, MinimumCombination(PValueAdjustment()))
 ```
+
 
 
 ### Higher criticism
