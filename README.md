@@ -356,6 +356,22 @@ Klaus, B., and Strimmer, K. (2013). Signal identification for rare and weak
 features: higher criticism or false discovery rates? Biostatistics 14, 129–143.
 
 
+
+### Simulation of p-value distributions
+
+
+#### Beta Uniform Mixture Model
+
+```julia
+BetaUniformMixtureModel(π₀, α, β)
+```
+
+Pounds, S., and Morris, S.W. (2003). Estimating the occurrence of false
+positives and false negatives in microarray studies by approximating and
+partitioning the empirical distribution of p-values. Bioinformatics 19,
+1236–1242.
+
+
 ## Installation
 
 The `MultipleTesting` package is part of the Julia ecosphere and the latest
