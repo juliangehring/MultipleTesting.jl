@@ -69,6 +69,18 @@ using StatsBase
 
     @testset "LeastSlope π₀" begin
 
+        # alternative, vectorized version
+        # used for comparison and compactness
+        function lsl_pi0_vec(pValues::AbstractVector{T}) where T <: AbstractFloat
+            n = length(pValues)
+            pValues = MultipleTesting.sort_if_needed(pValues)
+            s = (1 .- pValues) ./ (n:-1:1)
+            d = diff(s) .< 0
+            idx = something(findfirst(d), 0) + 1
+            pi0 = min(1 / s[idx] + 1, n) / n
+            return pi0
+        end
+
         @test typeof(LeastSlope()) <: Pi0Estimator
 
         ## checked against structSSI::pi0.lsl
@@ -77,9 +89,9 @@ using StatsBase
         @test isapprox(estimate(p1, LeastSlope()), 0.16, atol = 1e-2)
 
         ## check against internal reference implementation
-        @test estimate(p, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p)
-        @test estimate(p0, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p0)
-        @test estimate(p1, LeastSlope()) ≈ MultipleTesting.lsl_pi0_vec(p1)
+        @test estimate(p, LeastSlope()) ≈ lsl_pi0_vec(p)
+        @test estimate(p0, LeastSlope()) ≈ lsl_pi0_vec(p0)
+        @test estimate(p1, LeastSlope()) ≈ lsl_pi0_vec(p1)
 
         @test_throws MethodError LeastSlope(0.1)
 
@@ -91,7 +103,7 @@ using StatsBase
 
         p_unsort = unsort(p)
         @test !issorted(p_unsort)
-        @test isapprox(MultipleTesting.lsl_pi0_vec(p_unsort), 0.62, atol = 1e-2)
+        @test isapprox(lsl_pi0_vec(p_unsort), 0.62, atol = 1e-2)
         @test !issorted(p_unsort)
 
     end
@@ -172,6 +184,35 @@ using StatsBase
 
     @testset "CensoredBUM π₀" begin
 
+        function cbum_pi0_naive(pValues::AbstractVector{T},
+                γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
+                xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T <: AbstractFloat
+            
+            n = length(pValues)
+            z = fill(1 - γ0, n)
+            idx_left = pValues .< λ
+            idx_right = .!idx_left
+            pi0_old = γ0 = α = γ = Inf
+            lpr = log.(pValues[idx_right])
+            ll = log(λ)
+            for i in 1:maxiter
+            γ = sum(1 .- z) / n
+            α = -sum(z[idx_right])
+            α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
+            xl = (1 - γ) * (λ^α)
+            z[idx_left] .= xl / (γ * λ + xl)
+            xr = (1 - γ) * α * pValues[idx_right].^(α - 1)
+            z[idx_right] = xr ./ (γ .+ xr)
+            pi0_new = γ + (1 - γ) * α
+            if abs(pi0_new - pi0_old) <= xtol
+            return pi0_new, [γ, α], true
+            end
+            γ0 = γ
+            pi0_old = pi0_new
+            end
+            return NaN, [γ, α], false
+        end
+
         @test typeof(CensoredBUM()) <: Pi0Estimator
         @test typeof(CensoredBUM(0.2, 0.1)) <: Pi0Estimator
 
@@ -181,8 +222,8 @@ using StatsBase
 
         # test against internal reference implementation
         # p0 case is not handled well by naive implementation
-        @test estimate(p, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p)[1]
-        @test estimate(p1, CensoredBUM()) ≈ MultipleTesting.cbum_pi0_naive(p1)[1]
+        @test estimate(p, CensoredBUM()) ≈ cbum_pi0_naive(p)[1]
+        @test estimate(p1, CensoredBUM()) ≈ cbum_pi0_naive(p1)[1]
 
         ## test case that does not converge
         @test isnan(estimate(p, CensoredBUM(0.5, 0.05, 1e-6, 2)))
@@ -207,7 +248,7 @@ using StatsBase
         @test isnan(pi0_est)
         @test !is_converged
 
-        pi0_est, pars, is_converged = MultipleTesting.cbum_pi0_naive(ones(20))
+        pi0_est, pars, is_converged = cbum_pi0_naive(ones(20))
         @test isnan(pi0_est)
         @test !is_converged
 

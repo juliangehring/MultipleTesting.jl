@@ -1,7 +1,7 @@
 ### Combination methods for p-values ###
 
 """
-    combine(PValues, PValueCombination)
+    combine(PValues, <:PValueCombination)
 
 Combine p-values
 
@@ -34,7 +34,7 @@ julia> combine(pvals, StoufferCombination())
 function combine end
 
 function combine(pValues::AbstractVector{T}, method::M)::T where {T <: AbstractFloat,M <: PValueCombination}
-    combine(PValues(pValues), method)
+    return combine(PValues(pValues), method)
 end
 
 
@@ -183,7 +183,7 @@ function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::Stouff
 end
 
 function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T <: AbstractFloat,R <: Real}
-    combine(PValues(pValues), weights, method)
+    return combine(PValues(pValues), weights, method)
 end
 
 
@@ -291,7 +291,7 @@ struct WilkinsonCombination <: PValueCombination
             throw(ArgumentError("Rank must be positive."))
         end
         return new(rank)
-end
+    end
 end
 
 function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T <: AbstractFloat
