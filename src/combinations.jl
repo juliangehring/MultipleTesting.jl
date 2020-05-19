@@ -1,7 +1,7 @@
 ### Combination methods for p-values ###
 
 """
-    combine(PValues, PValueCombination)
+    combine(PValues, <:PValueCombination)
 
 Combine p-values
 

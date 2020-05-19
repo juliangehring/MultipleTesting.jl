@@ -1,10 +1,8 @@
 ## p-value adjustment methods ##
 
-# promotion from float vectors to PValues type
-
 """
-    adjust(PValues, PValueAdjustment)
-    adjust(PValues, Int, PValueAdjustment)
+    adjust(PValues, <:PValueAdjustment)
+    adjust(PValues, Int, <:PValueAdjustment)
 
 Adjustment of p-values
 
@@ -54,6 +52,9 @@ julia> adjust(pvals, BarberCandes())
 [`BarberCandes`](@ref)
 """
 function adjust end
+
+
+# promotion from float vectors to PValues type
 
 function adjust(pValues::Vector{T}, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
     return adjust(PValues(pValues), method)

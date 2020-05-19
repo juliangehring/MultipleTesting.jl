@@ -1,7 +1,7 @@
 ### estimators for π₀
 
 """
-    estimate(PValues, Pi0Estimator)
+    estimate(PValues, <:Pi0Estimator)
 
 Estimate π₀, the fraction of tests under the null hypothesis
 
@@ -189,18 +189,6 @@ end
 function lsl_slope(i::Integer, n::Integer, pValue::AbstractVector{T}) where T <: AbstractFloat
     s = (1 - pValue[i]) / (n - i + 1)
     return s
-end
-
-# alternative, vectorized version
-# used for comparison and compactness
-function lsl_pi0_vec(pValues::AbstractVector{T}) where T <: AbstractFloat
-    n = length(pValues)
-    pValues = sort_if_needed(pValues)
-    s = (1 .- pValues) ./ (n:-1:1)
-    d = diff(s) .< 0
-    idx = something(findfirst(d), 0) + 1
-    pi0 = min(1 / s[idx] + 1, n) / n
-    return pi0
 end
 
 
@@ -427,35 +415,6 @@ function cbum_pi0(pValues::AbstractVector{T},
         zr = xr ./ (γ .+ xr)
         szr = sum(zr)
         sz = szl + szr
-        pi0_new = γ + (1 - γ) * α
-        if abs(pi0_new - pi0_old) <= xtol
-            return pi0_new, [γ, α], true
-        end
-        γ0 = γ
-        pi0_old = pi0_new
-    end
-    return NaN, [γ, α], false
-end
-
-function cbum_pi0_naive(pValues::AbstractVector{T},
-                        γ0::AbstractFloat = 0.5, λ::AbstractFloat = 0.05,
-                        xtol::AbstractFloat = 1e-6, maxiter::Integer = 10000) where T <: AbstractFloat
-    n = length(pValues)
-    z = fill(1 - γ0, n)
-    idx_left = pValues .< λ
-    idx_right = .!idx_left
-    pi0_old = γ0 = α = γ = Inf
-    # compute constant values only once
-    lpr = log.(pValues[idx_right])
-    ll = log(λ)
-    for i in 1:maxiter
-        γ = sum(1 .- z) / n
-        α = -sum(z[idx_right])
-        α = α / ( ll * sum(z[idx_left]) + sum(z[idx_right] .* lpr) )
-        xl = (1 - γ) * (λ^α)
-        z[idx_left] .= xl / (γ * λ + xl)
-        xr = (1 - γ) * α * pValues[idx_right].^(α - 1)
-        z[idx_right] = xr ./ (γ .+ xr)
         pi0_new = γ + (1 - γ) * α
         if abs(pi0_new - pi0_old) <= xtol
             return pi0_new, [γ, α], true
