@@ -17,11 +17,11 @@ combine
 ## Types
 
 ```@docs
-FisherCombination
-LogitCombination
-StoufferCombination
-TippettCombination
-SimesCombination
-WilkinsonCombination
-MinimumCombination
+Fisher
+Logit
+Stouffer
+Tippett
+Simes
+Wilkinson
+Minimum
 ```

@@ -269,7 +269,7 @@ combine(pvalues, <:PValueCombination)
 #### Fisher
 
 ```julia
-combine(pvalues, FisherCombination())
+combine(pvalues, Fisher())
 ```
 
 Fisher, R.A. (1925). Statistical methods for research workers (Genesis
@@ -281,8 +281,8 @@ Publishing Pvt Ltd).
 Optionally with weights
 
 ```julia
-combine(pvalues, StoufferCombination())
-combine(pvalues, weights, StoufferCombination())
+combine(pvalues, Stouffer())
+combine(pvalues, weights, Stouffer())
 ```
 
 Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
@@ -295,7 +295,7 @@ Kutato Int Kozl 3, 171–197.
 #### Logit
 
 ```julia
-combine(pvalues, LogitCombination())
+combine(pvalues, Logit())
 ```
 
 Mudholkar, G.S., and George, E.O. (1977). The Logit Statistic for Combining
@@ -305,7 +305,7 @@ Probabilities - An Overview (Rochester University NY, Dept of Statistics).
 #### Tippett
 
 ```julia
-combine(pvalues, TippettCombination())
+combine(pvalues, Tippett())
 ```
 
 Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
@@ -315,7 +315,7 @@ workers in the biological sciences.
 #### Simes
 
 ```julia
-combine(pvalues, SimesCombination())
+combine(pvalues, Simes())
 ```
 
 Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
@@ -325,7 +325,7 @@ significance. Biometrika 73, 751–754.
 #### Wilkinson
 
 ```julia
-combine(pvalues, WilkinsonCombination(rank))
+combine(pvalues, Wilkinson(rank))
 ```
 
 Wilkinson, B. (1951). A statistical consideration in psychological research.
@@ -335,7 +335,7 @@ Psychological Bulletin 48, 156.
 #### Minimum of adjusted p-values
 
 ```julia
-combine(pvalues, MinimumCombination(PValueAdjustment()))
+combine(pvalues, Minimum(PValueAdjustment()))
 ```
 
 

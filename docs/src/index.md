@@ -91,14 +91,14 @@ estimate(pvals, Oracle(0.9))
 * Minimum of adjusted p-values
 
 ```julia
-combine(pvals, FisherCombination())
-combine(pvals, StoufferCombination())
-combine(pvals, weights, StoufferCombination())
-combine(pvals, LogitCombination())
-combine(pvals, TippettCombination())
-combine(pvals, SimesCombination())
-combine(pvals, WilkinsonCombination(rank))
-combine(pvals, MinimumCombination(PValueAdjustment()))
+combine(pvals, Fisher())
+combine(pvals, Stouffer())
+combine(pvals, weights, Stouffer())
+combine(pvals, Logit())
+combine(pvals, Tippett())
+combine(pvals, Simes())
+combine(pvals, Wilkinson(rank))
+combine(pvals, Minimum(PValueAdjustment()))
 ```
 
 
