@@ -60,6 +60,13 @@ function adjust(pValues::Vector{T}, method::M) where {T <: AbstractFloat,M <: PV
     return adjust(PValues(pValues), method)
 end
 
+function adjust(pValues::Vector{T}, method::M) where {T <: Union{Missing, AbstractFloat},M <: PValueAdjustment}
+    pValues_out = copy(pValues)
+    pValues_skipmissing = collect(skipmissing(pValues))
+    pValues_out[pValues .!== missing] .= adjust(PValues(pValues_skipmissing), method)
+    return pValues_out
+end
+
 function adjust(pValues::Vector{T}, n::Integer, method::M) where {T <: AbstractFloat,M <: PValueAdjustment}
     return adjust(PValues(pValues), n, method)
 end
