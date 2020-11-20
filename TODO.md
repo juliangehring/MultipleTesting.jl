@@ -1,0 +1,6 @@
+- Move `grenander` from utils to pi0estimators.
+- Move `unsort` to tests?
+- Test doctests
+- Add deprecates for combinations?
+- Type-alias for `Pi0Estimator`?
+- Generalize `Float64` parameters?
