@@ -39,7 +39,7 @@ Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle probabil
 adjust(pvalues, BenjaminiHochberg())
 ```
 
-Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method (see section below)
+Adaptive Benjamini-Hochberg with known π₀ or π₀ estimation method.
 
 ```julia
 adjust(pvalues, BenjaminiHochbergAdaptive(π₀))
@@ -49,6 +49,9 @@ adjust(pvalues, BenjaminiHochbergAdaptive(<:PValueAdjustmentMethod))
 Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
 Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
+
+Benjamini, Y., Krieger, A. M. & Yekutieli, D. (2006). Adaptive linear step-up 
+procedures that control the false discovery rate. Biometrika 93, 491–507.
 
 
 #### Benjamini-Yekutieli
