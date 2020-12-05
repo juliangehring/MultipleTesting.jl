@@ -17,6 +17,10 @@ Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
 [BenjaminiHochberg]
 
+Benjamini, Y., Krieger, A. M. & Yekutieli, D. (2006). Adaptive linear step-up 
+procedures that control the false discovery rate. Biometrika 93, 491–507.
+[BenjaminiHochbergAdaptive]
+
 Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
 procedure that controls the false discovery rate under independence. Journal of
 Statistical Planning and Inference 82, 163–170.

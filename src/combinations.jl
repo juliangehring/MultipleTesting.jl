@@ -13,8 +13,9 @@ julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
 julia> combine(pvals, Fisher())
 0.007616871850449092
+
 julia> combine(pvals, Stouffer())
-0.007098326181265917
+0.00709832618126593
 ```
 
 
@@ -131,7 +132,7 @@ Stouffer's p-value combination
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
 julia> combine(pvals, Stouffer())
-0.007098326181265917
+0.00709832618126593
 
 julia> weights = [1.0, 2.0, 0.4, 1.5];
 

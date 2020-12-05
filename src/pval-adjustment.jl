@@ -198,9 +198,8 @@ julia> adjust(pvals, 6, BenjaminiHochbergAdaptive(StoreyBootstrap()))
 
 # References
 
-Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A
-Practical and Powerful Approach to Multiple Testing. Journal of the Royal
-Statistical Society. Series B (Methodological) 57, 289–300.
+Benjamini, Y., Krieger, A. M. & Yekutieli, D. (2006). Adaptive linear step-up 
+procedures that control the false discovery rate. Biometrika 93, 491–507.
 """
 struct BenjaminiHochbergAdaptive <: PValueAdjustment
     pi0estimator::Pi0Estimator
@@ -286,7 +285,7 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 julia> adjust(pvals, BenjaminiLiu())
 4-element Array{Float64,1}:
  0.003994003998999962
- 0.022275749999999983
+ 0.022275750000000066
  0.02955000000000002
  0.125
 
