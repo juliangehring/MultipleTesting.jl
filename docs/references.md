@@ -105,31 +105,31 @@ Series B (Statistical Methodology) 66, 187–205.
 
 Fisher, R.A. (1925). Statistical methods for research workers (Genesis
 Publishing Pvt Ltd).
-[FisherCombination]
+[Fisher]
 
 Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
 Kutato Int Kozl 3, 171–197.
-[weighted StoufferCombination]
+[weighted Stouffer]
 
 Mudholkar, G.S., and George, E.O. (1977). The Logit Statistic for Combining
 Probabilities - An Overview (Rochester University NY, Dept of Statistics).
-[LogitCombination]
+[Logit]
 
 Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
 significance. Biometrika 73, 751–754.
-[SimesCombination]
+[Simes]
 
 Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
 (Princeton University Press).
-[StoufferCombination]
+[Stouffer]
 
 Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
 workers in the biological sciences.
-[TippettCombination]
+[Tippett]
 
 Wilkinson, B. (1951). A statistical consideration in psychological research.
 Psychological Bulletin 48, 156.
-[WilkinsonCombination]
+[Wilkinson]
 
 
 ### Higher criticism

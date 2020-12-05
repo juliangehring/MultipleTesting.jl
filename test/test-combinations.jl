@@ -10,29 +10,29 @@ using Test
 
     p1 = [0.01, 0.05, 0.2, 0.8]
     ref1 = Dict(
-        FisherCombination   => 0.01558752, # `metap::sumlog(p)`
-        LogitCombination    => 0.020031,   # `metap::logitp(p)`
-        StoufferCombination => 0.02353884, # `metap::sumz(p)`
-        TippettCombination  => 0.03940399, # `gmeta::Cpvaluecombine(p, "tippett")`
-        SimesCombination    => 0.04
+        Fisher   => 0.01558752, # `metap::sumlog(p)`
+        Logit    => 0.020031,   # `metap::logitp(p)`
+        Stouffer => 0.02353884, # `metap::sumz(p)`
+        Tippett  => 0.03940399, # `gmeta::Cpvaluecombine(p, "tippett")`
+        Simes    => 0.04
     )
 
     p2 = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.75]
     ref2 = Dict(
-        FisherCombination   => 1.285885e-06, # `metap::sumlog(p)`
-        LogitCombination    => 1.801132e-06, # `metap::logitp(p)`
-        StoufferCombination => 5.092143e-06, # `metap::sumz(p)`
-        TippettCombination  => 0.0007997201, # `gmeta::Cpvaluecombine(p, "tippett")`
-        SimesCombination    => 0.0008
+        Fisher   => 1.285885e-06, # `metap::sumlog(p)`
+        Logit    => 1.801132e-06, # `metap::logitp(p)`
+        Stouffer => 5.092143e-06, # `metap::sumz(p)`
+        Tippett  => 0.0007997201, # `gmeta::Cpvaluecombine(p, "tippett")`
+        Simes    => 0.0008
     )
 
     p3 = copy(p1)
     w3 = [0.1, 0.2, 0.3, 0.4] .* 2
-    ref3 = Dict(StoufferCombination => 0.1916892)
+    ref3 = Dict(Stouffer => 0.1916892)
 
     p_adjust_combinations = Dict(
-        Sidak             => TippettCombination,
-        BenjaminiHochberg => SimesCombination
+        Sidak             => Tippett,
+        BenjaminiHochberg => Simes
     )
 
     p_single = rand(1)
@@ -75,24 +75,24 @@ using Test
 
     @testset "Wilkinson combination" begin
 
-        method = WilkinsonCombination(1)
+        method = Wilkinson(1)
 
-        @test_throws MethodError WilkinsonCombination()
-        @test_throws ArgumentError WilkinsonCombination(0)
+        @test_throws MethodError Wilkinson()
+        @test_throws ArgumentError Wilkinson(0)
 
         @test typeof(method) <: PValueCombination
 
         # Wilkinson with rank = 1 is Tippett's method
-        ref = ref1[TippettCombination]
+        ref = ref1[Tippett]
         @test isapprox(combine(PValues(p1), method), ref, atol = 1e-8)
         @test isapprox(combine(p1, method), ref, atol = 1e-8)
 
-        ref = ref2[TippettCombination]
+        ref = ref2[Tippett]
         @test isapprox(combine(PValues(p2), method), ref, atol = 1e-8)
         @test isapprox(combine(p2, method), ref, atol = 1e-8)
 
-        @test_throws ArgumentError combine(PValues(rand(5)), WilkinsonCombination(6))
-        @test_throws ArgumentError combine(rand(5), WilkinsonCombination(6))
+        @test_throws ArgumentError combine(PValues(rand(5)), Wilkinson(6))
+        @test_throws ArgumentError combine(rand(5), Wilkinson(6))
 
         @test_throws DomainError combine(PValues(p1_invalid), method)
         @test_throws DomainError combine(p1_invalid, method)
@@ -112,12 +112,12 @@ using Test
 
         # reference values computed with `metap::wilkinsonp(p, r, alpha = 1e-16)$p`
         ref = [0.03940399, 0.01401875, 0.0272, 0.4096]
-        p = [combine(PValues(p1), WilkinsonCombination(r)) for r in 1:length(p1)]
+        p = [combine(PValues(p1), Wilkinson(r)) for r in 1:length(p1)]
         @test isapprox(p, ref, atol = 1e-7)
 
         ref = [7.997201e-04, 2.788821e-05, 5.393332e-05, 3.717514e-04,
                4.316500e-04, 1.231360e-03, 8.519680e-03, 1.001129e-01]
-        p = [combine(p2, WilkinsonCombination(r)) for r in 1:length(p2)]
+        p = [combine(p2, Wilkinson(r)) for r in 1:length(p2)]
         @test isapprox(p, ref, atol = 1e-7)
 
     end
@@ -125,9 +125,9 @@ using Test
 
     @testset "Minimum combination with $(p_adjustment)" for (p_adjustment, p_combination) in p_adjust_combinations
 
-        @test_throws MethodError MinimumCombination()
+        @test_throws MethodError Minimum()
 
-        padj_comb = MinimumCombination(p_adjustment())
+        padj_comb = Minimum(p_adjustment())
 
         @test typeof(padj_comb) <: PValueCombination
 
@@ -155,9 +155,9 @@ using Test
     end
 
 
-    @testset "Weighted StoufferCombination" begin
+    @testset "Weighted Stouffer" begin
 
-        method = StoufferCombination
+        method = Stouffer
 
         ref = ref1[method]
         @test isapprox(combine(p1, fill(1.0, size(p1)), method()), ref, atol = 1e-8)
@@ -194,20 +194,20 @@ using Test
         p0 = [0.01, 0.05, 0.2, 0.8, 0.0]
         p1 = [0.01, 0.05, 0.2, 0.8, 1.0]
 
-        @test isnan(combine(p0, FisherCombination()))
-        @test isapprox(combine(p1, FisherCombination()), 0.04198529, atol = 1e-8)
+        @test isnan(combine(p0, Fisher()))
+        @test isapprox(combine(p1, Fisher()), 0.04198529, atol = 1e-8)
 
-        @test isnan(combine(p0, LogitCombination()))
-        @test isnan(combine(p1, LogitCombination()))
+        @test isnan(combine(p0, Logit()))
+        @test isnan(combine(p1, Logit()))
 
-        @test isnan(combine(p0, StoufferCombination()))
-        @test isnan(combine(p1, StoufferCombination()))
+        @test isnan(combine(p0, Stouffer()))
+        @test isnan(combine(p1, Stouffer()))
 
-        @test isnan(combine(p0, fill(1.0, size(p0)), StoufferCombination()))
-        @test isnan(combine(p1, fill(1.0, size(p1)), StoufferCombination()))
+        @test isnan(combine(p0, fill(1.0, size(p0)), Stouffer()))
+        @test isnan(combine(p1, fill(1.0, size(p1)), Stouffer()))
 
-        @test isapprox(combine(p0, TippettCombination()), 0.0)
-        @test isapprox(combine(p1, TippettCombination()), 0.04900995, atol = 1e-8)
+        @test isapprox(combine(p0, Tippett()), 0.0)
+        @test isapprox(combine(p1, Tippett()), 0.04900995, atol = 1e-8)
 
     end
 
