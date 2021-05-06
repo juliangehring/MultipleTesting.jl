@@ -10,6 +10,7 @@ makedocs(
         canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/"),
     doctest = true,
     checkdocs = :exports,
+    linkcheck = true,
     pages = [
         "Home" => "index.md",
         "Library" => Any[
