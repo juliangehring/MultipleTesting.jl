@@ -1,12 +1,5 @@
 ## utility functions ##
 
-function reorder(values::AbstractVector{T}) where T <: Real
-    newOrder = sortperm(values)
-    oldOrder = sortperm(newOrder)
-    return newOrder, oldOrder
-end
-
-
 function sort_if_needed(x; kws...)
     if issorted(x; kws...)
         return x

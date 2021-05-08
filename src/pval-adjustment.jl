@@ -153,11 +153,11 @@ function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiHochberg) wher
     if k <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    pAdjusted[sortedOrder] = clamp.(pAdjusted, 0, 1)
     return pAdjusted
 end
 
@@ -262,11 +262,11 @@ function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiYekutieli) whe
     if k <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= harmonic_number(n) .* n ./ (1:k)
     stepup!(pAdjusted)
-    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    pAdjusted[sortedOrder] = clamp.(pAdjusted, 0, 1)
     return pAdjusted
 end
 
@@ -315,14 +315,14 @@ function adjust(pValues::PValues{T}, n::Integer, method::BenjaminiLiu) where T <
     if n <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = pValues[sortedOrder]
     # a bit more involved because cutoffs at significance α have the form:
     # P_(i) <= 1- [1 - min(1, m/(m-i+1)α)]^{1/(m-i+1)}
     s = n .- (1:k) .+ 1
     pAdjusted = (1 .- (1 .- pAdjusted).^s) .* s ./ n
     stepdown!(pAdjusted)
-    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    pAdjusted[sortedOrder] = clamp.(pAdjusted, 0, 1)
     return pAdjusted
 end
 
@@ -370,11 +370,11 @@ function adjust(pValues::PValues{T}, n::Integer, method::Hochberg) where T <: Ab
     if k <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepup!(pAdjusted)
-    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    pAdjusted[sortedOrder] = clamp.(pAdjusted, 0, 1)
     return pAdjusted
 end
 
@@ -422,11 +422,11 @@ function adjust(pValues::PValues{T}, n::Integer, method::Holm) where T <: Abstra
     if n <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = pValues[sortedOrder]
     pAdjusted .*= (n .- (1:k) .+ 1)
     stepdown!(pAdjusted)
-    pAdjusted = clamp.(pAdjusted[originalOrder], 0, 1)
+    pAdjusted[sortedOrder] = clamp.(pAdjusted, 0, 1)
     return pAdjusted
 end
 
@@ -474,7 +474,7 @@ function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T <: Abst
     if k <= 1
         return pValues
     end
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     pAdjusted = vcat(pValues[sortedOrder], fill(one(T), n - k))
     lower = n * minimum(pAdjusted ./ (1:n))
     q = fill(lower, n)
@@ -487,7 +487,9 @@ function adjust(pValues::PValues{T}, n::Integer, method::Hommel) where T <: Abst
         q[idx_right] .= q[n - j + 1]
         pa .= max.(pa, q)
     end
-    pAdjusted = max.(pa[originalOrder], pValues)
+    pa = pa[1:k]
+    pa[sortedOrder] = pa
+    pAdjusted = max.(pa, pValues)
     return pAdjusted
 end
 
@@ -578,12 +580,12 @@ adjust(pValues::PValues{T}, method::ForwardStop) where T <: AbstractFloat = adju
 function adjust(pValues::PValues{T}, n::Integer, method::ForwardStop) where T <: AbstractFloat
     k = length(pValues)
     check_number_tests(k, n)
-    sortedOrder, originalOrder = reorder(pValues)
+    sortedOrder = sortperm(pValues)
     logsums = -cumsum(log.(1 .- pValues[sortedOrder]))
     logsums ./= (1:k)
     stepup!(logsums)
-    pAdjusted = clamp.(logsums[originalOrder], 0, 1)
-    return pAdjusted
+    logsums[sortedOrder] = clamp.(logsums, 0, 1)
+    return logsums
 end
 
 
@@ -628,7 +630,7 @@ function adjust(pValues::PValues{T}, method::BarberCandes) where T <: AbstractFl
         return fill(1 / n, size(pValues))
     end
 
-    sorted_indexes, original_order = reorder(pValues)
+    sorted_indexes = sortperm(pValues)
     estimated_fdrs = pValues[sorted_indexes]
 
     Rt = 1 # current number of discoveries
@@ -655,7 +657,8 @@ function adjust(pValues::PValues{T}, method::BarberCandes) where T <: AbstractFl
     end
 
     stepup!(estimated_fdrs)
-    pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
+    pAdjusted = clamp.(estimated_fdrs, 0, 1)
+    pAdjusted[sorted_indexes] = pAdjusted
     return pAdjusted
 end
 

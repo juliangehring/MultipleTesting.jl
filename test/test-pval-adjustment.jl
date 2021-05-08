@@ -137,10 +137,10 @@ using Test
         # inefficient implementation for testing
         function barber_candes_brute_force(pValues::AbstractVector{T}) where T <: AbstractFloat
             n = length(pValues)
-            sorted_indexes, original_order = MultipleTesting.reorder(pValues)
-            sorted_pValues = pValues[sorted_indexes]
+            sorted_indexes = sortperm(pValues)
+            pAdjusted = pValues[sorted_indexes]
             estimated_fdrs = fill(1.0, size(pValues))
-            for (i, pv) in enumerate(sorted_pValues)
+            for (i, pv) in enumerate(pAdjusted)
                 if pv >= 0.5
                     break
                 else
@@ -148,7 +148,7 @@ using Test
                 end
             end
             MultipleTesting.stepup!(estimated_fdrs)
-            pAdjusted = clamp.(estimated_fdrs[original_order], 0, 1)
+            pAdjusted[sorted_indexes] = clamp.(estimated_fdrs, 0, 1)
             return pAdjusted
         end
 

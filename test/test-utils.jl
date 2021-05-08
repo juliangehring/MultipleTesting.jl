@@ -43,12 +43,16 @@ using Test
     end
 
 
-    @testset "reorder" begin
+    @testset "sorted and original ordering" begin
 
         x = [1, 5, 4, 2, 4, 3]
-        no, oo = MultipleTesting.reorder(x)
-        @test x[no] == sort(x)
-        @test x[no][oo] == x
+        new_order = sortperm(x)
+        y = x[new_order]
+        z = copy(y)
+        z[new_order] = y
+
+        @test y == sort(x)
+        @test z == x
 
     end
 
