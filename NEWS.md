@@ -4,6 +4,7 @@
 
 ### Changes
 
+- Improve the reordering strategy of p-values in adjustment methods. This change saves one sorting step for all adjustment methods that require sorted p-values. As a result, the performance for these methods is significantly improved.
 - Pin `Documenter` to v0.19 for building of the documentation (#104)
 
 
