@@ -1,11 +1,16 @@
 # MultipleTesting.jl News and Changes
 
-## Unreleased
+## Version 0.5.0
 
 ### Changes
 
 - Improve the reordering strategy of p-values in adjustment methods. This change saves one sorting step for all adjustment methods that require sorted p-values. As a result, the performance for these methods is significantly improved.
-- Pin `Documenter` to v0.19 for building of the documentation (#104)
+- Rename p-value combination types, in order to improve consistency with other types.
+
+
+### Support
+
+- Supports julia v1.4 and newer
 
 
 ## Version 0.4.1
