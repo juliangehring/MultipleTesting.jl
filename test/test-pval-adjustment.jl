@@ -4,6 +4,8 @@ module Test_pval_adjustment
 using MultipleTesting
 using Test
 
+include("utils.jl")
+
 
 @testset "p-Value adjustment" begin
 
@@ -75,7 +77,7 @@ using Test
 
         # unsorted inputs
         for i in 1:10
-            ord = MultipleTesting.unorder(pval1)
+            ord = unorder(pval1)
             @test isapprox(adjust(pval1[ord], method()), ref1[method][ord], atol = 1e-9)
         end
 
@@ -88,7 +90,7 @@ using Test
         # this test is not valid for ForwardStop
         if method != ForwardStop
             for i in 1:10
-                ord = MultipleTesting.unorder(ref2[method])
+                ord = unorder(ref2[method])
                 @test isapprox(adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9) # FIXME
             end
         end
@@ -96,7 +98,7 @@ using Test
         ## sorting order does not play a role
         for i in 1:10
             pval4 = sort(rand(10)) # all under H0
-            ord = MultipleTesting.unorder(pval4)
+            ord = unorder(pval4)
             @test adjust(pval4[ord], method()) == adjust(pval4, method())[ord]
         end
 
@@ -112,7 +114,7 @@ using Test
 
             # unsorted inputs
             for i in 1:10
-                ord = MultipleTesting.unorder(pval3)
+                ord = unorder(pval3)
                 @test adjust(pval3[ord], n3, method()) == (adjust(pval3pad, n3, method())[1:k3])[ord]
             end
 

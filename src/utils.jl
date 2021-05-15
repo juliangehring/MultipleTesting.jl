@@ -1,22 +1,5 @@
 ## utility functions ##
 
-function unsort(x; kws...)
-    y = copy(x)
-    while issorted(y; kws...)
-        shuffle!(y)
-    end
-    return y
-end
-
-function unorder(x; kws...)
-    ord = collect(1:length(x))
-    while issorted(x[ord]; kws...)
-        shuffle!(ord)
-    end
-    return ord
-end
-
-
 function valid_pvalues(x::AbstractVector{T}) where T <: AbstractFloat
     if !isin(x)
         throw(DomainError("p-values must all be in [0, 1]"))

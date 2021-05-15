@@ -4,6 +4,8 @@ module Test_utils
 using MultipleTesting
 using Test
 
+include("utils.jl")
+
 
 @testset "Utility functions" begin
 
@@ -57,6 +59,29 @@ using Test
     end
 
 
+    @testset "harmonic_number" begin
+
+        # Exact computation as reference
+        harm_n_exact(n::Integer) = sum([Rational(1, i) for i in 1:BigInt(n)])
+
+        n = [1:100; 200:200:1000; 10000]
+
+        max_d = 0.0
+        for i in n
+            hn1 = MultipleTesting.harmonic_number(i)
+            hn2 = harm_n_exact(i)
+            max_d = max(abs(hn1 - hn2), max_d)
+        end
+        # approximation error in the range of floating point inaccuracy
+        @test max_d < (10 * eps())
+
+    end
+
+end
+
+
+@testset "Helper functions for testing" begin
+
     @testset "unsort" begin
 
         n = 20
@@ -64,8 +89,6 @@ using Test
         xr = reverse(xs) # reverse sorted
         xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
-
-        unsort = MultipleTesting.unsort
 
         @test issorted(xs)
         @test !issorted(unsort(xs))
@@ -90,8 +113,6 @@ using Test
         xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
 
-        unorder = MultipleTesting.unorder
-
         @test issorted(xs)
         ord = unorder(xs)
         @test !issorted(ord)
@@ -107,25 +128,6 @@ using Test
         @test issorted(xr, rev = true)
         @test issorted(xr[unorder(xr)], rev = true)
         @test !issorted(xr[unorder(xr, rev = true)], rev = true)
-
-    end
-
-
-    @testset "harmonic_number" begin
-
-        # Exact computation as reference
-        harm_n_exact(n::Integer) = sum([Rational(1, i) for i in 1:BigInt(n)])
-
-        n = [1:100; 200:200:1000; 10000]
-
-        max_d = 0.0
-        for i in n
-            hn1 = MultipleTesting.harmonic_number(i)
-            hn2 = harm_n_exact(i)
-            max_d = max(abs(hn1 - hn2), max_d)
-        end
-        # approximation error in the range of floating point inaccuracy
-        @test max_d < (10 * eps())
 
     end
 

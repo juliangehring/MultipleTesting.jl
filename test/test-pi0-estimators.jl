@@ -5,6 +5,8 @@ using MultipleTesting
 using Test
 using StatsBase
 
+include("utils.jl")
+
 
 @testset "π₀ estimators" begin
 
@@ -15,8 +17,6 @@ using StatsBase
     pi0 = length(p0) / length(p)
 
     lambdas = collect(0.05:0.05:0.95)
-
-    unsort = MultipleTesting.unsort
 
 
     @testset "Storey π₀" begin
