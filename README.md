@@ -4,7 +4,7 @@ The `MultipleTesting` package offers common algorithms for p-value adjustment
 and combination as well as the estimation of the proportion π₀ of true null
 hypotheses.
 
-![xkcd p-value guide](https://imgs.xkcd.com/comics/p_values.png)
+[![xkcd p-value guide](https://imgs.xkcd.com/comics/p_values.png)](https://xkcd.com/license.html "XKCD")
 
 
 ## Features
