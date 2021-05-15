@@ -1,20 +1,5 @@
 ## utility functions ##
 
-function sort_if_needed(x; kws...)
-    if issorted(x; kws...)
-        return x
-    else
-        return sort(x; kws...)
-    end
-end
-
-function sort_if_needed!(x; kws...)
-    if !issorted(x; kws...)
-        sort!(x; kws...)
-    end
-end
-
-
 function unsort(x; kws...)
     y = copy(x)
     while issorted(y; kws...)

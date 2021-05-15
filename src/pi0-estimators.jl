@@ -171,7 +171,7 @@ end
 
 function estimate(pValues::PValues{T}, pi0estimator::LeastSlope) where T <: AbstractFloat
     n = length(pValues)
-    pValues = sort_if_needed(pValues)
+    pValues = sort(pValues)
     s0 = lsl_slope(1, n, pValues)
     sx = 0
     for i in 2:n
@@ -311,7 +311,7 @@ RightBoundary() = RightBoundary([0.02:0.02:0.1; 0.15:0.05:0.95])
 
 function estimate(pValues::PValues{T}, pi0estimator::RightBoundary) where T <: AbstractFloat
     n = length(pValues)
-    λseq = sort_if_needed(pi0estimator.λseq)
+    λseq = sort(pi0estimator.λseq)
     # make sure we catch p-values equal to 1 despite left closure
     # use closed=:left because we have been using >= convention in this package
     # note that original paper uses > convention.
