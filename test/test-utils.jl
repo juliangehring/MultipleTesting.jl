@@ -4,6 +4,8 @@ module Test_utils
 using MultipleTesting
 using Test
 
+include("utils.jl")
+
 
 @testset "Utility functions" begin
 
@@ -34,59 +36,59 @@ using Test
         @test_throws DomainError valid_pvalues([0.1, -0.3, 0.2])
 
         # test against valid vector inputs
-        @test valid_pvalues([0.0]) == nothing
-        @test valid_pvalues([1.0]) == nothing
-        @test valid_pvalues(rand(1)) == nothing
-        @test valid_pvalues([0.1, 0.2, 0.9]) == nothing
-        @test valid_pvalues(rand(5)) == nothing
+        @test valid_pvalues([0.0]) === nothing
+        @test valid_pvalues([1.0]) === nothing
+        @test valid_pvalues(rand(1)) === nothing
+        @test valid_pvalues([0.1, 0.2, 0.9]) === nothing
+        @test valid_pvalues(rand(5)) === nothing
 
     end
 
 
-    @testset "reorder" begin
+    @testset "sorted and original ordering" begin
 
         x = [1, 5, 4, 2, 4, 3]
-        no, oo = MultipleTesting.reorder(x)
-        @test x[no] == sort(x)
-        @test x[no][oo] == x
+        new_order = sortperm(x)
+        y = x[new_order]
+        z = copy(y)
+        z[new_order] = y
+
+        @test y == sort(x)
+        @test z == x
 
     end
 
 
-    @testset "sort_if_needed" begin
+    @testset "harmonic_number" begin
 
-        x = rand(20)
+        # Exact computation as reference
+        harm_n_exact(n::Integer) = sum([Rational(1, i) for i in 1:BigInt(n)])
 
-        sort_if_needed = MultipleTesting.sort_if_needed
-        sort_if_needed! = MultipleTesting.sort_if_needed!
+        n = [1:100; 200:200:1000; 10000]
 
-        # behaves as standard `sort`
-        @test sort_if_needed(x) == sort(x)
-        @test sort_if_needed(sort(x)) == sort(x)
-
-        # `sort` keywords work
-        @test sort_if_needed(x, rev = true) == sort(x, rev = true)
-        @test sort_if_needed(sort(x, rev = true), rev = true) == sort(x, rev = true)
-
-        x = rand(20)
-        y = copy(x)
-        sort_if_needed!(y)
-        @test y == sort(x)
-        sort_if_needed!(y)
-        @test y == sort(x)
+        max_d = 0.0
+        for i in n
+            hn1 = MultipleTesting.harmonic_number(i)
+            hn2 = harm_n_exact(i)
+            max_d = max(abs(hn1 - hn2), max_d)
+        end
+        # approximation error in the range of floating point inaccuracy
+        @test max_d < (10 * eps())
 
     end
 
+end
+
+
+@testset "Helper functions for testing" begin
 
     @testset "unsort" begin
 
         n = 20
         xs = sort(rand(n)) # sorted
         xr = reverse(xs) # reverse sorted
-        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
-
-        unsort = MultipleTesting.unsort
 
         @test issorted(xs)
         @test !issorted(unsort(xs))
@@ -108,10 +110,8 @@ using Test
         n = 20
         xs = sort(rand(n)) # sorted
         xr = reverse(xs) # reverse sorted
-        xu = xs[[1:2:n-1; 2:2:n]] # unsorted
+        xu = xs[[1:2:n - 1; 2:2:n]] # unsorted
         @test !issorted(xu)
-
-        unorder = MultipleTesting.unorder
 
         @test issorted(xs)
         ord = unorder(xs)
@@ -128,25 +128,6 @@ using Test
         @test issorted(xr, rev = true)
         @test issorted(xr[unorder(xr)], rev = true)
         @test !issorted(xr[unorder(xr, rev = true)], rev = true)
-
-    end
-
-
-    @testset "harmonic_number" begin
-
-        # Exact computation as reference
-        harm_n_exact(n::Integer) = sum([Rational(1, i) for i in 1:BigInt(n)])
-
-        n = [1:100; 200:200:1000; 10000]
-
-        max_d = 0.0
-        for i in n
-            hn1 = MultipleTesting.harmonic_number(i)
-            hn2 = harm_n_exact(i)
-            max_d = max(abs(hn1 - hn2), max_d)
-        end
-        # approximation error in the range of floating point inaccuracy
-        @test max_d < (10*eps())
 
     end
 

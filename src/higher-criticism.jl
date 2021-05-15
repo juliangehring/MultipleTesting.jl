@@ -11,10 +11,10 @@ julia> pvals = PValues([0.001, 0.01, 0.03, 0.5]);
 
 julia> estimate(pvals, HigherCriticismScores())
 4-element Array{Float64,1}:
- 1.15008
+ 1.1500817362257345
  1.96
- 3.32554
- 2.3094
+ 3.3255375505322444
+ 2.3094010767584976
 
 ```
 
@@ -30,9 +30,9 @@ features: higher criticism or false discovery rates? Biostatistics 14, 129–143
 struct HigherCriticismScores
 end
 
-function estimate(pValues::PValues{T}, method::HigherCriticismScores) where T<:AbstractFloat
+function estimate(pValues::PValues{T}, method::HigherCriticismScores) where T <: AbstractFloat
     n = length(pValues)
-    F = (n+1 .- competerank(-pValues)) ./ n  # ECDF
+    F = (n + 1 .- competerank(-pValues)) ./ n  # ECDF
     denom = F .* (one(T) .- F) ./ n
     # avoid denominator of 0 for last value
     idx0 = denom .== 0
@@ -67,7 +67,7 @@ features: higher criticism or false discovery rates? Biostatistics 14, 129–143
 struct HigherCriticismThreshold
 end
 
-function estimate(pValues::PValues{T}, method::HigherCriticismThreshold) where T<:AbstractFloat
+function estimate(pValues::PValues{T}, method::HigherCriticismThreshold) where T <: AbstractFloat
     idx_hcv = argmax(estimate(pValues, HigherCriticismScores()))
     return pValues[idx_hcv]
 end

@@ -35,17 +35,17 @@ using Test
         @test adjust(pval, t(pi0)) == pval .* pi0
 
         ## compare with reference values
-        @test isapprox( adjust(pval1, t(pi0)), ref, atol = 1e-8 )
+        @test isapprox(adjust(pval1, t(pi0)), ref, atol = 1e-8)
 
         ## BH Adaptive same as BH for π₀ missing or 1
-        @test isapprox( adjust(pval1, t(1.0)), ref0, atol = 1e-8 )
-        @test isapprox( adjust(pval1, t()), ref0, atol = 1e-8 )
-        @test isapprox( adjust(pval1, t(0.0)), zero(ref0), atol = 1e-8 )
+        @test isapprox(adjust(pval1, t(1.0)), ref0, atol = 1e-8)
+        @test isapprox(adjust(pval1, t()), ref0, atol = 1e-8)
+        @test isapprox(adjust(pval1, t(0.0)), zero(ref0), atol = 1e-8)
 
         # adaptive with pi0 estimator == oracle with estimated pi0
-        @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate_pi0(pval1, Storey())))
-        @test adjust(pval1, t(Storey(0.3))) == adjust(pval1, t(estimate_pi0(pval1, Storey(0.3))))
-        @test adjust(pval1, t(LeastSlope())) == adjust(pval1, t(estimate_pi0(pval1, LeastSlope())))
+        @test adjust(pval1, t(Storey())) == adjust(pval1, t(estimate(pval1, Storey())))
+        @test adjust(pval1, t(Storey(0.3))) == adjust(pval1, t(estimate(pval1, Storey(0.3))))
+        @test adjust(pval1, t(LeastSlope())) == adjust(pval1, t(estimate(pval1, LeastSlope())))
 
     end
 

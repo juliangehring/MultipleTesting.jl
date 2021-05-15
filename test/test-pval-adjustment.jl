@@ -4,6 +4,8 @@ module Test_pval_adjustment
 using MultipleTesting
 using Test
 
+include("utils.jl")
+
 
 @testset "p-Value adjustment" begin
 
@@ -43,9 +45,8 @@ using Test
     k3 = 6
     n3 = length(pval1)
     pval3 = pval1[1:k3]
-    pval3pad = [pval3; fill(1.0, n3-k3)]  # non-observed p-values equal to 1
-    methods3 = [Bonferroni, Holm, Hochberg, Hommel, BenjaminiHochberg,
-                BenjaminiYekutieli, BenjaminiLiu, Sidak, ForwardStop]
+    pval3pad = [pval3; fill(1.0, n3 - k3)]  # non-observed p-values equal to 1
+    methods3 = [Bonferroni, Holm, Hochberg, Hommel, BenjaminiHochberg, BenjaminiYekutieli, BenjaminiLiu, Sidak, ForwardStop]
 
     @testset "pvalue adjustment $method" for method in keys(ref1)
 
@@ -71,33 +72,33 @@ using Test
         end
 
         ## compare with reference values
-        @test isapprox( adjust(pval1, method()), ref1[method], atol = 1e-9 )
-        @test isapprox( adjust(PValues(pval1), method()), ref1[method], atol = 1e-9 )
+        @test isapprox(adjust(pval1, method()), ref1[method], atol = 1e-9)
+        @test isapprox(adjust(PValues(pval1), method()), ref1[method], atol = 1e-9)
 
         # unsorted inputs
         for i in 1:10
-            ord = MultipleTesting.unorder(pval1)
-            @test isapprox( adjust(pval1[ord], method()), ref1[method][ord], atol = 1e-9 )
+            ord = unorder(pval1)
+            @test isapprox(adjust(pval1[ord], method()), ref1[method][ord], atol = 1e-9)
         end
 
 
         ## compare with reference values having ties
-        @test isapprox( adjust(pval2, method()), ref2[method], atol = 1e-9 )
-        @test isapprox( adjust(PValues(pval2), method()), ref2[method], atol = 1e-9 )
+        @test isapprox(adjust(pval2, method()), ref2[method], atol = 1e-9)
+        @test isapprox(adjust(PValues(pval2), method()), ref2[method], atol = 1e-9)
 
         # unsorted inputs
         # this test is not valid for ForwardStop
         if method != ForwardStop
             for i in 1:10
-                ord = MultipleTesting.unorder(ref2[method])
-                @test isapprox( adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9 ) # FIXME
+                ord = unorder(ref2[method])
+                @test isapprox(adjust(pval2[ord], method()), ref2[method][ord], atol = 1e-9) # FIXME
             end
         end
 
         ## sorting order does not play a role
         for i in 1:10
             pval4 = sort(rand(10)) # all under H0
-            ord = MultipleTesting.unorder(pval4)
+            ord = unorder(pval4)
             @test adjust(pval4[ord], method()) == adjust(pval4, method())[ord]
         end
 
@@ -113,12 +114,12 @@ using Test
 
             # unsorted inputs
             for i in 1:10
-                ord = MultipleTesting.unorder(pval3)
+                ord = unorder(pval3)
                 @test adjust(pval3[ord], n3, method()) == (adjust(pval3pad, n3, method())[1:k3])[ord]
             end
 
             # k > n not allowed: test for any n in [1,k-1]
-            @test_throws ArgumentError adjust(pval3, rand(1:k3-1), method())
+            @test_throws ArgumentError adjust(pval3, rand(1:k3 - 1), method())
         end
 
     end
@@ -127,24 +128,42 @@ using Test
     @testset "argument checking for number of tests" begin
 
         @test_throws ArgumentError MultipleTesting.check_number_tests(3, 2)
-        @test MultipleTesting.check_number_tests(2, 2) == nothing
-        @test MultipleTesting.check_number_tests(2, 3) == nothing
+        @test MultipleTesting.check_number_tests(2, 2) === nothing
+        @test MultipleTesting.check_number_tests(2, 3) === nothing
 
     end
 
 
     @testset "BarberCandès #2:" begin
+
+        # inefficient implementation for testing
+        function barber_candes_brute_force(pValues::AbstractVector{T}) where T <: AbstractFloat
+            n = length(pValues)
+            sorted_indexes = sortperm(pValues)
+            pAdjusted = pValues[sorted_indexes]
+            estimated_fdrs = fill(1.0, size(pValues))
+            for (i, pv) in enumerate(pAdjusted)
+                if pv >= 0.5
+                    break
+                else
+                    estimated_fdrs[i] = (sum((1 .- pValues) .<= pv) + 1) / i
+                end
+            end
+            MultipleTesting.stepup!(estimated_fdrs)
+            pAdjusted[sorted_indexes] = clamp.(estimated_fdrs, 0, 1)
+            return pAdjusted
+        end
+
         for k = 1:5
             pv = rand(BetaUniformMixtureModel(0.5, 0.5, 7.0), 40)
-            @test isapprox(adjust(pv, BarberCandes()),
-                           MultipleTesting.barber_candes_brute_force(pv), atol=1e-9)
+            @test isapprox(adjust(pv, BarberCandes()), barber_candes_brute_force(pv), atol = 1e-9)
         end
     end
 
     @testset "BarberCandès: All p-values < 0.5 (#87)" begin
         for pv in ([0.05, 0.1, 0.3], [0.01, 0.17, 0.25, 0.37, 0.47])
             n = length(pv)
-            @test isapprox( adjust(PValues(pv), BarberCandes()), fill(1/n, n) )
+            @test isapprox(adjust(PValues(pv), BarberCandes()), fill(1 / n, n))
         end
     end
 

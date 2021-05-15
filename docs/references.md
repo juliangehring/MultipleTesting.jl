@@ -17,6 +17,10 @@ Practical and Powerful Approach to Multiple Testing. Journal of the Royal
 Statistical Society. Series B (Methodological) 57, 289–300.
 [BenjaminiHochberg]
 
+Benjamini, Y., Krieger, A. M. & Yekutieli, D. (2006). Adaptive linear step-up 
+procedures that control the false discovery rate. Biometrika 93, 491–507.
+[BenjaminiHochbergAdaptive]
+
 Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing
 procedure that controls the false discovery rate under independence. Journal of
 Statistical Planning and Inference 82, 163–170.
@@ -101,31 +105,31 @@ Series B (Statistical Methodology) 66, 187–205.
 
 Fisher, R.A. (1925). Statistical methods for research workers (Genesis
 Publishing Pvt Ltd).
-[FisherCombination]
+[Fisher]
 
 Liptak, T. (1958). On the combination of independent tests. Magyar Tud Akad Mat
 Kutato Int Kozl 3, 171–197.
-[weighted StoufferCombination]
+[weighted Stouffer]
 
 Mudholkar, G.S., and George, E.O. (1977). The Logit Statistic for Combining
 Probabilities - An Overview (Rochester University NY, Dept of Statistics).
-[LogitCombination]
+[Logit]
 
 Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
 significance. Biometrika 73, 751–754.
-[SimesCombination]
+[Simes]
 
 Stouffer, S.A. (1949). The American soldier. Vol. 1: Adjustment during army life
 (Princeton University Press).
-[StoufferCombination]
+[Stouffer]
 
 Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
 workers in the biological sciences.
-[TippettCombination]
+[Tippett]
 
 Wilkinson, B. (1951). A statistical consideration in psychological research.
 Psychological Bulletin 48, 156.
-[WilkinsonCombination]
+[Wilkinson]
 
 
 ### Higher criticism
@@ -141,14 +145,14 @@ features: higher criticism or false discovery rates? Biostatistics 14, 129–143
 
 ## Related software packages
 
-- [PValueAdjust.jl](https://github.com/dirkschumacher/PValueAdjust.jl): P-value adjustment methods for multiple testing correction, *deprecated* [julia]
+[PValueAdjust.jl](https://github.com/dirkschumacher/PValueAdjust.jl): P-value adjustment methods for multiple testing correction, *deprecated* [julia]
 
-- [`p.adjust`](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/p.adjust.html) in the [stats](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html) package [R]
+[`p.adjust`](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/p.adjust.html) in the [stats](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html) package [R]
 
-- [mutoss](https://cran.r-project.org/web/packages/mutoss/index.html): Multiple hypothesis testing procedures [R]
+[mutoss](https://cran.r-project.org/web/packages/mutoss/index.html): Multiple hypothesis testing procedures [R]
 
-- [qvalue](https://bioconductor.org/packages/release/bioc/html/qvalue.html): Q-value estimation for false discovery rate control [R]
+[qvalue](https://bioconductor.org/packages/release/bioc/html/qvalue.html): Q-value estimation for false discovery rate control [R]
 
-- [fdrtool](https://cran.r-project.org/web/packages/fdrtool/index.html): Estimation of (local) false discovery rates and higher criticism [R]
+[fdrtool](https://cran.r-project.org/web/packages/fdrtool/index.html): Estimation of (local) false discovery rates and higher criticism [R]
 
-- [pi0](https://cran.r-project.org/web/packages/pi0/index.html): Estimating the proportion of true null hypotheses for FDR, *deprecated* [R]
+[pi0](https://cran.r-project.org/web/packages/pi0/index.html): Estimating the proportion of true null hypotheses for FDR, *deprecated* [R]

@@ -1,11 +1,10 @@
-__precompile__()
-
 """
 *MultipleTesting* package
 
 * Adjusting p-values for multiple testing
 * Estimating the fraction π₀ of tests under the null hypothesis
 * Combination of p-values
+* Higher criticism
 """
 module MultipleTesting
 
@@ -17,10 +16,7 @@ import Distributions: estimate
 
 import SpecialFunctions: digamma
 
-import Random: shuffle!
-
-export
-    PValues,
+export PValues,
     adjust,
     PValueAdjustment,
     Bonferroni,
@@ -34,7 +30,7 @@ export
     Sidak,
     ForwardStop,
     BarberCandes,
-    estimate_pi0,
+    estimate,
     Pi0Estimator,
     Storey,
     StoreyBootstrap,
@@ -54,14 +50,13 @@ export
     BetaUniformMixtureModel,
     PValueCombination,
     combine,
-    FisherCombination,
-    LogitCombination,
-    StoufferCombination,
-    TippettCombination,
-    SimesCombination,
-    WilkinsonCombination,
-    MinimumCombination,
-    estimate,
+    Fisher,
+    Logit,
+    Stouffer,
+    Tippett,
+    Simes,
+    Wilkinson,
+    Minimum,
     HigherCriticismScores,
     HigherCriticismThreshold
 

@@ -1,44 +1,41 @@
 ### Combination methods for p-values ###
 
 """
-    combine(PValues, PValueCombination)
+    combine(PValues, <:PValueCombination)
 
 Combine p-values
+
 
 # Examples
 
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, FisherCombination())
+julia> combine(pvals, Fisher())
 0.007616871850449092
-julia> combine(pvals, StoufferCombination())
-0.007098326181265917
+
+julia> combine(pvals, Stouffer())
+0.00709832618126593
 ```
 
-```jldoctest
-julia> subtypes(PValueCombination)
-7-element Array{Union{DataType, UnionAll},1}:
- MultipleTesting.FisherCombination
- MultipleTesting.LogitCombination
- MultipleTesting.MinimumCombination
- MultipleTesting.SimesCombination
- MultipleTesting.StoufferCombination
- MultipleTesting.TippettCombination
- MultipleTesting.WilkinsonCombination
-```
 
 # See also
 
 `PValueCombination`s:
 
-[`FisherCombination`](@ref) [`LogitCombination`](@ref) [`StoufferCombination`](@ref) [`TippettCombination`](@ref) [`SimesCombination`](@ref) [`WilkinsonCombination`](@ref) [`MinimumCombination`](@ref)
+[`Fisher`](@ref)
+[`Logit`](@ref)
+[`Stouffer`](@ref)
+[`Tippett`](@ref)
+[`Simes`](@ref)
+[`Wilkinson`](@ref)
+[`Minimum`](@ref)
 
 """
 function combine end
 
-function combine(pValues::AbstractVector{T}, method::M)::T where {T<:AbstractFloat, M<:PValueCombination}
-    combine(PValues(pValues), method)
+function combine(pValues::AbstractVector{T}, method::M)::T where {T <: AbstractFloat,M <: PValueCombination}
+    return combine(PValues(pValues), method)
 end
 
 
@@ -53,7 +50,7 @@ Fisher's p-value combination
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, FisherCombination())
+julia> combine(pvals, Fisher())
 0.007616871850449092
 ```
 
@@ -65,10 +62,10 @@ Statistical methods for research workers
 (Genesis Publishing Pvt Ltd).
 
 """
-struct FisherCombination <: PValueCombination
+struct Fisher <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Fisher)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -77,7 +74,7 @@ function combine(pValues::PValues{T}, method::FisherCombination)::T where T<:Abs
         return NaN
     end
     x = -2 * sum(log.(pValues))
-    p = ccdf(Chisq(2n), x)
+    p = ccdf(Chisq(2n), Float64(x))
     return p
 end
 
@@ -93,7 +90,7 @@ Logit p-value combination
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, LogitCombination())
+julia> combine(pvals, Logit())
 0.006434494635148462
 ```
 
@@ -105,10 +102,10 @@ The Logit Statistic for Combining Probabilities - An Overview
 (Rochester University NY, Dept of Statistics).
 
 """
-struct LogitCombination <: PValueCombination
+struct Logit <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::LogitCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Logit)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -116,9 +113,9 @@ function combine(pValues::PValues{T}, method::LogitCombination)::T where T<:Abst
     if minimum(pValues) == 0 || maximum(pValues) == 1
         return NaN
     end
-    c = sqrt( (5n+2)*n*pi^2 / ((5n+4)*3) )
-    x = -sum(log.(pValues./(1 .- pValues))) / c
-    p = ccdf(TDist(5n+4), x)
+    c = sqrt((5n + 2) * n * pi^2 / ((5n + 4) * 3))
+    x = -sum(log.(pValues ./ (1 .- pValues))) / c
+    p = ccdf(TDist(5n + 4), x)
     return p
 end
 
@@ -134,12 +131,12 @@ Stouffer's p-value combination
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, StoufferCombination())
-0.007098326181265917
+julia> combine(pvals, Stouffer())
+0.00709832618126593
 
 julia> weights = [1.0, 2.0, 0.4, 1.5];
 
-julia> combine(pvals, weights, StoufferCombination())
+julia> combine(pvals, weights, Stouffer())
 0.007331653763696742
 ```
 
@@ -155,10 +152,10 @@ On the combination of independent tests.
 Magyar Tud Akad Mat Kutato Int Kozl 3, 171–197.
 
 """
-struct StoufferCombination <: PValueCombination
+struct Stouffer <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Stouffer)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -172,7 +169,7 @@ function combine(pValues::PValues{T}, method::StoufferCombination)::T where T<:A
     return p
 end
 
-function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
+function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::Stouffer)::T where {T <: AbstractFloat,R <: Real}
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -186,8 +183,8 @@ function combine(pValues::PValues{T}, weights::AbstractVector{R}, method::Stouff
     return p
 end
 
-function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::StoufferCombination)::T where {T<:AbstractFloat, R<:Real}
-    combine(PValues(pValues), weights, method)
+function combine(pValues::AbstractVector{T}, weights::AbstractVector{R}, method::Stouffer)::T where {T <: AbstractFloat,R <: Real}
+    return combine(PValues(pValues), weights, method)
 end
 
 
@@ -202,7 +199,7 @@ Tippett's p-value combination
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, TippettCombination())
+julia> combine(pvals, Tippett())
 0.039403990000000055
 ```
 
@@ -213,10 +210,10 @@ Tippett, L.H.C. (1931). The Methods of Statistics. An introduction mainly for
 workers in the biological sciences.
 
 """
-struct TippettCombination <: PValueCombination
+struct Tippett <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::TippettCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Tippett)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -237,7 +234,7 @@ Simes's p-value combination
 ```jldoctest
 julia> pvals = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pvals, SimesCombination())
+julia> combine(pvals, Simes())
 0.04
 ```
 
@@ -248,16 +245,16 @@ Simes, R.J. (1986). An improved Bonferroni procedure for multiple tests of
 significance. Biometrika 73, 751–754.
 
 """
-struct SimesCombination <: PValueCombination
+struct Simes <: PValueCombination
 end
 
-function combine(pValues::PValues{T}, method::SimesCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Simes)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
     end
     pValues = sort(pValues)
-    p = n * minimum(pValues./(1:n))
+    p = n * minimum(pValues ./ (1:n))
     return p
 end
 
@@ -273,10 +270,10 @@ Wilkinson's p-value combination
 ```jldoctest
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pv, WilkinsonCombination(1))  # combination with rank 1
+julia> combine(pv, Wilkinson(1))  # combination with rank 1
 0.03940399000000003
 
-julia> combine(pv, WilkinsonCombination(4))  # combination with rank 4
+julia> combine(pv, Wilkinson(4))  # combination with rank 4
 0.0625
 ```
 
@@ -287,10 +284,10 @@ Wilkinson, B. (1951). A statistical consideration in psychological research.
 Psychological Bulletin 48, 156.
 
 """
-struct WilkinsonCombination <: PValueCombination
+struct Wilkinson <: PValueCombination
     rank::Integer
 
-    function WilkinsonCombination(rank)
+    function Wilkinson(rank)
         if rank < 1
             throw(ArgumentError("Rank must be positive."))
         end
@@ -298,7 +295,7 @@ struct WilkinsonCombination <: PValueCombination
     end
 end
 
-function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Wilkinson)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]
@@ -308,7 +305,7 @@ function combine(pValues::PValues{T}, method::WilkinsonCombination)::T where T<:
         throw(ArgumentError("Rank must be in 1,..,$(n)"))
     end
     p_rank = partialsort(pValues, rank)
-    p = cdf(Beta(rank, n-rank+1), p_rank)
+    p = cdf(Beta(rank, n - rank + 1), Float64(p_rank))
     return p
 end
 
@@ -324,19 +321,19 @@ Minimum of adjusted p-value combination
 ```jldoctest
 julia> pv = PValues([0.01, 0.02, 0.3, 0.5]);
 
-julia> combine(pv, MinimumCombination(BenjaminiHochberg()))
+julia> combine(pv, Minimum(BenjaminiHochberg()))
 0.04
 
-julia> combine(pv, MinimumCombination(ForwardStop()))
+julia> combine(pv, Minimum(ForwardStop()))
 0.01005033585350145
 ```
 
 """
-struct MinimumCombination <: PValueCombination
+struct Minimum <: PValueCombination
     adjustment::PValueAdjustment
 end
 
-function combine(pValues::PValues{T}, method::MinimumCombination)::T where T<:AbstractFloat
+function combine(pValues::PValues{T}, method::Minimum)::T where T <: AbstractFloat
     n = length(pValues)
     if n == 1
         return pValues[1]

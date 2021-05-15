@@ -25,11 +25,11 @@ julia> using Distributions
 
 julia> pdf.(bum, 0.2:0.2:1.0)
 5-element Array{Float64,1}:
- 1.09443
- 0.832456
- 0.716398
- 0.647214
- 0.6
+ 1.094427190999916
+ 0.832455532033676
+ 0.7163977794943224
+ 0.647213595499958
+ 0.6000000000000001
 
 ```
 
@@ -44,6 +44,6 @@ partitioning the empirical distribution of p-values. Bioinformatics 19,
 """
 function BetaUniformMixtureModel(π0::AbstractFloat, α::AbstractFloat = 0.5, β::AbstractFloat = 1.0)
     isin(π0, 0, 1) || throw(DomainError("π0 must be in [0, 1]"))
-    bum = MixtureModel([Beta(α, β), Uniform()], [1-π0, π0])
+    bum = MixtureModel([Beta(α, β), Uniform()], [1 - π0, π0])
     return bum
 end

@@ -1,15 +1,16 @@
 using Documenter
 using MultipleTesting
 
+DocMeta.setdocmeta!(MultipleTesting, :DocTestSetup, :(using MultipleTesting); recursive=true)
+
 makedocs(
     modules = [MultipleTesting],
-    format = :html,
     sitename = "MultipleTesting.jl",
+    format = Documenter.HTML(disable_git = true,  # disable source and edit links to github
+        canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/"),
     doctest = true,
     checkdocs = :exports,
     linkcheck = true,
-    html_disable_git = true, # disable source and edit links to github
-    html_canonical = "https://juliangehring.github.io/MultipleTesting.jl/stable/",
     pages = [
         "Home" => "index.md",
         "Library" => Any[
@@ -24,8 +25,7 @@ makedocs(
 
 deploydocs(
     repo = "github.com/juliangehring/MultipleTesting.jl.git",
-    julia = "0.7",
     target = "build",
-    deps   = nothing,
-    make   = nothing
+    devbranch = "develop",
+    push_preview = true
 )
