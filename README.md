@@ -8,7 +8,7 @@ hypotheses.
 ## Features
 
 
-### Adjustment of p-values
+### Adjustment of p-Values
 
 ```julia
 adjust(pvalues, <:PValueAdjustmentMethod)
@@ -158,7 +158,7 @@ discovery rates: a unified approach. Journal of the Royal Statistical Society:
 Series B (Statistical Methodology) 66, 187–205.
 
 
-#### Storey's closed-form bootstrap
+#### Storey's Closed-Form Bootstrap
 
 ```julia
 estimate(pvalues, StoreyBootstrap())
@@ -191,7 +191,7 @@ Benjamini, Y., Krieger, A.M., and Yekutieli, D. (2006). Adaptive linear step-up
 procedures that control the false discovery rate. Biometrika 93, 491–507.
 
 
-#### RightBoundary
+#### Right Boundary
 
 Storey's estimate with dynamically chosen λ
 
@@ -216,7 +216,7 @@ partitioning the empirical distribution of p-values. Bioinformatics 19,
 1236–1242.
 
 
-#### Censored BUM
+#### Censored Beta-Uniform Mixture
 
 ```julia
 estimate(pvalues, CensoredBUM())
@@ -239,7 +239,7 @@ Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 555–572.
 
 
-#### ConvexDecreasing
+#### Convex Decreasing
 
 ```julia
 estimate(pvalues, ConvexDecreasing())
@@ -252,7 +252,7 @@ Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67,
 555–572.
 
 
-#### Oracle for known π₀
+#### Oracle for Known π₀
 
 ```julia
 estimate(pvalues, Oracle(π₀))
@@ -260,7 +260,7 @@ estimate(pvalues, Oracle(π₀))
 
 
 
-### Combination of p-values
+### Combination of p-Values
 
 ```julia
 combine(pvalues, <:PValueCombination)
@@ -333,7 +333,7 @@ Wilkinson, B. (1951). A statistical consideration in psychological research.
 Psychological Bulletin 48, 156.
 
 
-#### Minimum of adjusted p-values
+#### Minimum of Adjusted p-Values
 
 ```julia
 combine(pvalues, Minimum(PValueAdjustment()))
@@ -341,7 +341,7 @@ combine(pvalues, Minimum(PValueAdjustment()))
 
 
 
-### Higher criticism
+### Higher Criticism
 
 Higher criticism scores and threshold
 
@@ -358,7 +358,7 @@ features: higher criticism or false discovery rates? Biostatistics 14, 129–143
 
 
 
-### Simulation of p-value distributions
+### Modelling of p-Value Distributions
 
 
 #### Beta Uniform Mixture Model

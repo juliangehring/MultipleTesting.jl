@@ -54,10 +54,10 @@ adjust(pvals, n, PValueAdjustmentMethod)
 ### Estimation of π₀
 
 * Storey
-* Storey's closed-form bootstrap
+* Storey's Closed-Form Bootstrap
 * Least Slope
 * Two Step
-* RightBoundary (Storey's estimate with dynamically chosen λ)
+* Right Boundary (Storey's estimate with dynamically chosen λ)
 * Beta-Uniform Mixture (BUM)
 * Censored BUM
 * Flat Grenander
@@ -100,10 +100,10 @@ combine(pvals, Minimum(PValueAdjustment()))
 ```
 
 
-### Higher criticism
+### Higher Criticism
 
-* Higher criticism scores
-* Higher criticism threshold
+* Higher Criticism scores
+* Higher Criticism threshold
 
 ```julia
 estimate(pvals, HigherCriticismScores())
