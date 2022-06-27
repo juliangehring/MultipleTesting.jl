@@ -1,5 +1,14 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.5.1
+
+### Changes
+
+- Handle dependencies automatically through CompatHelper
+- Extend support to SpecialFunctions v2
+- Update the readme
+
+
 ## Version 0.5.0
 
 ### Changes
