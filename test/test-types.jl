@@ -48,7 +48,9 @@ using Test
 
         # TODO discuss expected behaviour in edge cases
         @test_throws MethodError PValues(0.5)
-        @test_throws ArgumentError PValues([])
+        # ArgumentError on 1.6, MethodError on 1.8
+        @test_throws Union{MethodError,ArgumentError} PValues(Any[])
+        @test_throws Union{MethodError,ArgumentError} PValues(Float64[])
         @test_throws TypeError PValues([0, 1])
 
     end
