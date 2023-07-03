@@ -3,7 +3,7 @@ uuid = "f8716d33-7c4a-5097-896f-ce0ecbd3ef6b"
 license = "MIT"
 authors = "Julian Gehring"
 repository = "https://github.com/juliangehring/MultipleTesting.jl"
-version = "0.5.2"
+version = "0.6.0"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
