@@ -1,5 +1,18 @@
 # MultipleTesting.jl News and Changes
 
+## Version 0.6.0
+
+### Changes
+
+- Upgrades julia compat to 1.6 (#127)
+- Upgrade StatsBase compat to 0.34 (#127)
+- Fixes tests where the error type changed in recent julia versions (#127)
+
+### Support
+
+- Supports julia v1.6 and newer
+
+
 ## Version 0.5.1
 
 ### Changes
