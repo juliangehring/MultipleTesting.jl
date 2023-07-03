@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Adjustment of p-Values · MultipleTesting.jl</title><link rel="canonical" href="https://juliangehring.github.io/MultipleTesting.jl/stable/adjustment/"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">MultipleTesting.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><span class="tocitem">Library</span><ul><li class="is-active"><a class="tocitem" href>Adjustment of p-Values</a><ul class="internal"><li><a class="tocitem" href="#Methods"><span>Methods</span></a></li><li><a class="tocitem" href="#Types"><span>Types</span></a></li></ul></li><li><a class="tocitem" href="../combination/">Combination of p-Values</a></li><li><a class="tocitem" href="../pi0/">Estimation of π₀</a></li><li><a class="tocitem" href="../higher-criticism/">Higher Criticism</a></li><li><a class="tocitem" href="../models/">Modelling of p-Value Distributions</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Library</a></li><li class="is-active"><a href>Adjustment of p-Values</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Adjustment of p-Values</a></li></ul></nav><div class="docs-right"><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Adjustment-of-p-Values"><a class="docs-heading-anchor" href="#Adjustment-of-p-Values">Adjustment of p-Values</a><a id="Adjustment-of-p-Values-1"></a><a class="docs-heading-anchor-permalink" href="#Adjustment-of-p-Values" title="Permalink"></a></h1><h2 id="Methods"><a class="docs-heading-anchor" href="#Methods">Methods</a><a id="Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Methods" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.adjust" href="#MultipleTesting.adjust"><code>MultipleTesting.adjust</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">adjust(PValues, &lt;:PValueAdjustment)
+adjust(PValues, Int, &lt;:PValueAdjustment)</code></pre><p>Adjustment of p-values</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.02
+ 0.039999999999999994
+ 0.5
+
+julia&gt; adjust(pvals, 6, BenjaminiHochberg()) # 4 out of 6 p-values
+4-element Array{Float64,1}:
+ 0.006
+ 0.03
+ 0.06
+ 0.75
+
+julia&gt; adjust(pvals, BarberCandes())
+4-element Array{Float64,1}:
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.3333333333333333
+ 1.0</code></pre><p><strong>See also</strong></p><p><code>PValueAdjustment</code>s:</p><p><a href="#MultipleTesting.Bonferroni"><code>Bonferroni</code></a> <a href="#MultipleTesting.BenjaminiHochberg"><code>BenjaminiHochberg</code></a> <a href="#MultipleTesting.BenjaminiHochbergAdaptive"><code>BenjaminiHochbergAdaptive</code></a> <a href="#MultipleTesting.BenjaminiYekutieli"><code>BenjaminiYekutieli</code></a> <a href="#MultipleTesting.BenjaminiLiu"><code>BenjaminiLiu</code></a> <a href="#MultipleTesting.Hochberg"><code>Hochberg</code></a> <a href="#MultipleTesting.Holm"><code>Holm</code></a> <a href="#MultipleTesting.Hommel"><code>Hommel</code></a> <a href="#MultipleTesting.Sidak"><code>Sidak</code></a> <a href="#MultipleTesting.ForwardStop"><code>ForwardStop</code></a> <a href="#MultipleTesting.BarberCandes"><code>BarberCandes</code></a></p></div></section></article><h2 id="Types"><a class="docs-heading-anchor" href="#Types">Types</a><a id="Types-1"></a><a class="docs-heading-anchor-permalink" href="#Types" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.Bonferroni" href="#MultipleTesting.Bonferroni"><code>MultipleTesting.Bonferroni</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Bonferroni adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, Bonferroni())
+4-element Array{Float64,1}:
+ 0.004
+ 0.04
+ 0.12
+ 1.0
+
+julia&gt; adjust(pvals, 6, Bonferroni())
+4-element Array{Float64,1}:
+ 0.006
+ 0.06
+ 0.18
+ 1.0</code></pre><p><strong>References</strong></p><p>Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle probabilita (Libreria internazionale Seeber).</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.BenjaminiHochberg" href="#MultipleTesting.BenjaminiHochberg"><code>MultipleTesting.BenjaminiHochberg</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Benjamini-Hochberg adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.02
+ 0.039999999999999994
+ 0.5
+
+julia&gt; adjust(pvals, 6, BenjaminiHochberg())
+4-element Array{Float64,1}:
+ 0.006
+ 0.03
+ 0.06
+ 0.75</code></pre><p><strong>References</strong></p><p>Benjamini, Y., and Hochberg, Y. (1995). Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing. Journal of the Royal Statistical Society. Series B (Methodological) 57, 289–300.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.BenjaminiHochbergAdaptive" href="#MultipleTesting.BenjaminiHochbergAdaptive"><code>MultipleTesting.BenjaminiHochbergAdaptive</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Adaptive Benjamini-Hochberg adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BenjaminiHochbergAdaptive(Oracle(0.5))) # known π₀ of 0.5
+4-element Array{Float64,1}:
+ 0.002
+ 0.01
+ 0.019999999999999997
+ 0.25
+
+julia&gt; adjust(pvals, BenjaminiHochbergAdaptive(StoreyBootstrap())) # π₀ estimator
+4-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia&gt; adjust(pvals, 6, BenjaminiHochbergAdaptive(StoreyBootstrap()))
+4-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0</code></pre><p><strong>References</strong></p><p>Benjamini, Y., Krieger, A. M. &amp; Yekutieli, D. (2006). Adaptive linear step-up  procedures that control the false discovery rate. Biometrika 93, 491–507.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.BenjaminiYekutieli" href="#MultipleTesting.BenjaminiYekutieli"><code>MultipleTesting.BenjaminiYekutieli</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Benjamini-Yekutieli adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BenjaminiYekutieli())
+4-element Array{Float64,1}:
+ 0.00833333333333334
+ 0.0416666666666667
+ 0.0833333333333334
+ 1.0
+
+julia&gt; adjust(pvals, 6, BenjaminiYekutieli())
+4-element Array{Float64,1}:
+ 0.01470000000000001
+ 0.07350000000000005
+ 0.14700000000000008
+ 1.0</code></pre><p><strong>References</strong></p><p>Benjamini, Y., and Yekutieli, D. (2001). The Control of the False Discovery Rate in Multiple Testing under Dependency. The Annals of Statistics 29, 1165–1188.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.BenjaminiLiu" href="#MultipleTesting.BenjaminiLiu"><code>MultipleTesting.BenjaminiLiu</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Benjamini-Liu adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BenjaminiLiu())
+4-element Array{Float64,1}:
+ 0.003994003998999962
+ 0.022275750000000066
+ 0.02955000000000002
+ 0.125
+
+julia&gt; adjust(pvals, 6, BenjaminiLiu())
+4-element Array{Float64,1}:
+ 0.0059850199850060015
+ 0.04084162508333341
+ 0.07647146000000005
+ 0.4375</code></pre><p><strong>References</strong></p><p>Benjamini, Y., and Liu, W. (1999). A step-down multiple hypotheses testing procedure that controls the false discovery rate under independence. Journal of Statistical Planning and Inference 82, 163–170.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.Hochberg" href="#MultipleTesting.Hochberg"><code>MultipleTesting.Hochberg</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Hochberg adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, Hochberg())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia&gt; adjust(pvals, 6, Hochberg())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0</code></pre><p><strong>References</strong></p><p>Hochberg, Y. (1988). A sharper Bonferroni procedure for multiple tests of significance. Biometrika 75, 800–802.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.Holm" href="#MultipleTesting.Holm"><code>MultipleTesting.Holm</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Holm adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, Holm())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia&gt; adjust(pvals, 6, Holm())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0</code></pre><p><strong>References</strong></p><p>Holm, S. (1979). A Simple Sequentially Rejective Multiple Test Procedure. Scandinavian Journal of Statistics 6, 65–70.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.Hommel" href="#MultipleTesting.Hommel"><code>MultipleTesting.Hommel</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Hommel adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, Hommel())
+4-element Array{Float64,1}:
+ 0.004
+ 0.03
+ 0.06
+ 0.5
+
+julia&gt; adjust(pvals, 6, Hommel())
+4-element Array{Float64,1}:
+ 0.006
+ 0.05
+ 0.12
+ 1.0</code></pre><p><strong>References</strong></p><p>Hommel, G. (1988). A stagewise rejective multiple test procedure based on a modified Bonferroni test. Biometrika 75, 383–386.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.Sidak" href="#MultipleTesting.Sidak"><code>MultipleTesting.Sidak</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Šidák adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, Sidak())
+4-element Array{Float64,1}:
+ 0.003994003998999962
+ 0.039403990000000055
+ 0.11470719000000007
+ 0.9375
+
+julia&gt; adjust(pvals, 6, Sidak())
+4-element Array{Float64,1}:
+ 0.0059850199850060015
+ 0.058519850599
+ 0.1670279950710002
+ 0.984375</code></pre><p><strong>References</strong></p><p>Šidák, Z. (1967). Rectangular Confidence Regions for the Means of Multivariate Normal Distributions. Journal of the American Statistical Association 62, 626–633.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.ForwardStop" href="#MultipleTesting.ForwardStop"><code>MultipleTesting.ForwardStop</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Forward-Stop adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, ForwardStop())
+4-element Array{Float64,1}:
+ 0.0010005003335835344
+ 0.005525418093542492
+ 0.013836681223931188
+ 0.1836643060579347
+
+julia&gt; adjust(pvals, 6, ForwardStop())
+4-element Array{Float64,1}:
+ 0.0010005003335835344
+ 0.005525418093542492
+ 0.013836681223931188
+ 0.1836643060579347</code></pre><p><strong>References</strong></p><p>G’Sell, M.G., Wager, S., Chouldechova, A., and Tibshirani, R. (2016). Sequential selection procedures and false discovery rate control. J. R. Stat. Soc. B 78, 423–444.</p></div></section></article><article class="docstring"><header><a class="docstring-binding" id="MultipleTesting.BarberCandes" href="#MultipleTesting.BarberCandes"><code>MultipleTesting.BarberCandes</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Barber-Candès adjustment</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; pvals = PValues([0.001, 0.01, 0.03, 0.5]);
+
+julia&gt; adjust(pvals, BarberCandes())
+4-element Array{Float64,1}:
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.3333333333333333
+ 1.0</code></pre><p><strong>References</strong></p><p>Barber, R.F., and Candès, E.J. (2015). Controlling the false discovery rate via knockoffs. Ann. Statist. 43, 2055–2085.</p><p>Arias-Castro, E., and Chen, S. (2017). Distribution-free multiple testing. Electron. J. Statist. 11, 1983–2001.</p></div></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../combination/">Combination of p-Values »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 3 July 2023 16:10">Monday 3 July 2023</span>. Using Julia version 1.9.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
