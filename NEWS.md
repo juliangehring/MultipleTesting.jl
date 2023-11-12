@@ -1,5 +1,16 @@
 # MultipleTesting.jl News and Changes
 
+## Version 1.0.0
+
+### Changes
+
+- Release stable version
+
+### Support
+
+- Supports julia v1.6 and newer
+
+
 ## Version 0.6.0
 
 ### Changes
