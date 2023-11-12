@@ -2,7 +2,7 @@
 
 What is better than one statistical test? Many tests!
 
-`MultipleTesting` offers commonly used algorithms to handle situations when dealing with multiple hypothesis tests - well tested and efficiantly implemented for large-scale analyses.
+`MultipleTesting` offers commonly used algorithms to handle situations when dealing with multiple hypothesis tests – well-tested and efficiently implemented for large-scale analyses.
 
 Features:
 - [Adjustment of p-Values](#adjustment-of-p-values)
@@ -10,6 +10,13 @@ Features:
 - [Combination of p-Values](#combination-of-p-values)
 - [Higher Criticism](#higher-criticism)
 - [Modelling of p-Value Distributions](#modelling-of-p-value-distributions)
+
+
+## Package Status
+
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliangehring.github.io/MultipleTesting.jl/stable) [![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
+
+![Testing](https://github.com/juliangehring/MultipleTesting.jl/workflows/Testing/badge.svg) [![Coverage](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
 
 
 ## Features
@@ -392,20 +399,3 @@ pkg> add MultipleTesting
 More details on packages and how to manage them can be found in the
 [package section](https://docs.julialang.org/en/v1/stdlib/Pkg/index.html)
 of the Julia documentation.
-
-
-## Feedback and Contributions
-
-Contributions of any kind are very welcome. Please feel free to open pull
-requests or issues with your questions or ideas.
-
-
-## Package Status
-
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliangehring.github.io/MultipleTesting.jl/stable)
-
-[![DOI](https://zenodo.org/badge/27935122.svg)](https://zenodo.org/badge/latestdoi/27935122)
-
-![Testing](https://github.com/juliangehring/MultipleTesting.jl/workflows/Testing/badge.svg)
-
-[![Coverage](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
