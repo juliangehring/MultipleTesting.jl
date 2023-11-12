@@ -1,8 +1,15 @@
 # MultipleTesting
 
-The `MultipleTesting` package offers common algorithms for p-value adjustment
-and combination as well as the estimation of the proportion π₀ of true null
-hypotheses.
+What is better than one statistical test? Many tests!
+
+`MultipleTesting` offers commonly used algorithms to handle situations when dealing with multiple hypothesis tests - well tested and efficiantly implemented for large-scale analyses.
+
+Features:
+- [Adjustment of p-Values](#adjustment-of-p-values)
+- [Estimation of π₀](#estimation-of-π₀)
+- [Combination of p-Values](#combination-of-p-values)
+- [Higher Criticism](#higher-criticism)
+- [Modelling of p-Value Distributions](#modelling-of-p-value-distributions)
 
 
 ## Features
@@ -402,5 +409,3 @@ requests or issues with your questions or ideas.
 ![Testing](https://github.com/juliangehring/MultipleTesting.jl/workflows/Testing/badge.svg)
 
 [![Coverage](https://codecov.io/gh/juliangehring/MultipleTesting.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/juliangehring/MultipleTesting.jl)
-
-The package uses [semantic versioning](https://semver.org/).
